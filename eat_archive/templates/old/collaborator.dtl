@@ -1,0 +1,7 @@
+{% extends "container.html" %}
+
+{% block title %}The current time{% endblock %}
+
+{% block content %}
+<p>test. </p>
+{% endblock %}

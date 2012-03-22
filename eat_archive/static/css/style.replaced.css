@@ -1,0 +1,125 @@
+div {
+  background: rgba(0, 0, 0, 0.2); }
+
+body {
+  background: #f4f6fc;
+  font-family: Arial, sans;
+  font-size: 0.9em; }
+
+#header #tags {
+  text-transform: uppercase; }
+#header #end, #header #beginning {
+  background: white; }
+#header #beginning {
+  float: left; }
+#header #end {
+  float: right; }
+
+.people .name {
+  font-size: 0.7em;
+  text-align: right; }
+
+.timeline_ppl {
+  height: 4px; }
+
+.timeline_ppl {
+  height: 1em;
+  position: absolute; }
+
+.line.level0,
+.line.level1,
+.line.level2,
+.line.level3,
+.line.level4,
+.line.level5 {
+  border-radius: 3px; }
+
+.line.level0 {
+  bottom: 0; }
+
+.line.level1 {
+  bottom: 4px; }
+
+.line.level2 {
+  bottom: 8px; }
+
+.line.level3 {
+  bottom: 12px; }
+
+.line.level4 {
+  bottom: 16px; }
+
+.line {
+  position: absolute;
+  opacity: 0.6; }
+
+.artists .line {
+  background: #ff1d25; }
+
+.engineers .line {
+  background: #2c57c0; }
+  
+.tagcloud {
+			font-family: 'Antic', sans-serif;
+			font-size:1em;
+		}
+
+		.tagcloud a{
+			color: #92b22c;
+			text-decoration:none;
+							padding-bottom:1px;
+			margin: 4px;
+		}
+
+		.tagcloud a:hover {
+			text-decoration:none;
+			border-bottom:2px solid #92b22c;
+		}
+		
+		.slider {
+			width : 40%;
+			margin-bottom:1.5em;
+
+		}
+		
+		.slider .ui-corner-all {
+			border-top-right-radius: 10px;
+			border-top-left-radius: 10px;
+			border-bottom-right-radius: 10px;
+			border-bottom-left-radius: 10px;
+		}
+		
+		.ui-slider-horizontal {
+			height:0.3em !important;
+		}
+		
+		.ui-slider-handle {
+			height:0em !important;
+			width:1.4em !important;
+			font-size:0.6em !important;
+			text-decoration:none !important;
+			cursor : move !important;
+			text-align:center;
+			padding-top:1.4em;
+		}
+		
+		.slider_value, .parameters {
+			font-size:10px;
+		}
+		
+		.ui-tabs-nav {
+		    background:none;
+		    border:none;
+		    line-height:1em;   
+		    font-family:Arial;
+		    color:black !important; 
+		}
+		
+		.ui-tabs-nav li, .ui-state-default {
+		    font-size:1em;
+		    color:black;
+		}
+		
+		
+		
+		

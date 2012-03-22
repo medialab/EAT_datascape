@@ -1,0 +1,11 @@
+    <html>
+    <head>
+    </head>
+    <body>
+        <ol>
+        {%for activity in activities%}
+          <li><a href="http://jiminy.medialab.sciences-po.fr/eat_datascape/archive/project/{{activity.id}}" >{{activity.name}}</a></li>
+        {% endfor %}
+        </ol>
+    </body>
+    </html>

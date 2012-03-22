@@ -1,0 +1,382 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+
+<link rel="stylesheet" href="{{ STATIC_URL }}/css/custom-theme/jquery-ui-1.8.16.custom.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+
+<link rel="stylesheet" href="{{ STATIC_URL }}/css/reset.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="{{ STATIC_URL }}/css/grid.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="{{ STATIC_URL }}/css/style.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+
+<link rel="stylesheet" href="{{ STATIC_URL }}/css/jquery.qtip.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="{{ STATIC_URL }}/css/supersized.shutter.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+
+
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<script src="{{ STATIC_URL }}/js/jquery-1.6.2.min.js"></script>
+<script src="{{ STATIC_URL }}/js/jquery-tagcloud.js"></script>
+<script src="{{ STATIC_URL }}/js/jquery-ui-1.8.16.custom.min.js"></script>
+<script src="{{ STATIC_URL }}/js/jquery.qtip.min.js"></script>
+<script src="{{ STATIC_URL }}/js/jquery.mousewheel.min.js"></script>
+<script src="{{ STATIC_URL }}/js/jquery.timelinegrid.js"></script>
+
+<script src="{{ STATIC_URL }}/js/views/projet.js"></script>
+<script src="{{ STATIC_URL }}/js/scripts.js"></script>
+
+<script type="text/javascript" src="{{ STATIC_URL }}/js/jquery.easing.min.js"></script>
+		
+<script type="text/javascript" src="{{ STATIC_URL }}/js/jquery.scrollbarpaper.js"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="{{ STATIC_URL }}/css/jquery.scrollbarpaper.css" />		
+		
+<script type="text/javascript" src="{{ STATIC_URL }}/js/supersized.3.2.5.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}/js/supersized.shutter.min.js"></script>
+
+<style type="text/css" media="screen">
+/* <![CDATA[ */
+        	{% for phase in phases %}
+        	    .phase_{{phase.id}} {
+                          left : {{phase.left }}%;
+                          width: {{phase.width}}%;
+                           {% if phase.width == -1 %}display:none !important;{% endif %}
+                          bottom : {{phase.level}}px;
+                          z-index : {{phase.level}};
+
+				}
+			{% endfor %}		
+			
+			.showing {
+			    z-index:2000;
+			}
+			.faded {
+			    opacity : 0.4;
+			}
+			#dark {
+			    width:100%;
+			    height:100%;
+			    opacity:0.7;
+			    background:black;
+			    z-index:1000
+			}	
+			
+/* ]]> */
+</style>
+<link href="http://code.google.com/apis/maps/documentation/javascript/examples/default.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript">
+
+// DJANGO GENERATED VARS 
+// =====================
+var locations = {}
+    {%for phase in phases%}
+     {%for place in phase.places%}
+        if (!("{{place.id}}" in locations))
+          locations[{{place.id}}] = [new google.maps.LatLng({{place.latitude|stringformat:"s"}}, {{place.longitude|stringformat:"s"}}),"<strong>{{place.name|safe}}</strong><br/>" ];
+     {%endfor%}
+    {%endfor%}
+    
+// TAGS
+EAT.tags = [];
+{%for category,tags2 in tag_cloud.items  %}
+	EAT.tags[{{forloop.counter0}}] = [
+	{% for each in tags2 %}
+		{tag :"{{each.tag|addslashes}}", count:{{each.size}}, title:{{each.size}}, link : '{{each.link}}' }{% if not forloop.last %} , {% endif %}
+	{% endfor %}
+	];
+{% endfor %}
+</script>
+
+<!-- 
+	main page script 
+	window onload event listener for every function that uses
+	django template vars
+-->
+<script type="text/javascript" >
+	
+EAT.annotations = {% autoescape off %} {{ annotations.json }} {% endautoescape %}
+min_date = '{% if start_zoom %}{{start_zoom|date:"d.m.Y"}}{% else %}{{min_date|date:"d.m.Y"}}{% endif %}'
+max_date = '{% if end_zoom %}{{end_zoom|date:"d.m.Y"}}{% else %}{{max_date|date:"d.m.Y"}}{% endif %}'
+
+$(function(){
+    EAT.makeTimeLineScrollable();
+    EAT.googleMaps.initialize();
+    EAT.tagClouds.makeTagClouds();
+    $( ".tabs" ).tabs();
+    EAT.qTip();
+    EAT.initSupersize();
+    timeline = new TimelineGrid({
+	    dates:{
+		    min:$.datepicker.parseDate( "dd.mm.yy", min_date ) ,
+		    max:$.datepicker.parseDate( "dd.mm.yy", max_date ) 
+	    },
+	    target: $("#time_points")
+    });
+});
+</script>
+<title>EAT Datascape - {{name}}</title>
+</head>
+<body>
+<pre>
+
+</pre>
+
+
+
+
+
+<div id="overlay"></div>
+<div class="container_26">
+	<!-- locker the locked -->
+	<div id="locker">
+		you're exploring the phase 
+		<div class="phase_locked"></div>
+		<button>unlock</button>
+	</div>
+	
+	<!-- dialogs frame -->
+		
+	<div id="source_dialog" class="grid_13 alpha omega" title=" ">
+		<h1 id="annotation_authors"><span class="annotation_author"></span></h1>
+		<div id="annotation_title"></div>
+		<div id="source_info">in « <span id="source_title"></span> » <span id="source_mark"></span></div> 
+		<div id="annotation_content"> 
+				<!-- div class="quotes_left"><img src="http://upload.wikimedia.org/wikipedia/commons/5/56/Left_double_quotation_mark.png"></div -->
+				<div id="source_text" class="overview">
+					<div class="source_image"></div>
+					<div class="long_text">
+					</div> 
+				</div>
+				<div id="source_reference"></div>
+		</div>		
+	</div>
+	<div class="grid_20 prefix_4 suffix_2 alpha omega ">
+        <div id="logo"><img src="{{ STATIC_URL }}/images/EAT-logo.png"></div>
+		<div id="header">
+            <div id="tags" class="demo2">
+                <p>
+                    {%for tag in tags.art %}
+                        {{tag}}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </p>
+                <p> {%for tag in tags.techno %}
+                        {{tag}}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </p>
+            </div>
+             <h1 id="project-title" class="demo1">{{name}}</h1>
+             <div id="period demo3">
+                 <div id="beginning">
+                     {{min_date|date:"j N Y"}}
+                 </div>
+                 <div id="end">
+                     {{max_date|date:"j N Y"}}
+                 </div>
+             </div>
+        </div>
+    </div>
+	
+	<div class="clear"></div>
+	<!-- end header -->
+	<div class="grid_23 prefix_3 alpha omega ">
+		<div id="timeline" class="grid_22 alpha omega demo3">
+			<div class="grid_1 alpha start_date">
+				<div class="start_delimeter align_centered">
+					<span>{{start_zoom.day}} {{start_zoom|date:"N"}}</span>
+					<div class="year">{{start_zoom.year}}</div>  
+				</div>
+            </div>
+            <div class="grid_20 phases_box">
+                <div id="conteneurphase" style="z-index:2000; overflow:auto">
+                    <div class="phases" id="bigtimeline" style="width:96%; position:relative; margin-left:7px">
+			            {% for phase in phases %}
+			                 <div  title="<h2>{% for tag in phase.tags %}
+			                        {{tag}}{% if not forloop.last %} , {% endif %}
+			                    {% endfor %}</h2>{{phase.start_date|date:'d N Y'}} - {{phase.end_date|date:'d N Y'}}" id="phase_{{forloop.counter0}}" class="phase_{{phase.id}} phase
+					            {% if phase.truncated_start or phase.truncated_end %}truncated{% endif %}
+					            "><span>{% for tag in phase.tags %}
+			                        {{tag}}{% if not forloop.last %}, {% endif %}
+			                    {% endfor %}
+					            </span>
+					            {% if phase.truncated_start %}
+						            <img src="{{ STATIC_URL }}/images/truncated_left.png" class="truncated_left">
+					            {% endif %}
+					            {% if phase.truncated_end %}
+						            <img src="{{ STATIC_URL }}/images/truncated_right.png" class="truncated_right"> 
+					            {% endif %}
+			                 </div>
+			            {% endfor %}
+			
+                  </div>
+                  <div id="timegrid" class="phases">
+        			    <div id="time_points" ></div>
+                            <div class="sources" >
+                                 {% for phase_id, phase_data in annotations.object.items %}
+                                    <div class="phase_{{phase_id}} source_list">
+                                     {% for annotation_id, annotation in phase_data.annotations.items %}
+                                        <div class="source phase_{{phase_id}}"  id="source_{{phase_id}}_{{ annotation_id}}" title="{{annotation.annotation_title}} <br/>in {{annotation.source_title}} <br /><em>{% for tag in phase_data.actionTags %}
+			                                            {{tag}}{% if not forloop.last %} , {% endif %}
+		                                            {% endfor %}</em>"></div>
+                                     {%endfor%}
+                                    </div>
+                                 {% endfor %}
+                            </div>
+                     </div>
+                </div>
+            </div>
+            <div class="grid_1 end_date omega">
+				<div class="end_delimeter align_centered">
+					<span>{{end_zoom.day}} {{end_zoom|date:"N"}}</span>
+					<div>{{end_zoom.year}}</div>  
+				</div>
+            </div>
+		</div>
+    </div>
+ 	<!-- end timeline  -->   	
+	
+    <div class="actors grid_26 alpha omega">
+		<div class="grid_1 alpha clean_space" >&nbsp;</div>
+        <div class="grid_25  alpha omega">
+			<div id="timegrid" class="grid_25 alpha omega demo3" >
+				<div class="grid_2 suffix_1 alpha label align_centered"><em>people </em></div>
+			</div>
+        </div>
+        <div class="clear"></div>
+		
+		<!-- alpha, because of legend -->
+		<div class="page grid_24 alpha ">
+				{% load listutils %}
+				{%for actor  in actors %}
+                <div class="grid_24 alpha omega demo4">
+					<div  class="actor_group grid_24 {{actor.profile|replace|lower}} {{actor.profile|lower}} alpha omega ">
+						<div class="grid_1 alpha legend circles" title="group: {% if actor.profile %}{{actor.profile|replace|lower}}{% else %}other{% endif %}">
+							<!-- img src="{{ STATIC_URL }}/images/profiles/{% if actor.profile %}{{actor.profile|lower}}{% else %}anonym{% endif %}.png" alt="{{profile|lower}}"
+							-->
+							<div class="legend_color {% if actor.profile %}{{actor.profile|replace|lower}}{% else %}other{% endif %}"></div>
+						</div>
+						<div class="grid_23 omega lines">
+							<div class="actor grid_23 alpha omega {% for phase in actor.phases %}phase_{{phase}} {% endfor %}">
+								<div class="grid_3 alpha name" title="{{actor.name}}{% if profile %}, <em>{{profile|replace|lower}}{% endif %}</em>">
+									<div><a style="text-decoration:none; color:black" href='../actor/{{actor.id}}'>{{actor.name}}</a></div>
+								</div>
+								<div class="phases_box grid_20 omega ">
+								    <div class="testest" style="z-index:2000; overflow:hidden; ">
+									    <div class="phases" style="width:96%; position:relative; height:2em;">&nbsp;
+									     {% for phase_id, phase in actor.phases.items %}
+										    <div class="phase level_0 phase_{{phase_id}}" 
+											    title="<h2>
+												    {% for tag in phase.actionTags %}
+													    {{tag}}{% if not forloop.last %} , {% endif %}
+												    {% endfor %}</h2>
+												    {{phase.start_date|date:'d N Y'}} - {{phase.end_date|date:'d N Y'}}
+											    " 
+											    id="phase_{{forloop.counter0}}"
+											    class="
+												    phase_{{phase.id}} phase
+												    {% if phase.truncated_start or phase.truncated_end %}truncated{% endif %}
+											    ">
+										    </div>
+									    {% endfor %}
+									    </div>
+                                    </div>
+								</div>
+							</div>
+
+						</div>
+						<!-- end of lines -->
+					</div>
+				</div>
+				<!-- end of actors' group --> 
+				{% endfor %}
+		
+		
+		</div>
+        <div id="legend" class="legend grid_2 omega demo4">
+			<div class="grid_2 alpha omega label align_centered"><em>legend</em></div>
+				<div class="grid_2 element alpha omega " title="profile: artist">
+					<div class="legend_color artist" ></div>
+					<span>artist</span>
+				</div>
+				<div class="grid_2 element alpha omega " title="profile: engineer">
+					<div class="legend_color engineer" ></div>
+					<span>engineer</span>
+				</div>
+				<div class="grid_2 element alpha omega " title="profile: manager">
+					<div class="legend_color manager" ></div>
+					<span>manager</span>
+				</div>
+				<div class="grid_2 element alpha omega " title="profile: organization">
+					<div class="legend_color organization" ></div>
+					<span>organization</span>
+				</div>
+				<div class="grid_2 element alpha omega " title="profile: other">
+					<div class="legend_color other" ></div>
+					<span>other</span>
+				</div>
+			
+		</div>
+		
+		<div class="clear"></div>
+        
+        
+    </div>
+	<!-- end of 'actors' -->
+	
+	<div id="deep_info" class="grid_26 alpha omega ">
+		<div class="tags grid_10 alpha demo5">
+			<div class="grid_2 alpha omega label align_centered"><em>tags</em></div>
+			<div class="tabs">
+				<ul>
+				 {% for category in tag_cloud %}
+					<li><a href="#tabs-{{forloop.counter0}}">{{category}}</a></li>
+				{%endfor%}
+				</ul>
+				
+				{% for category in tag_cloud %}
+				<div id="tabs-{{forloop.counter0}}">
+					<h2 id='{{ category }}'>{{ category }}</h2>
+					<div class="tagcloud" id="cloud_{{ forloop.counter0 }}"></div>
+				</div>	
+				{% endfor%}
+
+			</div>
+		</div>
+		<!-- end of tags -->
+		<div class="places grid_16 omega demo6">
+			<div class="places_box grid_6 alpha">
+				<div class="grid_2 suffix_4 alpha omega label align_centered"><em>places</em></div>
+			
+				<div class="places grid_6 alpha omega">
+					
+                    {%for phase in phases%}
+                     {%for place in phase.places%}
+					    <div class="place" id='place_{{place.id}}' onclick='return EAT.googleMaps.clickOnMarker({{place.id}})'>{{place.name}}</div>
+					 {% endfor %}
+					{% endfor %}
+
+					
+				</div>
+				
+				
+			</div>
+			<div class="google_map grid_10 omega">
+				<div id="google_map_canvas" style="height:300px">google map here</div>
+			</div>
+			<!-- end of google map -->
+		</div>
+		
+	</div>
+	<!-- end of deep_info -->
+	
+	
+	
+	
+	<div class="footer grid_26 alpha omega">
+		<div id="footer" ><img src="{{ STATIC_URL }}/images/Sc-Po-Medialab-Gris.png" alt="made by Medialab Sciences Po" title="visit Medialab Sciences Po"></div>
+	</div>
+</div>
+
+
+
+
+</body>
+</html>

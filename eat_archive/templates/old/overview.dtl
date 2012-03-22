@@ -1,0 +1,284 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+
+
+<link rel="stylesheet" href="{{ STATIC_URL }}/css/custom-theme/jquery-ui-1.8.16.custom.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+
+<link rel="stylesheet" href="{{ STATIC_URL }}/css/reset.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="{{ STATIC_URL }}/css/grid.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="{{ STATIC_URL }}/css/style.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+
+<link rel="stylesheet" href="{{ STATIC_URL }}/css/jquery.qtip.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+
+
+<script src="{{ STATIC_URL }}/js/jquery-1.6.2.min.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+<script src="{{ STATIC_URL }}/js/jquery-tagcloud.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+<script src="{{ STATIC_URL }}/js/jquery-ui-1.8.16.custom.min.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+<script src="{{ STATIC_URL }}/js/jquery.qtip.min.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+
+<!-- d3 library -->
+<script type="text/javascript" src="{{ STATIC_URL }}/js/d3/d3.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}/js/d3/d3.layout.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}/js/d3/stream_layers.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}/d3/d3.time.js"></script>
+
+<!-- timeline library -->
+<script src="{{ STATIC_URL }}/js/jquery.timelinegrid.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+<script src="{{ STATIC_URL }}/js/views/overview.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/line.css"/>
+<link href="http://code.google.com/apis/maps/documentation/javascript/examples/default.css" rel="stylesheet" type="text/css" />
+
+
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}/js/jquery.easing.min.js"></script>
+		
+		<script type="text/javascript" src="{{ STATIC_URL }}/js/supersized.3.2.5.min.js"></script>
+		<script type="text/javascript" src="{{ STATIC_URL }}/js/supersized.shutter.min.js"></script>
+		<script src="{{ STATIC_URL }}/js/scripts.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+<script type="text/javascript">
+
+// DJANGO GENERATED VARS 
+// =====================
+var locations = {}
+    {%for place in places%}
+        locations[{{place.id}}] = [new google.maps.LatLng({{place.lat|stringformat:"s"}}, {{place.lng|stringformat:"s"}}),"<strong>{{place.name|safe}}</strong><br/>" ]{% if not forloop.last %},{% endif %}
+    {%endfor%}
+    
+// TAGS
+EAT.tags = [];
+{%for category,tags2 in tag_cloud.items  %}
+	EAT.tags[{{forloop.counter0}}] = [
+	{% for each in tags2 %}
+		{tag :"{{each.tag|addslashes}}", count:{{each.size}}, title:{{each.size}}, link : '{{each.link}}' }{% if not forloop.last %} , {% endif %}
+	{% endfor %}
+	];
+{% endfor %}
+
+$(window).load( function(){
+	    EAT.googleMaps.initialize();
+    EAT.tagClouds.makeTagClouds();
+    $( ".tabs" ).tabs();
+    EAT.qTip();
+    EAT.initSupersize();
+	});
+</script>
+
+
+
+<title>EAT Datascape - Overview</title>
+
+</head>
+<body>
+<div id="overlay"></div>
+<div class="container_26">
+	<!-- dialogs frame -->
+	<div id="logged">
+	    connecté comme {{user.name}}
+	</div>
+	<div class="header grid_20 prefix_4 suffix_2 alpha omega ">
+        <div id="logo"><img src="{{ STATIC_URL }}/images/EAT-logo.png"></div>
+    
+		<div id="header">
+            <div id="tags">
+                {%for tag in tags.art %}
+                    {{tag}}{% if not forloop.last %} , {% endif %}
+                {% endfor %}
+            </div>
+             <h1 id="project-title">Experiments in Art and Technology</h1>
+             
+        </div>
+        
+        
+    </div>
+	
+	<div class="clear"></div>
+	<!-- end header -->
+	
+	<!-- the activity graph -->
+	<div class="d3_graph grid_26 alpha omega">
+        <div id="chart">
+		 
+		</div>
+    </div>
+	    <script type="text/javascript">
+        $.getJSON('{{ STATIC_URL }}/activities_stack.json', function(jsondata) {
+         
+         
+         
+         var  data = jsondata[0];
+         xlabels = jsondata[1];
+         xlabelsasdate = Array();
+         
+         
+
+         
+         
+         for (var i=0; i<xlabels.length; i++) {
+            xlabelsasdate[i] = $.datepicker.parseDate("dd/mm/yy",xlabels[i]); 
+         }
+                  new TimelineGrid({
+			dates:{
+				min:d3.min(xlabelsasdate),
+				max:d3.max(xlabelsasdate) 
+			},
+			target: $("#time_points")
+		});
+        // console.log(xlabelsasdate)
+        // console.log(data);
+
+var w = 1020,
+    h = 300,
+    p = 0,
+    x = d3.scale.linear().domain([0, 621]).range([0, w]),
+    x_label =  d3.time.scale().domain(xlabelsasdate).range([0,w]),
+    y = d3.scale.linear().domain([0, 450]).range([h, 0]);
+
+var vis = d3.select("#chart")
+    .data([data])
+  .append("svg:svg")
+    .attr("width", w + p * 2)
+    .attr("height", h + p * 2)
+  .append("svg:g")
+    .attr("transform", "translate(" + p + "," + p + ")");
+
+var rules = vis.selectAll("g.rule")
+    .data(x.ticks(10))
+  .enter().append("svg:g")
+    .attr("class", "rule");
+
+//rules.append("svg:line")
+//    .attr("x1", x)
+//    .attr("x2", x)
+//    .attr("y1", 0)
+//    .attr("y2", h - 1);
+
+/*
+//rules.append("svg:line")
+//    .attr("class", function(d) { return d ? null : "axis"; })
+    .attr("y1", y)
+    .attr("y2", y)
+    .attr("x1", 0)
+    .attr("x2", w + 1);
+*/
+//rules.append("svg:text")
+//    .attr("x", x)
+//    .attr("y", h + 3)
+//    .attr("dy", ".71em")
+//    .attr("text-anchor", "middle")
+//    .text(x.tickFormat(10));
+
+rules.append("svg:text")
+    .attr("y", y)
+    .attr("x", -3)
+    .attr("dy", ".35em")
+    .attr("text-anchor", "end")
+    .text(y.tickFormat(10));
+
+vis.append("svg:path")
+    .attr("class", "line")
+    .attr("stroke-width",5)
+    .attr("d", d3.svg.line()
+    .x(function(d) { return x(d.x); })
+    .y(function(d) { return y(d.y); }));
+
+vis.selectAll("circle.line")
+    .data(data)
+  .enter().append("svg:circle")
+    .attr("class", "line")
+    .attr("title",function(d) { return d.title; })
+    .attr("cx", function(d) { return x(d.x); })
+    .attr("cy", function(d) { return y(d.y); })
+    .attr("r", 0);
+
+           
+    
+});
+
+
+    </script>
+	
+	
+	    <div id="line">
+    </div>
+    <div id="ticks">
+    </div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<!-- end of 'activity' -->
+	<div class="overview_timegrid grid_26 alpha omega">
+		<div id="time_points"></div>
+		
+	</div>
+	
+	<div id="deep_info" class="grid_26 alpha omega">
+		<div class="tags grid_26 alpha omega">
+			<div class="grid_2 alpha omega label align_centered"><em>tags</em></div>
+			<div class="tabs">
+				<ul>
+				 {% for category in tag_cloud %}
+					<li><a href="#tabs-{{forloop.counter0}}">{{category}}</a></li>
+				{%endfor%}
+				</ul>
+				
+				{% for category in tag_cloud %}
+				<div id="tabs-{{forloop.counter0}}">
+					<h2 id='{{ category }}'>{{ category }}</h2>
+					<div class="slider" id="slider_{{ forloop.counter0 }}"></div>
+					<div class="parameters">
+						<p>Ordre : 
+							<a href="#{{category}}" onclick="javascript:EAT.tagClouds.changeOrder({{forloop.counter0}},'abc')">Alphabétique</a>,
+							<a href="#{{category}}" onclick="javascript:EAT.tagClouds.changeOrder({{forloop.counter0}},'size')">Taille</a>
+						</p>
+					</div>
+					<div class="tagcloud" id="cloud_{{ forloop.counter0 }}"></div>
+				</div>	
+				{% endfor%}
+  
+			</div> 
+		</div>
+		<!-- end of tags -->
+		<div class="places grid_26 alpha omega">
+			<div class="places_box grid_10 alpha">
+				<div class="grid_2 suffix_8 alpha omega label align_centered"><em>places</em></div>
+				<div class="places grid_10 alpha omega">
+					{% load listutils %}
+					<!-- first column -->
+					{% for sublist in places|partition:"2" %}
+					<div class="grid_5 {%if forloop.first %}alpha{% endif %} {%if forloop.first %}omega{% endif %}">
+						{% for place in sublist %}
+							<div class="place" id='place_{{place.id}}'>
+								<a href="javascript:EAT.googleMaps.clickOnMarker({{place.id}})">{{place.name}}</a>
+							</div>
+						{% endfor %}
+					</div>	
+					{% endfor %}	
+				</div>	
+			</div>
+			<div class="google_map grid_16   omega">
+				<div id="google_map_canvas">loading google map...</div>
+			</div>
+			<!-- end of google map -->
+		</div>
+		
+	</div>
+	<!-- end of deep_info -->
+	<div class="footer grid_26 alpha omega">
+		<div id="footer" ><img src="{{ STATIC_URL }}/images/Sc-Po-Medialab-Gris.png" alt="made by Medialab Sciences Po" title="visit Medialab Sciences Po"></div>
+	</div>
+</div>
+</body>
+</html>

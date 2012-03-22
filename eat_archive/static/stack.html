@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Stacked Bar Chart</title>
+    <script type="text/javascript" src="d3/d3.js"></script>
+    <script type="text/javascript" src="d3/d3.layout.js"></script>
+    <script type="text/javascript" src="d3/stream_layers.js"></script>
+    <script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="d3/button.css"/>
+    <link type="text/css" rel="stylesheet" href="d3/stack.css"/>
+
+  </head>
+  <body>
+    <div id="chart">
+      <button id="group" class="first" onclick="transitionGroup()">
+        Group
+      </button
+      ><button id="stack" class="active last" onclick="transitionStack()">
+        Stack
+      </button><p>
+    </div>
+    <script type="text/javascript">
+        $.getJSON('activities_stack.json', function(jsondata) {
+      //    var  data = jsondata.curves;
+
+ var n = 3, // number of layers
+    m = 621; // number of samples per layer        
+         
+   // var primary_data = stream_layers(n, m, .1);
+   var primary_data = jsondata.curves.slice(0,5);
+   
+    
+console.log(jsondata['curves'].length);    
+console.log(primary_data);    
+
+
+//primary_data  = [[{x:2,y:2},{x:4,y:2}],[{x:2,y:2},{x:4,y:3}]]  
+var data = d3.layout.stack()(primary_data),
+    color = d3.interpolateRgb("#fff", "#000");
+
+var p = 20,
+    w = 960,
+    h = 500 - .5 - p,
+    mx = m,
+    my = d3.max(data, function(d) {
+      return d3.max(d, function(d) {
+        return d.y0 + d.y;
+      });
+    }),
+    mz = d3.max(data, function(d) {
+      return d3.max(d, function(d) {
+        return d.y;
+      });
+    }),
+    x = function(d) { return d.x * w / mx; },
+    y0 = function(d) { return h - d.y0 * h / my; },
+    y1 = function(d) { return h - (d.y + d.y0) * h / my; },
+    y2 = function(d) { return d.y * h / mz; }; // or `my` to not rescale
+
+var vis = d3.select("#chart")
+  .append("svg:svg")
+    .attr("width", w)
+    .attr("height", h + p);
+
+var layers = vis.selectAll("g.layer")
+    .data(data)
+  .enter().append("svg:g")
+    .style("fill", function(d, i) { return color(i / (n - 1)); })
+    .attr("class", "layer");
+
+var bars = layers.selectAll("g.bar")
+    .data(function(d) { return d; })
+  .enter().append("svg:g")
+    .attr("class", "bar")
+    .attr("transform", function(d) { return "translate(" + x(d) + ",0)"; });
+
+bars.append("svg:rect")
+    .attr("width", x({x: .9}))
+    .attr("x", 0)
+    .attr("y", h)
+    .attr("height", 0)
+  .transition()
+    .delay(function(d, i) { return i * 10; })
+    .attr("y", y1)
+    .attr("height", function(d) { return y0(d) - y1(d); });
+
+var labels = vis.selectAll("text.label")
+    .data(data[0])
+  .enter().append("svg:text")
+    .attr("class", "label")
+    .attr("x", x)
+    .attr("y", h + 6)
+    .attr("dx", x({x: .45}))
+    .attr("dy", ".71em")
+    .attr("text-anchor", "middle")
+    .text(function(d, i) { return i; });
+
+vis.append("svg:line")
+    .attr("x1", 0)
+    .attr("x2", w - x({x: .1}))
+    .attr("y1", h)
+    .attr("y2", h);
+
+function transitionGroup() {
+  var group = d3.selectAll("#chart");
+
+  group.select("#group")
+      .attr("class", "first active");
+
+  group.select("#stack")
+      .attr("class", "last");
+
+  group.selectAll("g.layer rect")
+    .transition()
+      .duration(500)
+      .delay(function(d, i) { return (i % m) * 10; })
+      .attr("x", function(d, i) { return x({x: .9 * ~~(i / m) / n}); })
+      .attr("width", x({x: .9 / n}))
+      .each("end", transitionEnd);
+
+  function transitionEnd() {
+    d3.select(this)
+      .transition()
+        .duration(500)
+        .attr("y", function(d) { return h - y2(d); })
+        .attr("height", y2);
+  }
+}
+
+function transitionStack() {
+  var stack = d3.select("#chart");
+
+  stack.select("#group")
+      .attr("class", "first");
+
+  stack.select("#stack")
+      .attr("class", "last active");
+
+  stack.selectAll("g.layer rect")
+    .transition()
+      .duration(0)
+      .delay(function(d, i) { return (i % m) * 10; })
+      .attr("y", y1)
+      .attr("height", function(d) { return y0(d) - y1(d); })
+      .each("end", transitionEnd);
+
+  function transitionEnd() {
+    d3.select(this)
+      .transition()
+        .duration(0)
+        .attr("x", 0)
+        .attr("width", x({x: .9}));
+  }
+}
+           
+        });
+
+    </script>
+  </body>
+</html>

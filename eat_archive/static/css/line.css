@@ -1,0 +1,34 @@
+.view .activity{
+	padding: 0px;	
+}
+
+.rule line {
+  stroke: #eee;
+  shape-rendering: crispEdges;
+}
+
+.rule line.axis {
+  stroke: #000;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+circle.line {
+  fill: #404040;
+  stroke-width: 0px;
+ 
+}
+
+circle:hover {
+    stroke: #404040;
+    fill: #ffc40c;
+	stroke-width: 3px;
+}
+
+#time_points{
+  min-height: 25px;
+  }

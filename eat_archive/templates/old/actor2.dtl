@@ -1,0 +1,180 @@
+{% extends "base.dtl" %}
+{%block title%}EAT Datascape -  {% if actor.firstname %}{{actor.firstname}} {% endif %}{{actor.name}}{% endblock %}
+
+{% block custom_head %}
+<script type="text/javascript" src="{{ STATIC_URL }}/js/jquery.anythingzoomer.min.js"></script>
+<script type="text/javascript">
+main_gantt = {{phases|safe}};
+main_gantt = _.map(main_gantt, function(phase) {
+phase.start_date = $.datepicker.parseDate('yy-mm-dd', phase.start_date);
+if (phase.end_date)
+    phase.end_date = $.datepicker.parseDate('yy-mm-dd', phase.end_date);
+return phase;
+});
+
+formatTitle = function (phase) { 
+            content = "<strong>" + phase.activity + "</strong><br>"
+            content+= phase.label.join(" ") + "<br>";
+            content+= $.datepicker.formatDate("dd/mm/yy", phase.start_date) + " - "
+            content+= $.datepicker.formatDate("dd/mm/yy", phase.end_date) + ""
+            return content
+        }
+
+$(function() {
+    $("#gantt").gantt(main_gantt,
+    {
+        "content" : function(phase) { return phase.label.join(" "); },
+        "title" : formatTitle,
+        "customClass" : function(phase) { return "phase" + phase.id; } 
+    })
+
+    phases_by_activity = _.groupBy(main_gantt, function(phase) { return phase.activity_id }) 
+    _.each(phases_by_activity, function(phases, activity_id) {
+        activity_row = $("<div>", {"class" : "row activity"})
+        
+        html = "<p><a href='../project2/" + activity_id + "'>" + phases[0].activity +"</a></p>"
+        
+        $("<div></div>").addClass("span4").html(html).appendTo(activity_row);
+        $("<div></div>").gantt(phases,
+        {
+            "title" : formatTitle,
+            "content" : function(phase) {return "";},
+            "min_date" : $("#gantt").data("min_date"),
+            "max_date" : $("#gantt").data("max_date"),
+            "customClass" : function(phase) { return "phase" + phase.id; },
+            "height" : "5px"
+        }
+        ).appendTo(activity_row).addClass("span12");
+        
+        activity_row.appendTo("#activities");
+    });
+    
+    $("#timegrid").timeline({
+        dates : {
+            min :$("#gantt").data("min_date"),
+            max :$("#gantt").data("max_date")
+        }   
+    });
+    
+       $(".gantt-bar").hover(function () {
+            classes = $(this).attr("class").split(" ");
+            nr_phase = _.find(classes, function (class_str) {
+                return class_str.match("phase[1-9]+")
+            });
+            rows = $("."+nr_phase).addClass("mainHovered")
+                        .parent().not("#gantt")
+                        .parent().not("#mainrow").addClass("highlit");
+            if ($("#onlySelected").is(":checked") )
+                rows.slideToggle(300);
+     
+        }, function () {
+            classes = $(this).attr("class").split(" ");
+            nr_phase = _.find(classes, function (class_str) {
+                return class_str.match("phase[1-9]+")
+            });
+            rows = $("."+nr_phase).removeClass("mainHovered")
+                           .parent().not("#gantt")
+                           .parent().removeClass("highlit");
+            if ($("#onlySelected").is(":checked") )
+                rows.slideToggle(300);
+        }
+    );
+    
+    $("#expandGantt").change(function() {
+        if ( $(this).is(":checked") ) 
+            $("#gantt").gantt("expand", "40px");
+        else
+            $("#gantt").gantt("expand", "20px");
+    });
+    
+    $(".gantt-bar").qtip(EAT.qTipConfig)
+    $('#map').jMapping();
+    $(".help").hide();
+    $("#help").change(function() {
+        if ( $(this).is(":checked") )
+            $(".help").show(300);
+        else
+            $(".help").hide(300);
+    });
+	$("#gantt").anythingZoomer();
+});
+
+
+</script>
+{% endblock %}
+
+{% block content %}
+<p class="help">
+Below is the name of the actor with tags that describe him/her. 
+</p>
+<h1> 
+    {% if actor.firstname %}{{actor.firstname}} {% endif %}{{actor.name}}<br/>
+    <small>{%for tag in actor.profileTags.all %}{{tag|lower}} {% endfor %}</small><br/>
+    <!--<small>techno : {%for tag in actor.technologyTags.all %}{{tag|lower}} {% endfor %}</small>-->
+</h1>
+<h2>When ?</h2>
+
+<div class="row" id="mainrow">
+    <div class="span4">
+        <p class="help">
+            This timeline shows you the phases {% if actor.firstname %}{{actor.firstname}} {% endif %}{{actor.name}}
+            participated in. <br/>
+            Hover on a phase to get more info.
+        </p>
+        <h4>Options</h4>
+        <ul class="inputs-list">
+            <li><label for="expandGantt"><input type="checkbox" id="expandGantt"> expanded</label>
+                <p class="help">means the timeline will be bigger</p>
+            </li>   
+        </ul>
+    </div>
+    <div class="row">    
+        <div class="span12">
+            <div id="gantt"></div>
+            <div id="timegrid">
+                <div id="time_points"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div id="activities" class="span16">
+    <h2>What ?</h2>
+    <p class="help">
+        Below are the different activities {% if actor.firstname %}{{actor.firstname}} {% endif %}{{actor.name}} participated in.
+        Within an activity, you only see the phases he participated in.
+    </p>
+</div>
+<div class="row">
+    <div id="map-side-bar" class="span4">
+        <h2>Where ?</h2>
+        {% for place in places %}
+      <div class="map-location" data-jmapping="{id: {{place.id}}, point: {lng: {{place.longitude|stringformat:'f' }}, lat: {{place.latitude|stringformat:'f' }}}, category: 'museum'}"> 
+        <a href="#" class="map-link">{{place.name}}</a>
+        <div class="info-box">
+          <p>
+            <h3>{{ place.name }}</h3>
+            {% if place.address %}{{ place.address }}<br/>{%endif%} 
+          </p>
+        </div>
+      </div>
+        {% endfor %}
+    </div>
+    <div>
+    <div id="map" class="span12" ></div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+

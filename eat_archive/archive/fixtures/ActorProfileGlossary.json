@@ -1,0 +1,74 @@
+[
+    {
+        "pk": 0, 
+        "model": "archive.actorprofileglossary", 
+        "fields": {
+            "tag": "engineer", 
+            "description": null
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "archive.actorprofileglossary", 
+        "fields": {
+            "tag": "artist", 
+            "description": null
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "archive.actorprofileglossary", 
+        "fields": {
+            "tag": "curator", 
+            "description": null
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "archive.actorprofileglossary", 
+        "fields": {
+            "tag": "journalist", 
+            "description": null
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "archive.actorprofileglossary", 
+        "fields": {
+            "tag": "technician", 
+            "description": null
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "archive.actorprofileglossary", 
+        "fields": {
+            "tag": "manager", 
+            "description": null
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "archive.actorprofileglossary", 
+        "fields": {
+            "tag": "museum", 
+            "description": null
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "archive.actorprofileglossary", 
+        "fields": {
+            "tag": "technology", 
+            "description": null
+        }
+    }, 
+    {
+        "pk": 8, 
+        "model": "archive.actorprofileglossary", 
+        "fields": {
+            "tag": "gallery", 
+            "description": null
+        }
+    }
+]

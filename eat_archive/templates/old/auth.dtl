@@ -1,0 +1,269 @@
+<html>
+<head>
+
+<link rel="stylesheet" href="{{ STATIC_URL }}/css/bootstrap.min.css">
+<link rel="stylesheet" href="{{ STATIC_URL }}/css/custom-theme/jquery-ui-1.8.16.custom.css" />
+<link rel="stylesheet" href="{{ STATIC_URL }}/css/new.css" />
+<link rel="stylesheet" href="{{ STATIC_URL }}/css/jquery.qtip.css" />
+
+<script src="{{ STATIC_URL }}/js/jquery-1.6.2.min.js"></script>
+<script src="{{ STATIC_URL }}/js/underscore-min.js"></script>
+
+<script src="{{ STATIC_URL }}/js/jquery-tagcloud.js"></script>
+<script src="{{ STATIC_URL }}/js/jquery-ui-1.8.16.custom.min.js"></script>
+<script src="{{ STATIC_URL }}/js/jquery.qtip.min.js"></script>
+<script src="{{ STATIC_URL }}/js/jquery.gantt.js"></script>
+<script src="{{ STATIC_URL }}/js/jquery.timelinegrid.js"></script>
+
+<script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+
+<script src="{{ STATIC_URL }}/js/scripts.js"></script>
+<script type="text/javascript">
+var main_gantt = {{phases|safe}};
+main_gantt = _.map(main_gantt, function(phase) {
+    console.log(phase.start_date);
+    phase.start_date = $.datepicker.parseDate('yy-mm-dd', phase.start_date);
+    if (phase.end_date)
+        phase.end_date = $.datepicker.parseDate('yy-mm-dd', phase.end_date);
+    return phase;
+});
+
+var gantt_charts = {{ people|safe }};
+EAT.tags = {{tag_cloud|safe}};
+var locations = {{places|safe}};
+var info_people = {{info_people|safe}}
+
+// changer les dates en Date() javascript
+gantt_charts = _.map(gantt_charts, function(gantt_chart) {
+    gantt_chart["data"] = _.map(gantt_chart["data"], function(phase) {
+        tmp = phase.start_date.split("-")
+        phase.start_date = new Date(tmp[0], tmp[1], tmp[2]) 
+        
+        if (phase.end_date) {
+            tmp = phase.end_date.split("-")
+            phase.end_date = new Date(tmp[0], tmp[1], tmp[2]) 
+        }
+        return phase;
+    });
+    return gantt_chart;
+});
+
+locations = _.map(locations, function (place) {
+   return [new google.maps.LatLng(place.latitude, place.longitude), place.name] 
+});
+locations = _.sortBy(locations, function(item) { return item[1]; })
+
+var showAnnotation = function(key) {
+    console.log(key);
+}
+
+var annotation = function(phase_id) {
+    EAT.annotations = {{annotations.json|safe}}
+    return _.map(EAT.annotations[phase_id]["annotations"], function (_, key) {
+        return  $("<span></span>").html("<img src='http://jiminy.medialab.sciences-po.fr/eat_datascape/static/images/source.png'>").addClass("gantt-annotation")
+            .click(function () {
+                showAnnotation(key);
+            }) ;
+    });
+}
+
+var formatTitle = function(phase) {
+    var title = phase.label + "<br>"
+    title += $.datepicker.formatDate('yy-mm-dd', phase.start_date) + " - ";
+    title += $.datepicker.formatDate('yy-mm-dd', phase.end_date);
+    return title;
+}
+
+var formatContent = function (phase) {
+    var content = $("<div></div>").addClass("gantt-content");
+    $("<span></span>").text(phase.tags.join(", "))
+                    .addClass("gantt-label")
+                    .appendTo(content);
+    
+    var annotations = $("<div></div>")
+            .addClass("gantt-annotations")
+            .appendTo(content);
+    
+    _.each(annotation(phase.id), function(item) {
+        item.appendTo(annotations);
+    });
+    return content;
+}
+
+$(function(){
+    //  main gantt config
+    main_gantt_config = {
+        "sorted" : false,
+        "height" : "20px",
+        "padding_y" : "5px",
+        "title" : formatTitle,
+        "content" : formatContent,
+        "customClass" : function(phase) { return "phase" + phase.id; }
+    }
+
+    // make main gantt
+    $('#gantt').gantt(main_gantt, main_gantt_config); 
+    
+    // actor involved in high number of phases are higher    
+    gantt_charts = _.sortBy(gantt_charts, function (gantt_chart) {
+        return -gantt_chart["nb_phases"]
+    });
+    
+    actors_gantt_config =  {
+        "height" : "5px"
+        ,"content" : function (phase) { return ""}
+        ,"min_date" : $("#gantt").data("min_date")
+        ,"max_date" : $("#gantt").data("max_date")
+        ,"customClass" : function(phase) { return "phase" + phase.phase_id; }
+    }
+    
+    // for each actor
+    _.each(gantt_charts, function(gantt_chart, key) {
+        // make the row
+        actor_div = $("<div class='row actor'></div>").appendTo("#actors")
+            .attr("id", "actor-"+key)
+            .append("<div class='span4'><div class='circle'></div><p>"+ (gantt_chart["firstname"] || "") + " " +gantt_chart["name"]+"</p></div>")
+            .addClass(info_people[gantt_chart["actor_id"]]["profileTags"].join(" "))
+        
+        // prepare the div for the gantt   
+        $("<div class='offset4'></div>").appendTo("#actor-"+key)
+            .attr("id", "gantt-actor-"+key)
+        
+        // make the gantt     
+        $("#gantt-actor-"+key).gantt(gantt_chart["data"], actors_gantt_config);
+    });
+    
+   $(".gantt-bar").hover(function () {
+            classes = $(this).attr("class").split(" ");
+            nr_phase = _.find(classes, function (class_str) {
+                return class_str.match("phase[1-9]+")
+            });
+            rows = $("."+nr_phase).addClass("mainHovered")
+                        .parent()
+                        .parent().not("#mainrow").addClass("highlit");
+            if ($("#onlySelected").is(":checked") )
+                rows.slideToggle(300);
+     
+        }, function () {
+            classes = $(this).attr("class").split(" ");
+            nr_phase = _.find(classes, function (class_str) {
+                return class_str.match("phase[1-9]+")
+            });
+            rows = $("."+nr_phase).removeClass("mainHovered")
+                           .parent()
+                           .parent().not("#mainrow").removeClass("highlit");
+            if ($("#onlySelected").is(":checked") )
+                rows.slideToggle(300);
+        }
+    );
+   
+    EAT.googleMaps.initialize();
+    _.each(locations, function(location, key) {
+        li = $("<li></li>")
+        $("<a href='#'></a>").text(location[1])
+                          .appendTo(li)
+                          .addClass("place")
+                          .attr("id", "place_" + key)
+                          .click(function() { EAT.googleMaps.clickOnMarker(key); return false; }) 
+        li.appendTo("#places")
+    });
+    EAT.googleMaps.markerBlueOnHover();
+    EAT.tagClouds.makeTagClouds($("#tag_clouds"))
+    $(".gantt-bar").qtip(EAT.qTipConfig)
+    //$( ".tabs" ).tabs();
+    
+    timeline = new TimelineGrid({
+	    dates:{
+		    min:$("#gantt").data("min_date") ,
+		    max:$("#gantt").data("max_date") 
+	    },
+	    target: $("#time_points")
+    });
+
+    $("#onlySelected").change(function() {
+        if ( $(this).is(":checked") )
+            rows = $(".actor").not("#mainrow").hide(300);
+        else
+            rows = $(".actor").not("#mainrow").show(300);
+    });
+    $("#expandGantt").change(function() {
+        if ( $(this).is(":checked") ) 
+            $("#gantt").gantt("expand", "40px");
+        else
+            $("#gantt").gantt("expand", "20px");
+    });
+});
+     
+</script>
+
+</head>
+<body>
+
+<div class="topbar" >
+  <div class="topbar-inner">
+    <div class="container-fluid">
+      <a class="brand" href="#">EAT Datascape</a>
+      <ul class="nav">
+        <li class="active"><a href="#overview">Overview</a></li>
+        <li><a href="#actors">About</a></li>
+        <li><a href="#map">Map</a></li>
+        <li><a href="#about">About</a></li>
+      </ul>
+        logged as {{user}}
+    </div>
+  </div>
+      
+</div>
+
+<div class="container-fluid">
+    <h1>{{ activity }}<br/>
+        <small>art : {%for tag in tags.techno%}{{tag|lower}} {% endfor %}</small><br/>
+        <small>techno : {%for tag in tags.art%}{{tag|lower}} {% endfor %}</small>
+    </h1>
+    
+    <h2>When ?</h2>
+
+    <div class="row" id="mainrow">
+        <div class="span4">
+            This timeline shows you the different phases of 
+            the project.
+            <h4>Options</h4>
+            <ul class="inputs-list">
+                <li><label for="expandGantt"><input type="checkbox" id="expandGantt"> expanded</label></li>
+                <li><label for="onlySelected"><input type="checkbox" id="onlySelected" /> only selected</label></li>
+            </ul>
+        </div>    
+        <div class="offset4" id="gantt">
+        </div>
+        <div class="offset4" id="timegrid">
+            <div id="time_points"></div>
+        </div>
+    </div>
+    <h2>Who ?</h2>
+    <!--<button class="small btn" id="toggleActors">hide</button>-->
+    <div id="actors">
+    </div>
+    <div class="row">
+        <div class="span8">
+            <h2>What ?</h2>
+            <div id="tag_clouds">
+            </div>
+        </div>
+        <div class="row">
+            <div class="offset1 span4">
+                <h2 id="map">Where ?</h2>
+                <ul id="places">
+                </ul>
+            </div>
+            <div class="offset5">
+                <div id="google_map_canvas"></div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+
+
+

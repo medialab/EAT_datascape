@@ -1,0 +1,397 @@
+{% extends "base.dtl" %}
+{%block title%}EAT Datascape - {{ activity }}{% endblock %}
+
+{% block custom_head %}
+
+
+<script type="text/javascript">
+var main_gantt = {{phases|safe}};
+// parse date into javascript's native Date()
+main_gantt = _.map(main_gantt, function(phase) {
+    phase.start_date = $.datepicker.parseDate('yy-mm-dd', phase.start_date);
+    if (phase.end_date)
+        phase.end_date = $.datepicker.parseDate('yy-mm-dd', phase.end_date);
+    return phase;
+});
+
+var gantt_charts = {{ people|safe }};
+
+var info_people = {{info_people|safe}}
+
+// changer les dates en Date() javascript
+gantt_charts = _.map(gantt_charts, function(gantt_chart) {
+    gantt_chart["data"] = _.map(gantt_chart["data"], function(phase) {
+        tmp = phase.start_date.split("-")
+        phase.start_date = new Date(tmp[0], tmp[1]-1, tmp[2]) 
+        
+        if (phase.end_date) {
+            tmp = phase.end_date.split("-")
+            phase.end_date = new Date(tmp[0], tmp[1]-1, tmp[2]) 
+        }
+        return phase;
+    });
+    return gantt_chart;
+});
+
+var showAnnotation = function(key) {
+    console.log(key);
+}
+
+var annotation = function(phase_id) {
+    EAT.annotations = {{annotations.json|safe}}
+    return _.map(EAT.annotations[phase_id]["annotations"], function (_, key) {
+        return  $("<span></span>").html("<img src='http://jiminy.medialab.sciences-po.fr/eat_datascape/static/images/source.png'>").addClass("gantt-annotation")
+            .click(function () {
+                showAnnotation(key);
+            }) ;
+    });
+}
+
+var formatTitle = function(phase) {
+    var title = phase.tags.join(", ") + "<br>"
+    title += $.datepicker.formatDate('yy-mm-dd', phase.start_date) + " - ";
+    title += $.datepicker.formatDate('yy-mm-dd', phase.end_date);
+    return title;
+}
+
+var formatContent = function (phase) {
+    var content = $("<div></div>").addClass("gantt-content");
+    $("<span></span>").text(phase.tags.join(", "))
+                    .addClass("gantt-label")
+                    .appendTo(content);
+    
+    var annotations = $("<div></div>")
+            .addClass("gantt-annotations")
+            .appendTo(content);
+    
+    _.each(annotation(phase.id), function(item) {
+        item.appendTo(annotations);
+    });
+    return content;
+}
+
+$(function(){
+    //  main gantt config
+    main_gantt_config = {
+        "sorted" : false,
+        "height" : "20px",
+        "padding_y" : "5px",
+        "title" : formatTitle,
+        "content" : formatContent,
+        "customClass" : function(phase) { return "phase" + phase.id; }
+    }
+
+    // make main gantt
+    $('#gantt').gantt(main_gantt, main_gantt_config); 
+    
+    // actor involved in high number of phases are higher    
+    gantt_charts = _.sortBy(gantt_charts, function (gantt_chart) {
+        return -gantt_chart["nb_phases"]
+    });
+    
+    actors_gantt_config =  {
+        "height" : "5px"
+        ,"content" : function (phase) { return ""}
+        ,"title" : function(phase) { 
+            var title = phase.label + "<br>"
+            title += $.datepicker.formatDate('yy-mm-dd', phase.start_date) + " - ";
+            title += $.datepicker.formatDate('yy-mm-dd', phase.end_date);
+            return title; }
+        ,"min_date" : $("#gantt").data("min_date")
+        ,"max_date" : $("#gantt").data("max_date")
+        ,"customClass" : function(phase) { return "phase" + phase.phase_id; }
+    }
+    
+    // for each actor
+    _.each(gantt_charts, function(gantt_chart, key) {
+        // make the row
+        tags = info_people[gantt_chart["actor_id"]]["profileTags"]
+        
+        $("<div>", { "class" : "actor " + tags.join(" ") }). append(
+            $("<div>", {
+                "class" : "row",
+
+                "id" : "actor-"+key})
+                .append(
+                    $("<div>", { "class" : "span4"})
+                        .append(
+                            $("<div>", { "class" : "circle" }),
+                            $("<a>", { 
+                                "href" : "../actor2/"+gantt_chart["actor_id"] })
+                                .text((gantt_chart["firstname"] || "") + " " +gantt_chart["name"]))
+                         )
+
+        ).appendTo("#actors");
+        
+        // prepare the div for the gantt   
+        $("<div>", {
+            "class" : "span12", 
+            "id" : "gantt-actor-"+key})
+            .appendTo("#actor-"+key)
+        
+        // make the gantt     
+        $("#gantt-actor-"+key).gantt(gantt_chart["data"], actors_gantt_config);
+    });
+    
+   $(".gantt-bar").hover(function () {
+            classes = $(this).attr("class").split(" ");
+            nr_phase = _.find(classes, function (class_str) {
+                return class_str.match("phase[1-9]+")
+            });
+            rows = $("."+nr_phase).addClass("mainHovered")
+                        .parent().not("#gantt")
+                        .parent().not("#mainrow").parent().addClass("highlit");
+            
+            if ($("#onlySelected").is(":checked") ) {
+                rows.toggle();
+            }
+     
+        }, function () {
+            
+            classes = $(this).attr("class").split(" ");
+            
+            nr_phase = _.find(classes, function (class_str) {
+                return class_str.match("phase[1-9]+")
+            });
+            
+            rows = $("."+nr_phase).removeClass("mainHovered")
+                           .parent().not("#gantt")
+                           .parent().parent().removeClass("highlit");
+            
+            if ($("#onlySelected").is(":checked") ) {
+                rows.toggle();
+            }
+        }
+    );
+   
+    $('#map').jMapping();
+    
+    $(".gantt-bar").qtip(EAT.qTipConfig)
+    //$( ".tabs" ).tabs();
+    
+    $("#time_points").timeline({
+	    dates:{
+		    min:$("#gantt").data("min_date") ,
+		    max:$("#gantt").data("max_date") 
+	    }
+    });
+
+    $("#onlySelected").change(function() {
+        if ( $(this).is(":checked") )
+            rows = $(".actor").not("#mainrow").hide(300);
+        else
+            rows = $(".actor").not("#mainrow").show(300);
+    });
+    $(".help").hide();
+    $("#help").change(function() {
+        if ( $(this).is(":checked") )
+            $(".help").show(300);
+        else
+            $(".help").hide(300);
+    });
+    $("#expandGantt").change(function() {
+        if ( $(this).is(":checked") ) 
+            $("#gantt").gantt("expand", "40px");
+        else
+            $("#gantt").gantt("expand", "20px");
+    });
+    
+    $("#tag_clouds .tag_cloud").tagcloudsemantic({"max_size":2});
+});
+     
+</script>
+
+
+<script>
+$(window).load(function() {
+	mCustomScrollbars();
+});
+
+function mCustomScrollbars(){
+	/* 
+	malihu custom scrollbar function parameters: 
+	1) scroll type (values: "vertical" or "horizontal")
+	2) scroll easing amount (0 for no easing) 
+	3) scroll easing type 
+	4) extra bottom scrolling space for vertical scroll type only (minimum value: 1)
+	5) scrollbar height/width adjustment (values: "auto" or "fixed")
+	6) mouse-wheel support (values: "yes" or "no")
+	7) scrolling via buttons support (values: "yes" or "no")
+	8) buttons scrolling speed (values: 1-20, 1 being the slowest)
+	*/
+	$("#mcs3_container").mCustomScrollbar("vertical",900,"easeOutCirc",1.05,"auto","yes","no",0); 
+}
+
+/* function to fix the -10000 pixel limit of jquery.animate */
+$.fx.prototype.cur = function(){
+    if ( this.elem[this.prop] != null && (!this.elem.style || this.elem.style[this.prop] == null) ) {
+      return this.elem[ this.prop ];
+    }
+    var r = parseFloat( jQuery.css( this.elem, this.prop ) );
+    return typeof r == 'undefined' ? 0 : r;
+}
+</script>
+<script src="{{ STATIC_URL }}/js/jquery.mCustomScrollbar.js"></script>
+{% endblock %}
+
+
+{% block content %}
+
+<!-- content to show if javascript is disabled -->
+<noscript>
+	<style type="text/css">
+		#mcs3_container .customScrollBox{overflow:auto;}
+		#mcs3_container .dragger_container{display:none;}
+	</style>
+</noscript>
+
+<div class="the-page">
+
+<div class="page-right">
+
+<div id="mcs3_container">
+	<div class="scrollabe_customScrollBox">
+		<div class="scrollabe_container">
+    		<div class="scrollabe_content">
+        		<h3>Adjustable scroller height with 1/3 range and greater easing, with mouse-wheel support</h3>
+            	<p>Aliquam erat volutpat. Maecenas non tortor nulla, non malesuada velit. Nullam felis tellus, tristique nec egestas in, luctus sed diam. Suspendisse potenti. </p>
+            	<p>consectetur adipiscing elit. Nulla consectetur libero consectetur quam consequat nec tincidunt massa feugiat. Donec egestas mi turpis. Fusce adipiscing dui eu metus gravida vel facilisis ligula iaculis. Cras a rhoncus massa. Donec sed purus eget nunc placerat consequat. Nulla facilisi. Nam vel augue odio, dignissim mattis dolor. Nullam at mi aliquet quam interdum consectetur. Duis tempus mauris in lorem dictum eget euismod urna aliquet. In vestibulum tempor porta.</p>
+            	<p>Morbi porttitor rhoncus nisi, eget vehicula quam sodales at. Maecenas ipsum tellus, mollis quis faucibus id, feugiat molestie lacus. Sed nec quam purus, at condimentum quam. Integer imperdiet faucibus urna tempus consectetur. Nullam non purus ligula, et tincidunt nulla. Aenean tincidunt, dui at elementum egestas, sem turpis volutpat turpis, nec congue purus quam quis ligula. Nam dictum rutrum pulvinar. Aenean sed cursus purus. Curabitur non dui eu nibh fermentum interdum a id dui. Fusce iaculis blandit tellus, nec tincidunt massa adipiscing id. Aliquam dui massa, porttitor eget molestie at, semper eu libero. Suspendisse sit amet velit et elit viverra convallis vitae ut turpis. Maecenas vehicula blandit odio sollicitudin eleifend. Curabitur molestie porta neque ac imperdiet. Phasellus nec nisl non lectus pharetra porttitor sit amet tristique mi. Integer vehicula vestibulum sem vitae varius. Ut scelerisque semper posuere.</p>
+                <img src="mcsImg1.jpg" />
+            	<p>Aliquam erat volutpat. Maecenas non tortor nulla, non malesuada velit. Nullam felis tellus, tristique nec egestas in, luctus sed diam. Suspendisse potenti. Cras venenatis condimentum nibh a mollis. Duis id sapien nibh. Vivamus porttitor, felis quis blandit tincidunt, erat magna scelerisque urna, a faucibus erat nisl eget nisl. Aliquam consequat turpis id velit egestas a posuere orci semper. Mauris suscipit erat quis urna adipiscing ultricies. In hac habitasse platea dictumst. Nulla scelerisque lorem quis dui sagittis egestas. Etiam sed massa felis, aliquam pellentesque est. Quisque quis ante tortor, sed egestas risus. Maecenas varius adipiscing nulla, nec rhoncus est mattis id. Aenean blandit convallis nisi at fringilla. Nunc id massa eu sapien fringilla posuere.</p>
+            	<img src="mcsImg2.jpg" />
+            	<p>Nam eu arcu at purus tincidunt pharetra ultrices at ipsum. Mauris urna nunc, vulputate quis gravida in, pharetra id mauris. Ut sit amet mi dictum nulla lobortis adipiscing quis a nulla. Etiam diam ante, imperdiet vel scelerisque eget, venenatis non eros. Praesent ipsum sem, eleifend ut gravida eget, tristique id orci. Nam adipiscing, sem in mattis vulputate, risus libero adipiscing risus, eu molestie mi justo eget nulla. Cras venenatis metus et urna egestas non laoreet orci rutrum. Pellentesque ullamcorper dictum nisl a tincidunt. Quisque et lacus quam, sed hendrerit mi. Mauris pretium, sapien et malesuada pulvinar, lorem leo viverra leo, et egestas mi nisl quis odio. Aliquam erat volutpat. Sed urna arcu, tempus eu vulputate adipiscing, consectetur et orci. Vivamus congue, nunc vitae fringilla convallis, libero massa lacinia lorem, id convallis mauris elit ut leo. Nulla vel odio sem. Duis lorem urna, congue vitae rutrum sed, tincidunt vel tortor. In hac habitasse platea dictumst. Nunc vitae enim ante, vitae facilisis massa. Etiam sagittis sapien at nibh fermentum consectetur convallis lacus blandit.</p>
+                <img src="mcsImg1.jpg" />
+            	<p>Aliquam erat volutpat. Maecenas non tortor nulla, non malesuada velit. Nullam felis tellus, tristique nec egestas in, luctus sed diam. Suspendisse potenti. Cras venenatis condimentum nibh a mollis. Duis id sapien nibh. Vivamus porttitor, felis quis blandit tincidunt, erat magna scelerisque urna, a faucibus erat nisl eget nisl. Aliquam consequat turpis id velit egestas a posuere orci semper. Mauris suscipit erat quis urna adipiscing ultricies. In hac habitasse platea dictumst. Nulla scelerisque lorem quis dui sagittis egestas. Etiam sed massa felis, aliquam pellentesque est. Quisque quis ante tortor, sed egestas risus. Maecenas varius adipiscing nulla, nec rhoncus est mattis id. Aenean blandit convallis nisi at fringilla. Nunc id massa eu sapien fringilla posuere.</p>
+            	<img src="mcsImg2.jpg" />
+            	<p>Nam eu arcu at purus tincidunt pharetra ultrices at ipsum. Mauris urna nunc, vulputate quis gravida in, pharetra id mauris. Ut sit amet mi dictum nulla lobortis adipiscing quis a nulla. Etiam diam ante, imperdiet vel scelerisque eget, venenatis non eros. Praesent ipsum sem, eleifend ut gravida eget, tristique id orci. Nam adipiscing, sem in mattis vulputate, risus libero adipiscing risus, eu molestie mi justo eget nulla. Cras venenatis metus et urna egestas non laoreet orci rutrum. Pellentesque ullamcorper dictum nisl a tincidunt. Quisque et lacus quam, sed hendrerit mi. Mauris pretium, sapien et malesuada pulvinar, lorem leo viverra leo, et egestas mi nisl quis odio. Aliquam erat volutpat. Sed urna arcu, tempus eu vulputate adipiscing, consectetur et orci. Vivamus congue, nunc vitae fringilla convallis, libero massa lacinia lorem, id convallis mauris elit ut leo. Nulla vel odio sem. Duis lorem urna, congue vitae rutrum sed, tincidunt vel tortor. In hac habitasse platea dictumst. Nunc vitae enim ante, vitae facilisis massa. Etiam sagittis sapien at nibh fermentum consectetur convallis lacus blandit.</p>
+            	<p>the end.</p>
+			</div>
+		</div>
+		<div class="dragger_container">
+    		<div class="dragger"></div>
+		</div>
+	</div>
+</div>
+
+</div>
+
+<div class="project-page">
+
+	<p class="help">Below is the title of the project and tags that describe the project (blue are technology tags, red are artistic tags).</p>
+	<h1>{{ activity }}<br/>
+	    <small class="techno">{%for tag in tags.techno%}<span class="tag">{{tag|lower}}</span> {% endfor %}</small><br/>
+	    <small class="art">{%for tag in tags.art%}<span class="tag">{{tag|lower}}</span> {% endfor %}</small>
+	</h1>
+	
+	<h2>When ?</h2>
+	
+	<div class="row" id="mainrow">
+
+	    <div class="span4">
+	        <p class="help">This timeline shows you the different phases of 
+	        the project. <br/>Hover on a phase to get more
+	        information.</p>
+	        <h4>Options</h4>
+	        <ul class="inputs-list">
+	            <li><label for="expandGantt"><input type="checkbox" id="expandGantt"> expanded</label><small class="help">means the timeline will be bigger</small></li>
+	            <li><label for="onlySelected"><input type="checkbox" id="onlySelected" /> only hovered</label><small class="help">means that below will be displayed only the actors who played a role in the phase you're hovering</small></li>
+	        </ul>
+	        
+	    </div>
+	    <div class="span12">    
+	        <div id="gantt">
+	        </div>
+	        <div id="timegrid">
+	            <div id="time_points"></div>
+	        </div>
+	    </div>
+
+	</div>
+
+	<h2>Who ?</h2>
+	<p class="help">These are the actors who played a part in the project. You can click on a name
+	   to go the actor's page.
+	</p>
+	<!--<button class="small btn" id="toggleActors">hide</button>-->
+	<div id="actors">
+	actors here
+	</div>
+	
+	
+
+</div>
+</div><!-- endof the -page -->
+<div class="row">
+	
+	    <div class="span4">
+	        <div id="tagclouds">
+	            <h2>What ?</h2>
+	            <p class="help">
+	                Here is a tagcloud of the different types of actors. The bigger a word is
+	                means that more people of this type collaborated on this project. 
+	            </p>
+	            <div id="tag_clouds">
+	            
+	            
+	                {% for tag_cloud, v in tag_clouds.items %}
+	                    <div class="tag_cloud">
+	                        {% for tag in v %}
+	                        <div class="tag" data-tag="{size: {{tag.size}}}">{{tag.tag}}</div>{% if not forloop.last %}<br/>{% endif %}
+	                        {% endfor %}
+	                    </div>
+	                {% endfor %}
+	                
+	                
+	                
+	            </div>
+	        </div>
+	    </div>
+	  
+	     <!-- Map Side Bar -->
+	    <div class="span4">
+	    
+	    
+	    
+	        <div id="map-side-bar">
+	            <h2>Where ?</h2>
+	            <p class="help">
+	                Here are all the places involved in this project.<br/>
+	                Click on a place, you'll jump to it directly on the map.
+	            </p>
+	            {% for place in places %}
+	            <div class="map-location" data-jmapping="{id: {{place.id}},point: {lng: {{place.longitude|stringformat:'f' }}, lat: {{place.latitude|stringformat:'f' }}}, category: 'museum'}"> 
+	                <a href="#" class="map-link">{{place.name}}</a>
+	                <div class="info-box">
+	                    <p>
+	                        <h3>{{ place.name }}</h3>
+	                        {% if place.address %}{{ place.address }}<br/>{%endif%} 
+	                    </p>
+	                </div>
+	            </div>
+	            {% endfor %}
+	        </div>
+	        
+	        
+	        
+	        
+	    </div>
+	     
+	    
+	    <!-- Map -->
+	    <div class="span8" >
+	        <div id="map"></div>
+	    </div>
+	     
+	        
+	
+	         
+	
+	
+	</div>
+
+{% endblock %}
+
+
+
+

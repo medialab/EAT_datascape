@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Stacked Bar Chart</title>
+    
+    <link rel="stylesheet" href="css/jquery.qtip.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+    <script type="text/javascript" src="d3/d3.js"></script>
+    <script type="text/javascript" src="d3/d3.layout.js"></script>
+    <script type="text/javascript" src="d3/d3.time.js"></script>
+    <script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
+    <script type="text/javascript" src="js/jquery.qtip.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui-1.8.16.custom.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui-1.8.16.custom.min.js"></script>
+    <script src="js/jquery.timelinegrid.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+    <link type="text/css" rel="stylesheet" href="d3/button.css"/>
+    <link type="text/css" rel="stylesheet" href="line.css"/>
+<style type="text/css" media="screen">
+/* <![CDATA[ */
+
+    * { margin:0; padding:0;}
+    
+    .time_point {
+        position:absolute;
+        border-left:1px solid #000  ;
+    }
+    #ticks {
+        width:940px;
+        position:relative;
+        margin-left:30px;
+        padding:0;
+        top:-32px;
+
+    }
+    
+/* ]]> */
+</style>
+
+  </head>
+  <body>
+
+    <script type="text/javascript">
+        $.getJSON('http://jiminy-dev.medialab.sciences-po.fr/anta_dev/api-squid/get-df-itf-distribution/user/zwj/prefix/rws', function(jsondata) {
+         
+         
+         
+         var  data = jsondata[0];
+         xlabels = jsondata[1];
+         xlabelsasdate = Array();
+         
+         
+
+         
+         
+         for (var i=0; i<xlabels.length; i++) {
+            xlabelsasdate[i] = $.datepicker.parseDate("dd/mm/yy",xlabels[i]); 
+         }
+                  new TimelineGrid({
+			dates:{
+				min:d3.min(xlabelsasdate),
+				max:d3.max(xlabelsasdate) 
+			},
+			target: $("#time_points")
+		});
+         console.log(xlabelsasdate)
+         console.log(data);
+
+var w = 900,
+    h = 500,
+    p = 30,
+    x = d3.scale.linear().domain([0, 621]).range([0, w]),
+    y = d3.scale.linear().domain([0, 450]).range([h, 0]);
+
+var vis = d3.select("#line")
+    .data([data])
+  .append("svg:svg")
+    .attr("width", w + p * 2)
+    .attr("height", h + p * 2)
+  .append("svg:g")
+    .attr("transform", "translate(" + p + "," + p + ")");
+
+var rules = vis.selectAll("g.rule")
+    .data(x.ticks(10))
+  .enter().append("svg:g")
+    .attr("class", "rule");
+
+//rules.append("svg:line")
+//    .attr("x1", x)
+//    .attr("x2", x)
+//    .attr("y1", 0)
+//    .attr("y2", h - 1);
+
+rules.append("svg:line")
+    .attr("class", function(d) { return d ? null : "axis"; })
+    .attr("y1", y)
+    .attr("y2", y)
+    .attr("x1", 0)
+    .attr("x2", w + 1);
+
+//rules.append("svg:text")
+//    .attr("x", x)
+//    .attr("y", h + 3)
+//    .attr("dy", ".71em")
+//    .attr("text-anchor", "middle")
+//    .text(x.tickFormat(10));
+
+rules.append("svg:text")
+    .attr("y", y)
+    .attr("x", -3)
+    .attr("dy", ".35em")
+    .attr("text-anchor", "end")
+    .text(y.tickFormat(10));
+
+vis.append("svg:path")
+    .attr("class", "line")
+    .attr("d", d3.svg.line()
+    .x(function(d) { return x(d.x); })
+    .y(function(d) { return y(d.y); }));
+
+vis.selectAll("circle.line")
+    .data(data)
+  .enter().append("svg:circle")
+    .attr("class", "line")
+    .attr("title",function(d) { return d.title; })
+    .attr("cx", function(d) { return x(d.x); })
+    .attr("cy", function(d) { return y(d.y); })
+    .attr("r", 2);
+
+           
+    
+});
+
+$(function () {
+
+setTimeout( function() {
+    var qTipConfig = {
+        position : { my :"bottom center", at : "top center"},
+        style:     {    classes: 'ui-tooltip-daniele ui-tooltip-shadow'}
+    } 
+
+
+    $("*[title]").qtip(qTipConfig);
+    }, 1000);
+});
+    </script>
+    <div id="line">
+    </div>
+    <div id="ticks">
+        <div id="time_points">
+        </div>
+    </div>
+  </body>
+</html>

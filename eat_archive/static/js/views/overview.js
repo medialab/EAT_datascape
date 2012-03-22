@@ -1,0 +1,1 @@
+/** * Main script for view/overview */$(window).load( function(){	console.log("view script loaded.");		});

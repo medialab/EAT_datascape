@@ -1,0 +1,399 @@
+<html>
+<head>
+
+
+<link rel="stylesheet" href="{{ STATIC_URL }}/css/custom-theme/jquery-ui-1.8.16.custom.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+
+<link rel="stylesheet" href="{{ STATIC_URL }}/css/reset.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="{{ STATIC_URL }}/css/style.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="{{ STATIC_URL }}/css/grid.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+<link rel="stylesheet" href="{{ STATIC_URL }}/css/jquery.qtip.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+
+
+<script src="{{ STATIC_URL }}/js/jquery-1.6.2.min.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+<script src="{{ STATIC_URL }}/js/jquery-tagcloud.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+<script src="{{ STATIC_URL }}/js/jquery-ui-1.8.16.custom.min.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+<script src="{{ STATIC_URL }}/js/jquery.qtip.min.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+
+
+
+
+</head>
+<body>
+<script type="text/javascript">
+$.extend({
+    getUrlVars: function () {
+        var vars = [],
+            hash;
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for (var i = 0; i < hashes.length; i++) {
+            hash = hashes[i].split('=');
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
+        }
+        return vars;
+    },
+      getUrlVar: function(name){
+
+    return $.getUrlVars()[name];
+	}
+});
+
+order = 1;
+sort_size = function (a, b) {return a.count < b.count ? -1*(-order) : (a.count == b.count ? 0 : 1*(-order))}
+sort_alpha =  function (a, b) {return a.tag < b.tag ? -1*order : (a.tag == b.tag ? 0 : 1*order)}
+sortmethod = sort_alpha;	
+var config = {sort:sortmethod, maxFontSizeEm:3};
+	
+var tags = [];
+{%for category,tags2 in tags.items  %}
+	tags[{{forloop.counter0}}] = [
+	{% for each in tags2 %}
+		{tag :"{{each.tag|addslashes}}", count:{{each.size}}, title:{{each.size}}, link : '{{each.link}}' }{% if not forloop.last %} , {% endif %}
+	{% endfor %}
+	];
+{% endfor %}
+	
+function changeOrder(number, type) {
+    if (type == "size") var sortmethod = sort_size;
+    else var sortmethod = sort_alpha;
+	
+    jQuery.extend(config, {
+        sort: sortmethod
+    });
+    $('#cloud_' + number).tagCloud(tags[number], config);
+}
+
+$(function() {
+	function slider_change(thresold_min, thresold_max,number) {
+		$("#slider_"+number+" .ui-slider-handle:nth-child(1)").text(thresold_min);		
+		$("#slider_"+number+" .ui-slider-handle:nth-child(2)").text(thresold_max);		
+			tags_upd = [];
+		for (var i=0; i<tags[number].length; i++) {
+			if (tags[number][i]['count'] <= thresold_max && tags[number][i]['count'] >= thresold_min) {
+				tags_upd.push(tags[number][i]);
+			}		
+		}
+		//jQuery.extend(config,{thresold_min:ui_values[0],thresold_max:ui_values[1] });
+		//$("#tagcloud1").tagCloud(tags1, config);
+		$('#cloud_' + number).tagCloud(tags_upd, config);
+		$('#cloud_' + number +' a[title]').qtip( { style: { classes: 'ui-tooltip-youtube ui-tooltip-shadow'} } );
+	}
+	
+	counts =[];
+	mini = [];
+	maxi = []
+	{% for category in tags %}
+		counts[{{forloop.counter0}}] = [];
+		for (var i=0; i<tags[{{forloop.counter0}}].length; i++) { 
+			counts[{{forloop.counter0}}].push(tags[{{forloop.counter0}}][i]['count']);
+		}
+		mini[{{forloop.counter0}}] = Math.min.apply(null, counts[{{forloop.counter0}}]);
+		maxi[{{forloop.counter0}}] = Math.max.apply(null, counts[{{forloop.counter0}}]);
+	{% endfor %}
+
+	//config
+	var sliderOpts = {
+	animate:true,
+	};
+
+      //create slider
+	{% for category in tags %}
+		jQuery.extend(sliderOpts, {
+			min : mini[{{forloop.counter0}}],
+			max : maxi[{{forloop.counter0}}],
+			values : [mini[{{forloop.counter0}}],maxi[{{forloop.counter0}}]],
+			slide: function(e, ui) { 
+				slider_change(ui.values[0],ui.values[1], {{forloop.counter0}});
+			  }
+		});
+		$("#slider_{{ forloop.counter0 }}").slider(sliderOpts);
+	{% endfor %}
+	
+	{% for category in tags %}		
+		$("#cloud_{{ forloop.counter0 }}").tagCloud(tags[{{ forloop.counter0 }}], config);
+		$("#slider_{{forloop.counter0}} .ui-slider-handle:nth-child(1)").text(mini[{{forloop.counter0}}]);		
+		$("#slider_{{forloop.counter0}} .ui-slider-handle:nth-child(2)").text(maxi[{{forloop.counter0}}]);		
+	{% endfor %}
+
+	$('a[title]').qtip( {
+	style: { classes: 'ui-tooltip-youtube ui-tooltip-shadow' }
+	});
+	
+});
+  
+</script>
+
+<div class="container_26">
+    <div class="grid_18 prefix_4 suffix_2 alpha omega ">
+        <div id="header">
+            <div id="tags">
+                Theatre, Perfomance, Gesture
+            </div>
+             <h1 id="">Hommage to New York</h1>
+             <div id="period">
+                 <div id="beginning">
+                     01 JAN 1960
+                 </div>
+                 <div id="end">
+                     16 SEP 2011
+                 </div>
+             </div>
+        </div>
+        
+        
+    </div> <!- end header->
+    <div class="clear"></div>
+    <div class="prefix_3 grid_22 alpha omega">
+
+            <div class="grid_1 start_date alpha">
+                <span class="day">01</span>
+                <span class="month">JAN</span>
+                <span class="year">1960</span>
+            </div>
+            <div class="grid_19">
+                <div id="timeline phases">
+                    TIMELINE
+                </div>
+            </div>
+            <div class="grid_1 end_date omega">
+                <span class="day">22</span>
+                <span class="month">APR</span>
+                <span class="year">1973</span>
+            </div>
+
+    </div> <!- fin timeline  ->
+    <div class="grid_26 alpha omega">
+        <div class="grid_23 prefix_1 alpha omega">
+            people
+            + grid
+        </div>
+        <div class="clear"></div>
+        
+        <div class="grid_24 alpha omega artists">
+            <div class="grid_1 alpha circles">
+                c
+            </div>
+            <div class="grid_23 omega">
+                <div class="grid_23 alpha omega">
+                    <div class="grid_3 alpha name">
+                        Tinguely Jean
+                    </div>
+                    <div class="grid_18 omega">
+                        <div class="timeline_ppl">
+                            <div style="margin-left:0px;
+                                        width      :20px;
+                                        height     :4px;
+                                        ; "
+                                class="line level1">
+                            </div>
+                            <div style="margin-left:20px;
+                                        width      :200px;
+                                        height     :4px;
+                                         "
+                                class="line level2">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                
+                
+                <div class="grid_23 alpha omega">
+                    <div class="grid_3 alpha name">
+                        Adorno Olga
+                    </div>
+                    <div class="grid_18 omega">
+                        <div class="timeline_ppl">
+                            <div style="margin-left:0px;
+                                        width      :20px;
+                                        height     :4px;
+                                         "
+                                class="line level1">
+                            </div>
+                            <div style="margin-left:15px;
+                                        width      :200px;
+                                        height     :4px;
+                                         "
+                                class="line level2">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                <div class="grid_23 alpha omega">
+                    <div class="grid_3 alpha name">
+                        Breer Robert
+                    </div>
+                    <div class="grid_18 omega">
+                        <div class="timeline_ppl">
+                            <div style="margin-left:0px;
+                                        width      :20px;
+                                        height     :4px;"
+                                class="line level1"></div>
+                            <div style="margin-left:20px;
+                                        width      :200px;
+                                        height     :4px; "
+                                class="line level2"></div>
+                        </div>
+
+                    </div>
+                </div>
+                
+                
+                <div class="grid_23 alpha omega">
+                    <div class="grid_3 alpha name">
+                        Breer Robert
+                    </div>
+                    <div class="grid_18 omega">
+                        <div class="timeline_ppl">
+                            <div style="margin-left:0px;
+                                        width      :20px;
+                                        height     :4px;"
+                                class="line level1"></div>
+                            <div style="margin-left:20px;
+                                        width      :200px;
+                                        height     :4px; "
+                                class="line level2"></div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="grid_24 alpha omega engineers">
+            <div class="grid_1 alpha circles">
+                c
+            </div>
+            <div class="grid_23 omega">
+                <div class="grid_23 alpha omega">
+                    <div class="grid_3 alpha name">
+                        Tinguely Jean
+                    </div>
+                    <div class="grid_18 omega">
+                        <div class="timeline_ppl">
+                            <div style="margin-left:0px;
+                                        width      :20px;
+                                        height     :4px;
+                                        ; "
+                                class="line level1">
+                            </div>
+                            <div style="margin-left:20px;
+                                        width      :200px;
+                                        height     :4px;
+                                         "
+                                class="line level2">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                
+                
+         <div class="grid_23 alpha omega">
+                    <div class="grid_3 alpha name">
+                        Adorno Olga
+                    </div>
+                    <div class="grid_18 omega">
+                        <div class="timeline_ppl">
+                            <div style="margin-left:0px;
+                                        width      :20px;
+                                        height     :4px;
+                                         "
+                                class="line level1">
+                            </div>
+                            <div style="margin-left:15px;
+                                        width      :200px;
+                                        height     :4px;
+                                         "
+                                class="line level2">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="">
+                    
+                </div>
+                
+                
+                <div class="grid_23 alpha omega">
+                    <div class="grid_3 alpha name">
+                        Breer Robert
+                    </div>
+                    <div class="grid_18 omega">
+                        <div class="timeline_ppl">
+                            <div style="margin-left:0px;
+                                        width      :20px;
+                                        height     :4px;"
+                                class="line level1"></div>
+                            <div style="margin-left:20px;
+                                        width      :200px;
+                                        height     :4px; "
+                                class="line level2"></div>
+                        </div>
+
+                    </div>
+                </div>
+                
+                
+                <div class="grid_23 alpha omega">
+                    <div class="grid_3 alpha name">
+                        Breer Robert
+                    </div>
+                    <div class="grid_18 omega">
+                        <div class="timeline_ppl">
+                            <div style="margin-left:0px;
+                                        width      :20px;
+                                        height     :4px;"
+                                class="line level1"></div>
+                            <div style="margin-left:20px;
+                                        width      :200px;
+                                        height     :4px; "
+                                class="line level2"></div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+    </div>    
+    <script>
+	$(function() {
+		$( ".tabs" ).tabs();
+	});
+	</script>
+    <div class="grid_11 alpha">
+         <div class="tabs">
+            <ul>
+             {% for category in tags %}
+                <li><a href="#tabs-{{forloop.counter0}}">{{category}}</a></li>
+            {%endfor%}
+            </ul>
+            
+            {% for category in tags %}
+            <div id="tabs-{{forloop.counter0}}">
+                <h1 id='{{ category }}'>{{ category }}</h1>
+                <div class="slider" id="slider_{{ forloop.counter0 }}"></div>
+                <div class="parameters">
+                    <p>Ordre : 
+	                    <a href="#{{category}}" onclick="javascript:changeOrder({{forloop.counter0}},'abc')">Alphabétique</a>,
+	                    <a href="#{{category}}" onclick="javascript:changeOrder({{forloop.counter0}},'size')">Taille</a>
+                    </p>
+                </div>
+                <div class="tagcloud" id="cloud_{{ forloop.counter0 }}"></div>
+            </div>	
+            {% endfor%}
+
+	    </div>
+    </div>
+    <div class="grid_15 omega">
+        salut
+    </div>
+
+</div>
+</body>
+</html>

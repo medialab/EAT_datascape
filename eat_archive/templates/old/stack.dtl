@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Stacked Bar Chart</title>
+    <script type="text/javascript" src="{{ STATIC_URL }}/d3/d3.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}/d3/d3.layout.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}/d3/stream_layers.js"></script>
+    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/d3/button.css"/>
+    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}/d3/stack.css"/>
+  </head>
+  <body>
+    <div id="chart">
+      <button id="group" class="first" onclick="transitionGroup()">
+        Group
+      </button
+      ><button id="stack" class="active last" onclick="transitionStack()">
+        Stack
+      </button><p>
+    </div>
+    <script type="text/javascript">
+        var data =  {{jsondata|safe}}
+    </script>
+
+       
+    <script type="text/javascript" src="{{ STATIC_URL }}/d3/stack.js"></script>
+  </body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{% block title %}{% endblock %}</title>
+		
+		<link rel="stylesheet" href="{{ STATIC_URL }}/css/custom-theme/jquery-ui-1.8.16.custom.css" type="text/css" media="screen"  />
+		
+		<link rel="stylesheet" href="{{ STATIC_URL }}/css/reset.css" type="text/css" media="screen"/>
+		<link rel="stylesheet" href="{{ STATIC_URL }}/css/grid.css" type="text/css" media="screen"/>
+		<link rel="stylesheet" href="{{ STATIC_URL }}/css/style.css" type="text/css" media="screen"/>
+		
+		<link rel="stylesheet" href="{{ STATIC_URL }}/css/jquery.qtip.css" type="text/css" media="screen"/>
+		
+		<script src="{{ STATIC_URL }}/js/jquery-1.6.2.min.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+		<script src="{{ STATIC_URL }}/js/jquery-tagcloud.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+		<script src="{{ STATIC_URL }}/js/jquery-ui-1.8.16.custom.min.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+		<script src="{{ STATIC_URL }}/js/jquery.qtip.min.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+		<script src="{{ STATIC_URL }}/js/jquery.mousewheel.min.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+		<!-- timeline library -->
+		<script src="{{ STATIC_URL }}/js/jquery.timelinegrid.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+		
+		
+		<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+		<script src="{{ STATIC_URL }}/js/scripts.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+		<script type="text/javascript" src="{{ STATIC_URL }}/js/jquery.easing.min.js"></script>
+		<script type="text/javascript" src="{{ STATIC_URL }}/js/views/projet.js"></script>
+				
+		<script type="text/javascript" src="{{ STATIC_URL }}/js/supersized.3.2.5.min.js"></script>
+		<script type="text/javascript" src="{{ STATIC_URL }}/js/supersized.shutter.min.js"></script>
+	</head>
+	<body>
+	
+	{% block content %}{% endblock %}
+	{% block footer %}
+    <hr>
+    <p>footer</p>
+    {% endblock %}
+	</body>
+</html>

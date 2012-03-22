@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+<link rel="stylesheet" href="{{ STATIC_URL }}/css/custom-theme/jquery-ui-1.8.16.custom.css" type="text/css" media="screen"  />
+
+<link rel="stylesheet" href="{{ STATIC_URL }}/css/reset.css" type="text/css" media="screen"/>
+<link rel="stylesheet" href="{{ STATIC_URL }}/css/grid.css" type="text/css" media="screen"/>
+<link rel="stylesheet" href="{{ STATIC_URL }}/css/style.css" type="text/css" media="screen"/>
+
+<link rel="stylesheet" href="{{ STATIC_URL }}/css/jquery.qtip.css" type="text/css" media="screen"/>
+
+<script src="{{ STATIC_URL }}/js/jquery-1.6.2.min.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+<script src="{{ STATIC_URL }}/js/jquery-tagcloud.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+<script src="{{ STATIC_URL }}/js/jquery-ui-1.8.16.custom.min.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+<script src="{{ STATIC_URL }}/js/jquery.qtip.min.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+<script src="{{ STATIC_URL }}/js/jquery.mousewheel.min.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+<!-- timeline library -->
+<script src="{{ STATIC_URL }}/js/jquery.timelinegrid.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+
+
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<script src="{{ STATIC_URL }}/js/scripts.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}/js/jquery.easing.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}/js/views/projet.js"></script>
+		
+<script type="text/javascript" src="{{ STATIC_URL }}/js/supersized.3.2.5.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}/js/supersized.shutter.min.js"></script>
+
+
+<script type="text/javascript">
+EAT.annotations = {% autoescape off %} {{ annotations.json }} {% endautoescape %}
+
+min_date = '{% if start_zoom %}{{start_zoom|date:"d.m.Y"}}{% else %}{{min_date|date:"d.m.Y"}}{% endif %}'
+max_date = '{% if end_zoom %}{{end_zoom|date:"d.m.Y"}}{% else %}{{max_date|date:"d.m.Y"}}{% endif %}'
+
+$(function() {
+    EAT.makeTimeLineScrollable();
+    EAT.initSupersize();
+    
+	new TimelineGrid({
+	    dates:{
+		    min:$.datepicker.parseDate( "dd.mm.yy", min_date ) ,
+		    max:$.datepicker.parseDate( "dd.mm.yy", max_date ) 
+	    },
+	    target: $("#time_points")
+    });
+    EAT.qTip();
+    EAT.addExpandButton();
+});
+</script>
+<script src="{{ STATIC_URL }}/js/googlemapsfunctions.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+<script src="{{ STATIC_URL }}/js/tagcloudsfunctions.js" type="text/javascript" language="javascript" charset="utf-8"></script>
+
+
+<title>EAT Datascape - Overview</title>
+<style>
+/* <![CDATA[ */
+ h2 {
+    font-size:2em;
+ }
+ h3 {
+    font-size:1.6em;
+ }
+ p, ul {
+    font-size:1.3em;
+    margin-top:0.5em;
+    margin-bottom:0.5em;
+ }
+ 
+ ul {
+    margin-left:40px;
+ }
+
+
+        	{% for phase in phases %}
+        	    .phase_{{phase.id}} {
+                          left : {{phase.left }}%;
+                          width: {{phase.width}}%;
+                           {% if phase.width == -1 %}display:none !important;{% endif %}
+                          bottom : {{phase.level}}px;
+                          z-index : {{phase.level}};
+
+				}
+			{% endfor %}			
+			
+
+
+
+/* ]]> */
+</style>
+</head>
+<body>
+
+<div id="overlay"></div>
+
+<div class="container_26">
+	<div id="source_dialog" class="grid_13 alpha omega" title=" ">
+		<h1 id="annotation_authors"><span class="annotation_author"></span></h1>
+		<div id="annotation_title"></div>
+		<div id="source_info">in « <span id="source_title"></span> » <span id="source_mark"></span></div> 
+		<div id="annotation_content"> 
+				<!-- div class="quotes_left"><img src="http://upload.wikimedia.org/wikipedia/commons/5/56/Left_double_quotation_mark.png"></div -->
+				<div id="source_text" class="overview">
+					<div class="source_image"></div>
+					<div class="long_text">
+					</div> 
+				</div>
+				<div id="source_reference"></div>
+		</div>		
+	</div>
+	<div class="grid_20 prefix_4 suffix_2 alpha omega ">
+        <div id="logo"><img src="{{ STATIC_URL }}/images/EAT-logo.png"></div>
+		<div id="header">
+		      <div id="tags">
+                <p>
+                    {%for tag in tags.art %}
+                        {{tag}}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </p>
+                <p> {%for tag in tags.techno %}
+                        {{tag}}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </p>
+            </div>
+             <h1 id="project-title">{%if actor.firstname %}{{actor.firstname}} {% endif %}{{actor.name}}</h1>
+        </div>
+    </div>
+	<div class="grid_23 prefix_3 alpha omega ">
+		<div id="timeline" class="grid_22 alpha omega">
+			<div class="grid_1 alpha start_date">
+				<div class="start_delimeter align_centered">
+					<span>{{start_zoom.day}} {{start_zoom|date:"N"}}</span>
+					<div class="year">{{start_zoom.year}}</div>  
+				</div>
+            </div>
+            <div class="grid_20 phases_box">
+                <div id="conteneurphase">
+                    <div class="phases" id="bigtimeline" style="width:96%; position:relative; margin-left:7px">
+			            {% for phase in phases %}
+			                 <div  title="<h2><strong>{{phase.activity}}</strong><br/>{% for tag in phase.tags %}
+			                        {{tag}}{% if not forloop.last %} , {% endif %}
+			                    {% endfor %}</h2>{{phase.start_date|date:'d N Y'}} - {{phase.end_date|date:'d N Y'}}" id="phase_{{forloop.counter0}}" class="phase_{{phase.id}} phase
+					            {% if phase.truncated_start or phase.truncated_end %}truncated{% endif %}
+					            "><span><!--{% for tag in phase.tags %}
+			                        {{tag}}{% if not forloop.last %}, {% endif %}
+			                    {% endfor %}-->{{phase.activity}}
+					            </span>
+					            {% if phase.truncated_start %}
+						            <img src="{{ STATIC_URL }}/images/truncated_left.png" class="truncated_left">
+					            {% endif %}
+					            {% if phase.truncated_end %}
+						            <img src="{{ STATIC_URL }}/images/truncated_right.png" class="truncated_right"> 
+					            {% endif %}
+			                 </div>
+			            {% endfor %}
+                    </div> <!-- fin de bigtimeline -->
+                    <div id="timegrid" class="phases">
+        			    <div id="time_points" ></div>
+                            <div class="sources" >
+                                 {% for phase_id, phase_data in annotations.object.items %}
+                                    <div class="phase_{{phase_id}} source_list">
+                                     {% for annotation_id, annotation in phase_data.annotations.items %}
+                                        <div class="source phase_{{phase_id}}"  id="source_{{phase_id}}_{{ annotation_id}}" title="{{annotation.annotation_title}} <br/>in {{annotation.source_title}} <br /><em>{% for tag in phase_data.actionTags %}
+			                                            {{tag}}{% if not forloop.last %} , {% endif %}
+		                                            {% endfor %}</em>"></div>
+                                     {%endfor%}
+                                    </div>
+                                 {% endfor %}
+                            </div>
+                     </div>
+                </div>
+
+            </div>
+            <div class="grid_1 end_date omega">
+				<div class="end_delimeter align_centered">
+					<span>{{end_zoom.day}} {{end_zoom|date:"N"}}</span>
+					<div>{{end_zoom.year}}</div>  
+				</div>
+            </div>
+		</div>
+    </div>
+ 	<!-- end timeline  -->   	
+    <div class="actors grid_26 alpha omega">
+        <div class="clear"></div>
+        <div class="grid_25 prefix_1 alpha omega actors">
+
+            <p>{{ actor}} participated to the following projects :
+            {% regroup phases|dictsort:"activity" by activity as activity_list %}
+                <ul id="listprojects">
+                    {% for a in activity_list%}
+                    <li class="project"><h3><a href='../project/{{a.grouper.id}}'>{{ a.grouper }}</a></h3>
+                        <ul>
+                            {% for p in a.list%}
+                            <li style="font-size:0.7em">
+                                {% for t in p.tags%}
+                                    {{t}}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    {% endfor %}
+                </ul>
+
+            </p>
+        </div>
+                <div class="grid_25 prefix_1 alpha omega actors">
+                 {% for a in activity_list%}
+                    <div class="activity">
+                        <h2>{{a.grouper.name}}</h2>
+                        <div class="phases_box grid_19 prefix_3">
+                            <div class="phases" style="width:96%; position:relative; height:2em;">
+                            {% for phase in a.list %}
+                            <div class="phase phase_{{phase.id}}" style="bottom:0; position:absolute; background: rgba(149,211,68,0.8); border:green 1px solid;" id="phase_{{forloop.counter0}}">
+                                {% for tag in phase.tags %}
+                                    {{tag}}{% if not forloop.last %} , {% endif %}<br/>
+                                {% endfor %}
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                {% endfor %}
+                </div>
+    
+    
+    </div>
+    <div class="clear"></div>
+	<div class="footer grid_26 alpha omega">
+		<div id="footer" ><img src="{{ STATIC_URL }}/images/Sc-Po-Medialab-Gris.png" alt="made by Medialab Sciences Po" title="visit Medialab Sciences Po"></div>
+	</div>
+</div>
+</div>
+</body>
+</html>

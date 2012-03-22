@@ -1,0 +1,947 @@
+[
+    {
+        "pk": 0, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                9, 
+                19, 
+                16, 
+                17, 
+                4, 
+                8
+            ], 
+            "technologyTags": [
+                1, 
+                6, 
+                11, 
+                50, 
+                70
+            ], 
+            "activityTags": [
+                1
+            ], 
+            "name": "Homage to New York", 
+            "description": "1. Jean Tinguely arrived in New York in 1960 for an exhibition at the Staempfli Gallery. Pontus Hult\u00e9n told me that 1 should ask him if he needed any help. He had received an offer to build a sculpture in the garden of the Museum of Modern Art. I asked Tinguely, \"What do you need?\" His answer was, \"bicycle wheels.\" We gathered the material from bicycle shops in New Jersey and the garbage dumps on the New Jersey flats. It took us three weeks to build what he wanted, a self-destructing machine. With the help of my friends at Bell Telephone Laboratories, we constructed timing and triggering devices to release smoke, start a fire in a piano, break support members, and make noises. On the evening of March 17, 1960, the machine, which Jean called Hommage to New York, performed to a museum society audience with smoke billowing out from the structure and the piano playing. It destroyed itself in 27 minutes. What remained of the machine was carted back to the dumps in New Jersey."
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                16, 
+                3, 
+                17
+            ], 
+            "technologyTags": [
+                32, 
+                70, 
+                102
+            ], 
+            "activityTags": [
+                1
+            ], 
+            "name": "Field Painting", 
+            "description": "2. Jasper Johns asked me for a transparent gas-discharge letter to include in a painting. He wanted the power supply to be mounted behind the painting without any power cords attaching the painting to the wall. My colleagues and I designed a battery-driven high-voltage power supply. A multi-vibrator circuit converted the OC voltage from 12-volt rechargeable batteries into AC voltage, which was transformed into 700 volts to power the neon letter. Here I am standing with the red neon 'R' in Johns' Field Painting, of 1963-64."
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                9, 
+                14
+            ], 
+            "technologyTags": [
+                6, 
+                70, 
+                11, 
+                13
+            ], 
+            "activityTags": [
+                1
+            ], 
+            "name": "At My Body\u2019s House", 
+            "description": "3. In the early 1960's dancers became interested in relating body movements or functions to sound as they danced. My assistant at Bell Labs, Harold Hodges and I made a small transmitter for Yvonne Rainer which she wore attached to her belt. A contact microphone on her throat picked up the sound of her breathing as she danced. The transmitter relayed the sound to a speaker. In this photograph Rainer is performing At My Body's House in 1964."
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                6, 
+                17, 
+                21
+            ], 
+            "technologyTags": [
+                11, 
+                18, 
+                70, 
+                102
+            ], 
+            "activityTags": [
+                1
+            ], 
+            "name": "Oracle", 
+            "description": "4. During the time I was working with Tinguely on Homage ta New York, Robert Rauschenberg asked me to collaborate on what he described as an interactive environment. After many discussions, the idea boiled down to a sound environment where the sounds from five AM radios emanate from five sculptures. The viewer can vary the volume and the rate of scanning through the frequency band from knobs on the control unit, but cannot stop the scanning at any one station. Rauschenberg wanted no wires from the control unit to the other pieces, so that they could ail be moved freely in relation to one another. With the limited technology available in the early 1960's, we designed and built a system where ail the AM radios were located in the control unit and the sound was re-transmitted on the FM band to receivers and speakers in the other pieces. Interference between the FM transmitters and noise from the scanning motors were problems we had to solve. In this photograph Rauschenberg and I are working on Oracle.\n\n5. When Harold Hodges and I were finishing the technical system, Rauschenberg put together the five sculptures that make up Oracle from objects he found in the streets. The pieces consist of a car door mounted on a typewriter table; a tub with an air conditioning duct through which water flows with, a small wire basket attached to the tub by a chain; a window frame attached to another long duct; an exhaust pipe on large wheels; and a large aluminum staircase which houses the control unit. I had ordered the aluminum staircase according to Bob's specs, and he added other objects to it. Bob located the speakers in each piece so that the piece had its own unique sound.\nOracle was shown at Leo Castelli Gallery, on May 15, 1965. To avoid the feeling of a gallery. Rauschenberg covered the floor with a black rubber mat. The five pieces were placed throughout the front room of the gallery and the viewers could walk freely among them."
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                9, 
+                12, 
+                14, 
+                15, 
+                21
+            ], 
+            "technologyTags": [
+                26, 
+                27, 
+                70, 
+                96, 
+                98, 
+                11
+            ], 
+            "activityTags": [
+                1
+            ], 
+            "name": "Variations V", 
+            "description": "6. John Cage made Variations V in 1965 for the Merce Cunningham Dance Company. He and David Tudor settled on two systems for the sound to be affected by movement. For the first, my colleagues and I set up a system of directional photocells aimed at the stage lights, so that the dancers triggered sounds as they cut the light beams with their movements. A second system used a series of antennas. When a dancer came within four feet of an antenna a sound would result. Ten photocells were wired to activate tape-recorders and short-wave radios. Cecil Coker designed a control circuit, which was built by my assistant Witt Wittnebert. Film footage by Stan VanDerBeek and Nam June Paik's manipulated television images were projected on screens behind the dancers. In this photograph Variations Vis performed for a television taping session in Hamburg. The photocells were located at the base of the five-foot antennas placed around the stage. Cage, Tudor, and Gordon Mumma operate equipment to modify and determine the final sounds."
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                17, 
+                5, 
+                6
+            ], 
+            "technologyTags": [
+                39, 
+                40
+            ], 
+            "activityTags": [
+                1
+            ], 
+            "name": "Silver Clouds", 
+            "description": "7. At the 47th Street Factory, Andy Warhol asked me for a floating light bulb. We made some calculations and discovered it was not possible with existing battery technology. While working on the idea, my colleague at Bell Laboratories found a material called ScotchpakTM which was relatively impermeable to helium and could be heat sealed. It was used by the United States Army for wrapping sandwiches. When I brought this material to Andy he decided to make clouds and while we were figuring out how to heat-seal curves, he simply folded the material over and made these Silver Clouds, which were first shown at Leo Castelli's gallery in 1966. The sculptures had a wonderful buoyancy as they hovered gently in the room. The heat gradient between the floor and ceiling creates a slight pressure differential; we could balance the Silver Clouds using paperclips to make them float between ceiling and floor."
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": "", 
+            "technologyTags": "", 
+            "activityTags": [
+                9
+            ], 
+            "name": "First Meeting Planning of artists and engineers for the 9 Evenings", 
+            "description": "8. By 1965, interest among the artists in using technology had grown, and many of the artists who had performed together at Judson Church and other spaces in New York expressed a desire to stage large-scale performances. Bob Rauschenberg and I organized a group of artists to work together with engineers on a series of performances involving new technology. The group included John Cage, Lucinda Childs, \u00d6yvind Fahlstr\u00f6m, Alex Hay, Deborah Hay, Steve Paxton, Yvonne Rainer, Robert Rauschenberg, David Tudor, and Robert Whitman. The first planning meeting of artists and engineers took place in early 1966 in Rauschenberg's studio. During the summer of 1966, more than 30 engineers, most of them from Bell Laboratories, worked in one-to-one collaboration with individual artists, depending on the artist's project and engineer's speciality. Other engineers worked on equipment and systems that could be used by ail the artists."
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": "", 
+            "technologyTags": "", 
+            "activityTags": [
+                3, 
+                12
+            ], 
+            "name": "9 Evenings: Theatre and Engineering", 
+            "description": "9. 9 Evenings: Theatre and Engineering opened on October 13, 1966, at the 69th Regiment Armory, a huge space on Lexington Avenue at 25th Street in New York City. The art community in New York became involved in helping us with 9 Evenings, as fellow artists, dancers, musicians, and performers volunteered their time for setting up and trouble shooting, and then appeared in the performances. A high-powered, but slightly distorted publicity campaign resulted in more than 1500 people each night attended the performances, many of them unprepared for the avant-garde performances they saw. In this photograph the crowd is entering the Armory on opening night. The 9 EVENINGS poster, designed by Rauschenberg, hangs on either side of the entrance, and an Army transport truck sits on the street, displaced from its usual parking place on the Armory floor."
+        }
+    }, 
+    {
+        "pk": 8, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                9, 
+                6, 
+                10, 
+                22
+            ], 
+            "technologyTags": [
+                11, 
+                21, 
+                27, 
+                70, 
+                6, 
+                2, 
+                14
+            ], 
+            "activityTags": [
+                1
+            ], 
+            "name": "Physical Things", 
+            "description": "10. In Steve Paxton's work, Physical Things, a polyethylene air-inflated structure occupied most of the Armory floor and a tower rose to the peak of the Armory roof. The audience walked through the structure, encountering slide projections, sounds and performers. Emerging from the structure, they used small receivers to hear different sounds broadcast from wire loops suspended in a net overhead."
+        }
+    }, 
+    {
+        "pk": 9, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                9, 
+                10
+            ], 
+            "technologyTags": [
+                11, 
+                21, 
+                27, 
+                2, 
+                89, 
+                70, 
+                97
+            ], 
+            "activityTags": [
+                1
+            ], 
+            "name": "Grass Field", 
+            "description": "11. For Grass Field Alex Hay wanted to pick up body sounds: brain waves, muscle activity and eye movements. Pete Kaminsky, Fred Waldhauer and Cecil Coker built a battery-driven differential amplifier which had a peak gain of 80 db at low frequencies from 1/2 Hz to 10Hz. The whole unit, batteries and all fit into a 1\"x3\"x5\" box, no mean feat to do this in 1966. The signal from the differential amplifier was fed into a voltage-controlled oscillator, then to a transmitter, which sent the sound to the speakers. Electrodes were placed on Hay's head and body and ail the equipment was attached to a plastic plate fastened on Hay's back. These body sounds were heard through the speakers as Hay carefully laid out 64 numbered pieces of cloth. Here Hay is sitting in front of a television camera and the image of his face is projected on the screen behind him as Robert Rauschenberg picks up numbered cloths."
+        }
+    }, 
+    {
+        "pk": 10, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                9, 
+                10, 
+                14, 
+                19
+            ], 
+            "technologyTags": [
+                11, 
+                21, 
+                70, 
+                6
+            ], 
+            "activityTags": [
+                1
+            ], 
+            "name": "Solo", 
+            "description": "12. For Deborah Hay's dance, Solo, Larry Heilos designed the electrical system, and he and Witt Wittnebert built eight radio-controlled carts that moved around the Armory floor, which were then covered to make platforms for dancers to stand or lie on.\nEight formally dressed performers entered and sat like a musical ensemble in front of antennas that transmitted the FM signal to the platforms. They operated the radio-control system to move the platforms into and around the space. Composer Jim Tenney acted as \"conductor\" of the orchestra.\nSixteen dancers, wearing shiny white costumes, entered the brightly lit space either walking or riding on a cart. They then walked or rode on the moving platforms in solo, duet, or trio formations, following specific rules for dancer and platform movement in relation to the performance area and to each other. David Tudor performed Toshi Ichiyanagi's work Funakakushi. From time to time the lights were turned out, coming back on to find dancers and platforms in different positions as they had continued performing in the darkness."
+        }
+    }, 
+    {
+        "pk": 11, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                9, 
+                10
+            ], 
+            "technologyTags": [
+                70, 
+                11, 
+                18, 
+                6, 
+                13, 
+                14, 
+                21, 
+                27, 
+                2, 
+                36
+            ], 
+            "activityTags": [
+                1
+            ], 
+            "name": "Open Score", 
+            "description": "13. Open Score, Robert Rauschenberg's piece for 9 Evenings, began with a tennis game on the floor of the Armory. Bill Kaminski designed a miniature FM transmitter that fit in the handle of the tennis racquet, and a contact microphone was attached to the handle of the racquet with the antenna wound around the frame of the head. Each time Frank Stella and Mimi Kanarek hit the bail the vibrations of the racquet strings were transmitted to the speakers around the armory, and a loud BONG was heard. At each BONG, one of the 48 lights went out, and the game ended when the Armory was in complete darkness. Five hundred people came on stage in the dark. Using infrared light and infrared television cameras, their images were picked up and projected on three large screens suspended in front of the audience. In a third section, Simone Forti, in a cloth sack, sang an Italian love song as Rauschenberg picked her up and put her down at several places on the Armory floor."
+        }
+    }, 
+    {
+        "pk": 12, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                9, 
+                12, 
+                10
+            ], 
+            "technologyTags": [
+                11, 
+                21, 
+                70
+            ], 
+            "activityTags": [
+                1
+            ], 
+            "name": "Bandoneon! (a Combine)", 
+            "description": "14. In this photograph David Tudor and Fred Waldhauer set up Tudor's piece Bandoneon! on the performance platform. Ten different types of microphones were attached to the band[o]neon and picked up the sound which was distributed to four different processing devices. The first was a forty-channel filter circuit. Twelve of its output channels were fed to the 12 speakers; the remaining channels activated relays to turn on and off spotlights on the balcony. Second, a processing circuit, which Tudor had built himself, fed four transducers attached to wood and metal structures moving on the Armory floor. The third was the 20-channel proportional control system, built by Fred Waldhauer, which controlled the intensity of eight lights mounted on the performance platform and fed the sound into different speakers around the Armory. The fourth device used the sound to modify images on the three television projectors.\n\n15. David Tudor's Bandoneon! combined sound and visual elements. In this performance photograph Tudor is seated to the left on the performance platform, specially constructed for the Armory space to hold ail the electronic equipment and then move it easily onto the floor of the Armory at the time of the performance. Behind him are Bob Kieronski, who is operating a Vocoder, which he designed and built; David Behrman; Lowell Cross, who designed and operated the system for manipulating the images on the video projector; and Fred Waldhauer, who operated his proportional control system for the performance. Two of the wooden structures, to which Tudor attached transducers, and the horn speaker moved around the Armory floor on radio-controlled carts. To the top left can be seen the television projectors and screens. One of the characteristics of the Armory was a 5-second echo, which was a problem for some of the artists. Tudor worked with this long reverberation time, and in effect used the entire Armory as his instrument."
+        }
+    }, 
+    {
+        "pk": 13, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                9, 
+                10
+            ], 
+            "technologyTags": [
+                11, 
+                21, 
+                70, 
+                6, 
+                13, 
+                14
+            ], 
+            "activityTags": [
+                1
+            ], 
+            "name": "Carriage Discreteness", 
+            "description": "16. In Carriage Discreteness Yvonne Rainer spread out in a grid on the Armory floor slats slabs, cubes, planks, sheets of different materials like Masonite, wood, and styrofoam beams made by Carl Andre. From a small balcony high on one wall of the Armory, Rainer transmitted instructions to the performers, who wore FM pickups on their wrists, telling them to carry objects from one part of the floor to another."
+        }
+    }, 
+    {
+        "pk": 14, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                9, 
+                12, 
+                10
+            ], 
+            "technologyTags": [
+                11, 
+                18, 
+                21, 
+                98, 
+                70, 
+                12, 
+                13, 
+                14
+            ], 
+            "activityTags": [
+                1
+            ], 
+            "name": "Variations VII", 
+            "description": "17. For Variations VII John Cage wanted to \"use sounds available at the time of the performance.\" 10 telephone lines were installed in the Armory by New York Telephone Company. He had lines open in various places in New York City including Luchow's, the Aviary, the 14th Street Con Edison electric power station, the ASPCA lost dog kennel, The New York Times press room, and Merce Cunningham's studio. Magnetic pickups on the telephone receivers fed these sound sources into the sound manipulation system. Cage also had 6 contact microphones on the performing platform itself and 12 contact microphones on household appliances such as a blender, a juicer, a toaster, a fan, etc. He also had 20 radio bands, 2 television bands, and 2 Geiger counters. Oscillators and pulse generators completed the sound sources. Thirty photocells and lights were mounted at ankle level around the performance area, which activated the different sound sources as the performers moved around. Cage invited the audience to move around freely and many stood near the performance area."
+        }
+    }, 
+    {
+        "pk": 15, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                9, 
+                10
+            ], 
+            "technologyTags": [
+                11, 
+                21, 
+                70, 
+                17, 
+                20
+            ], 
+            "activityTags": [
+                1
+            ], 
+            "name": "Vehicle", 
+            "description": "18. Peter Hirsch designed a 70 kHz Doppler sonar system for Lucinda Childs' piece, Vehicle. Childs swung three red buckets around inside the ultrasonic sound beams created by transmitters in the three stands as seen in the photograph. The reflected signals from the buckets mixed with the original 70 kHz signal, and the resulting beat frequency fell in the audible range. The sound was transmitted to the speakers around the Armory. It was a swishing noise like wind blowing through a forest."
+        }
+    }, 
+    {
+        "pk": 16, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                9, 
+                10
+            ], 
+            "technologyTags": [
+                11, 
+                21, 
+                70, 
+                27, 
+                2, 
+                5, 
+                22, 
+                25, 
+                35
+            ], 
+            "activityTags": [
+                1
+            ], 
+            "name": "Two Holes of Water - 3", 
+            "description": "19. In Robert Whitman's Two Holes of Water - 3 seven cars, carrying film and television projectors, drove onto the Armory floor and parked facing the back wall which was covered with white paper. On the balcony, television cameras shot performers Trisha Brown and Mimi Stark moving slowly in front of a curved mirror; and another shot Jackie Leavitt typing. On the Armory floor another camera shot Susanna di Maria pouring water and Les Levine ued a small fiber optic video camera inside his coat pocket Whitman fed the images of these live performances and off-air television images to the television projectors in the cars. He also cued the drivers to turn on nature films and films he had made himself, including a film that superimposed the back and front of a girl as she performed simple movements. Ken Dewey, high up in the winch hoist projected films onto a white screen on the floor. Contact microphones on the tailpipe of a car and on the typewriter and a Bertrand Russell speech were some of the sounds resounding through the Armory."
+        }
+    }, 
+    {
+        "pk": 17, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                9, 
+                10
+            ], 
+            "technologyTags": [
+                11, 
+                21, 
+                70, 
+                72, 
+                27, 
+                5, 
+                2, 
+                12, 
+                28
+            ], 
+            "activityTags": [
+                1
+            ], 
+            "name": "Kisses Sweeter than Wine", 
+            "description": "20. Oyvind Fahls[t]r\u00f6m's Kisses Sweeter than Wine was a complex, poetic theater performance incorporating live actors, elaborate props, and a triptych of slide, movie and television projection screens. Oyvind used a pillow that \"could sing out while it was bounced on the floor,\" a remote-controlled mylar missile circling the Armory, and snowflakes that fell upward. Characters included Jedadiah Buxton and other idiot savants who were \"capable of memorizing enormous amounts of data or of making multi-digit calculations in their head; \"a girl in a plastic swimming pool of Jello, Chinese Sparrows under attack, and Space Girl, dressed in silver, who descended in a winch hoist from the ceiling. Performers in white dress shirts gather around her as she holds up the head of then President Lyndon B. Johnson."
+        }
+    }, 
+    {
+        "pk": 18, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": "", 
+            "technologyTags": "", 
+            "activityTags": [
+                9
+            ], 
+            "name": "E.A.T. Meeting at the Central Plaza Hotel, New York", 
+            "description": "22. 9 Evenings generated a great interest in using new technology among the artists in New York, Robert Whitman, Fred Waldhauer, Robert Rauschenberg, and I decided to form Experiments in Art and Technology as a not-for-profit service organization for artists, engineers, scientists and industry, to promote artists' access to the new technology they wanted for their work. On November 30, 1966, we called a meeting at the Central Plaza Hotel on lower Broadway in New York to determine the amount of interest the artists had in this idea. Three hundred artists came to the meeting, and we collected eighty immediate requests for technical help. We realized that our first task was to interest more engineers in working with artists."
+        }
+    }, 
+    {
+        "pk": 19, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": "", 
+            "technologyTags": "", 
+            "activityTags": [
+                10
+            ], 
+            "name": "E.A.T. Publications", 
+            "description": "23. In January 1967 we began to publish a newsletter that reported on our efforts to structure E.A.T. and on the activities we were organizing to bring artists and engineers together. A year later, we split it into two publications: E.A. T. Operations and Information providing practical news about resources and procedures for member engineers and artists, and TECHNE, a newspaper with articles on collaborations and projects between artists and engineers using the new technology."
+        }
+    }, 
+    {
+        "pk": 20, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": "", 
+            "technologyTags": "", 
+            "activityTags": [
+                4
+            ], 
+            "name": "E.A.T. Technical Services", 
+            "description": "24. The idea of the one-to-one collaboration between individual artists and engineers or scientists was the basis of E.A.T. These collaborations made it possible for artists to pursue ideas that required the use of new technology, and the work could develop in directions that neither the artist or the engineer could have foreseen. We also believed that these collaborations could lead technology in directions more positive for the needs, desires, and pleasures of the individual. We developed the Technical Services Program, whose principal activity was to match artists who had technical problems or projects with engineers or scientists who could work with them. Over the years E.A.T. has helped thousands of artists who approached us for technical assistance. In 1967 Fred Waldhauer and L.J. Robinson collaborated with Rauschenberg on his large interactive sculpture Soundings. In this photograph Robinson, center, talks with Rauschenberg, to the right, during the installation of Soundings at the Stedelijk Museum in Amsterdam."
+        }
+    }, 
+    {
+        "pk": 21, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                4, 
+                22
+            ], 
+            "technologyTags": [
+                25, 
+                11, 
+                18, 
+                96, 
+                21, 
+                70
+            ], 
+            "activityTags": [
+                1
+            ], 
+            "name": "Soundings", 
+            "description": "25. In a silent space Soundings is a mirror, eight feet high and thirty-six feet long. Behind the partially mirrorized front layer are two layers of plexiglass with images of wooden chairs silkscreened on them. Different lights behind the sheets of plexiglass are triggered by sounds in the room so that sets of lights go on, and illuminated images of chairs are seen through the mirror. Technically, Soundings works by having the sound signal from microphones hung in front of the panels split into four frequency bands, chosen to correspond to the pitch of different human voices. The signal from each frequency band controls a set of thirty-six 150-watt spotlights. and the brightness of the lights varies in intensity based on the volume of the sound. Thus, one frequency band activates nine lights throughout the piece; and soft sounds will produce a low light level."
+        }
+    }, 
+    {
+        "pk": 22, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": "", 
+            "technologyTags": "", 
+            "activityTags": [
+                8
+            ], 
+            "name": "E.A.T. Press Conference", 
+            "description": "26. With the help of Theodore Kheel, we organized a press conference at Bob Rauschenberg's building on October 10, 1967, to formally launch E.A.T. It was accompanied by a one-day exhibition of works of art incorporating technology. Representatives from industry, labor, government, and the academic and technical communities, including John Pierce of Bell Laboratories, and Senator Jacob Javits, expressed support for E.A.T. at the press conference. Press coverage exceeded our expectations, including this above-the-fold article in The New York Times."
+        }
+    }, 
+    {
+        "pk": 23, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": "", 
+            "technologyTags": "", 
+            "activityTags": [
+                3, 
+                5, 
+                6
+            ], 
+            "name": "E.A.T. Lecture-Demonstrations", 
+            "description": "27. In the spring of 1968, E.A.T. organized a series of thirty lecture demonstrations by engineers and scientists for artists, held at the E.A.T. loft at 9 East 16th Street. The lectures covered such technical subjects as lasers and holography; computer generated sound and images; color theory; paper; television; and new HexcelTM materials. Speakers came from academic, industrial and government laboratories such as, Bell Laboratories, Massachusetts Institute of Technology, National Bureau of Standards, Eastman-Kodak, Columbia University, IBM, and Union Camp Company. In this photograph, Herwig Kogelnik, who did some of the fundamental work on lasers at Bell Laboratories in Murray Hill, N.J., gives a lecture on lasers and holography."
+        }
+    }, 
+    {
+        "pk": 24, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": "", 
+            "technologyTags": "", 
+            "activityTags": [
+                3
+            ], 
+            "name": "E.A.T. Local Groups", 
+            "description": "28. E.A.T. Local Groups began to spring up spontaneously as artists and engineers in areas outside New York contacted us wanting to set up artist-engineer collaborations to work with the new technology. We encouraged people to start Local Groups and gave them information and advice. By 1968 there were 28 E.A.T. Local Groups active in the U.S. and Canada, 4 in Europe and one in South America. In June 1968 we held an international conference at the loft in New York for E.A.T. representatives to meet and discuss ideas for organization and activities in their areas.\nWe also went on speaking tours to colleges and universities and visited Local Group meetings. In this photograph, I am speaking to a group in Toronto. Behind me is a projection of the first technical requests from the artists for 9 EVENINGS."
+        }
+    }, 
+    {
+        "pk": 25, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": "", 
+            "technologyTags": "", 
+            "activityTags": [
+                9
+            ], 
+            "name": "Participation to the Annual meeting (1967) of the Institute of Electrical and Electronics Engineers (IEEE)", 
+            "description": "29. The initial effort of E.A.T. in 1967 and 1968 was to generate publicity and contacts in order to recruit engineers to work with artists and to raise money for the operation of E.A.T. We arranged for artists to visit technical laboratories like Bell Laboratories in Murray Hill, N.J., IBM Laboratories in Armonk, N.Y., and RCA Sarnoff Laboratories in Princeton, N.J. We held a weekly open house at the E.A.T. loft, where artists and engineers could meet and talk informally. In March 1967 we took a booth at the annual meeting of the Institute of Electrical and Electronics Engineers (IEEE) where artists made the case for engineers getting involved. In this photograph artists Tom Gormley and Hans Haacke, far right, are talking to an engineer. Our recruiting efforts were successful. Within three years, in addition to 2,000 artist members, we had more than 2,000 engineer members all over the country. This made it possible to carry out our goal of responding to every artist who required technical help and matching the artists with engineers who could collaborate with them on ideas the artists couldn't execute by themselves."
+        }
+    }, 
+    {
+        "pk": 26, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": "", 
+            "technologyTags": "", 
+            "activityTags": [
+                3
+            ], 
+            "name": "E.A.T. Competition", 
+            "description": "30. Again to stimulate interest in the technical community, E.A.T., in November 1967, announced a competition for the best contribution by an engineer to a work of art made in collaboration with an artist. The. prize was to be given to the engineer, and the judges were all engineers.\nSome of the works were to be selected by Pontus Hult\u00e9n for his exhibition, \"The Machine,\" at the Museum of Modern Art in 1968. E.A.T. offered to find partners for ail engineers and artists who wanted to enter the competition.\n\n31. The E.A.T. competition generated more than 140 submissions from all over the world, and we decided to show all these works.  [\u2026]"
+        }
+    }, 
+    {
+        "pk": 27, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": "", 
+            "technologyTags": "", 
+            "activityTags": [
+                3, 
+                7
+            ], 
+            "name": "Some More Beginnings", 
+            "description": "31. The E.A.T. competition generated more than 140 submissions from all over the world, and we decided to show all these works. \"Some More Beginnings: Experiments in Art and Technology,\" which was the first major art and technology exhibition, opened at the Brooklyn Museum in November 1968. In this photo Peter Poole demonstrates Fakir in 3/4 Time by Niels and Lucy Young, which won a prize in the E.A.T. competition. On the same principle as a lariat, a loop of cotton ribbon held by vacuum to a rotating axle, moves 100 mph along itself, forming a standing stationary shape in space."
+        }
+    }, 
+    {
+        "pk": 28, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                6, 
+                8, 
+                21, 
+                22
+            ], 
+            "technologyTags": "", 
+            "activityTags": [
+                2
+            ], 
+            "name": "Pepsi Pavilion for Expo '70 in Osaka, Japan", 
+            "description": "32.\nIn September of 1968 Robert Breer introduced us to his neighbor, David Thomas of Pepsi Cola, who proposed that artists be involved in designing the Pepsi Pavilion for Expo '70 in Osaka, Japan. Breer and I chose Frosty Myers, Robert Whitman, and David Tudor to collaborate on the design of the Pavilion. As the design of the Pavilion developed, engineers and more artists were added to the project and given responsibility to develop specific elements. All in all 63 engineers, artists and scientists contributed to the design of the Pavilion.\nOutside the Pavilion, the dome, which had been decided on before we came into the project, was covered by a water vapor cloud sculpture, by Fujiko Nakaya. And on the plaza, seven of Robert Breer's Floats, six-foot high white sculptures, moved around slowly at less than 2 feet per minute, emitting sound. Four tall triangular towers held the lights for Myers' Light Frame sculpture.\n\n33.\nThis cross section of the Pavilion shows that visitors entered through a tunnel on the right, and descended into a dark clam-shaped room lit by moving patterns of laser light. Climbing the stairs, they came into the Mirror Dome, which was Bob Whitman's idea. It was a 90foot diameter 21O-degree spherical mirror made of aluminized mylar in which the real image of the floor and the visitors on it hung upside down in space over the their heads. David Tudor designed the sound system as an \"instrument\" with 32 input channels and 37 speakers arranged in a rhombic grid on the surface of the dome behind the mirror. Sound could be moved at varying speeds around or across the dome, or it could be shifted abruptly from any one speaker to another, creating point sources of sound. Both the lighting system, designed by artist Tony Martin, and the sound system could be pre-programed or controlled in real time from a console at one side of the Dome.\nThe artists wanted to create a Pavilion where the vis[i]tors could explore the envi[ro]nment and create their own experience. The artists also conceived of the Pavilion as a performance space, continuously programmed by visiting American and Japanese artists throughout the six months of Expo '70.\n\n34.\nThe sloping floor and ceiling of the Clam Room was designed by Robert Whitman to provide a transition between the outside of the Pavilion and the Mirror Dome upstairs. It was dark, with some light coming from the glass ceiling which was the center part of the floor of the Mirror Dome. A sound-activated laser deflection system showered the floor and visitors with moving patterns of laser light 10 feet across. Lowell Cross designed the system which split the beam from a krypton laser into four colors, and sent each color beam to sets of mirrors mounted at right angles and vibrating up to 500 cycles per second to create the patterns. This is a view of the Clam Room looking toward the entrance tunnel.\n\n35.\nThe original four artists wanted to cover the dome, which had been decided on before we became involved, with a cloud and asked Japanese artist Fujiko Nakaya to create it. We had already rejected chemical means of producing fog: carbon dioxide for environmental reasons and urea for public relations ones. Nakaya found cloud physicist Tom Mee in Pasadena, who designed a nozzle system for her. Water under pressure of 500 psi is pushed through an orifice 10 mil in diameter and hits a small pin which breaks the water into\ndroplets tiny enough to remain suspended in air. The system for the Pavilion consisted of 2,520 jet-spray nozzles organized in 10-foot strands of plastic pipe with one nozzle every foot, placed in the ridges and valleys on the top section of the roof. The system could generate a 6-foot thick 150-foot diameter area of low-hanging cloud. This required 41 tons of water per hour, and we had to build a small reservoir to continually feed the system. Nakaya took this photograph the first day she had the cloud system turned on full. The Expo fire brigade showed up, but much to their relief found only what they called 'water smoke.'\n\n36.\nA view of the Pavilion from the back with the cloud sculpture fully on and one of the towers for Myers' Light Frame sculpture. Nakaya designed a cloud control system to monitor the humidity and wind; different groups of nozzles were activated to produce more or less volume of cloud as the weather conditions demanded.\n\n37.\nThe spherical mirror in the Pepsi Pavilion, showing the real image of the floor and the visitors hanging upside down in space over their heads. This optical effect resembles that of a hologram. Because of the size of our mirror, a spectator looking at the real image of a person could walk around that image and see it from ail sides. The effect was spectacular.\nOur architect John Pearce devised an ingenious way the mylar mirror could be held up inside an air-tight spherical cage. A slight vacuum of less than 1/1000 of an atmosphere in the space between the cage and the mirror was sufficient to hold up the mirror. There was no need for cumbersome air locks.\nThe floor was divided into 10 areas made up of different materials, such as astroturf, rough wood, slate, tile, and asphalt. Through handsets, visitors could hear different sounds while standing on each different floor material: on the tile floor, horses hooves and shattering glass; on the astroturf, ducks, frogs, cicadas and lions roaring. These sounds were transmitted to the handset from wire loops embedded in the floor section.\n\n38.\nThis photograph of Ritty Burchfield with a flag is the first formal photograph taken in the mirror and was used for publicity in Japan. Remy Charlip used this flag and other large pieces of colored cloth for a performance in the Mirror on opening day of the Pavilion. The space in the mirror was gentle and poetic, rich and always changing. It was quite complex in spite of its simplicity. Every day we discovered new and complicated optical effects.\n\n39.\nThis photograph is printed upside down to demonstrate the real image effect in the mirror. We can clearly see the real image of the backs of two men (one wearing a white hat); and the fronts of the same two men standing on the floor, their arms raised, pointing toward their images. Visitors became very excited when they recognized themselves and their friends in the mirror.\n\n40.\nWe took this photograph on March 15, the opening day of Expo '70, as everyone climb[e]d onto the entrance tunnel for a group port[rai]t.\n1. Franny Breer, 2. David Tudor, 3. Julie Martin, 4. Calvin Tomkins, \n5. Jackie Serwer, 6. Robert Whitman (partially obscured), 7. Ardison\nPhillips, 8. Fujilko Nakaya, 9. Frosty Myers, 10. Dore Weiner, 11.\nSachiko Tamai, 12. John Ryde, 13. Carla Harrison, 14. Gordon Garmire,\n15. Robert Breer, 16. Lori Van't Slot, 17. Harry Harper, 18. Billy Kl\u00fcver, 19. \nRemy Charlip, 20. Babara Rose, 21. Lowell Van't Slot, 22. Howard\nChesney, 23. Fred Waldhauer, 24. Eric Saarinen, 25. Larry Owens, 26.\nPeter Poole, 27. John Pearce, 28. Maja Kl\u00fcver, 29. Olga Kl\u00fcver, 30. Tom\nMee, 31. Elsa Garmire, 32. Sig Stenlund.\nAbout three million people visited the Pavilion during the course of\nExpo '70. Ardison Phillips calculated that the average visitor spent 23 minutes in the Pavilion, longer than any other pavilion. As a matter of fact, we once saw a Japanese family sitting on the astroturf peacefully having their lunch.\n\n41.\nAt night Frosty Myers' Light Frame sculpture created a tilted rectangle of light around the Pavilion cutting through the Cloud on the dome. Four triangular poles of different heights, were set in a square 130 feet apart at each corner of the Pavilion plaza. At the top of each pole were two 500-watt, high intensity xenon lights, each light directed toward the light of the neighboring tower, creating a narrow beam of light between each tower to form the rectangle of light.\nThe number of technical breakthroughs in the Pavilion was quite astonishing: the cloud system, the 90-foot diameter spherical mirror, the xenon light frame, the sound loops in the floor, and the design of the control console. Almost everything we did was new and untried. But even more significant was that the Pavilion was a living, responsive environment: The Cloud and the Floats on the exterior were always moving, and inside the sound, lights and images in the mirror were always changing as people entered and explored it. The artists and engineers had created a large and complex work of art."
+        }
+    }, 
+    {
+        "pk": 29, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                17, 
+                19
+            ], 
+            "technologyTags": [
+                11
+            ], 
+            "activityTags": [
+                1
+            ], 
+            "name": "Pepsi Pavilion Floats", 
+            "description": "32. [...] And on the plaza, seven of Robert Breer's Floats, six-foot high white sculptures, moved around slowly at less than 2 feet per minute, emitting sound."
+        }
+    }, 
+    {
+        "pk": 30, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                17
+            ], 
+            "technologyTags": [
+                26
+            ], 
+            "activityTags": [
+                1
+            ], 
+            "name": "Pepsi Pavilion Light Frame", 
+            "description": "32. [...] Four tall triangular towers held the lights for Myers' Light Frame sculpture. \n\n33. At night Frosty Myers' Light Frame sculpture created a tilted rectangle of light around the Pavilion cutting through the Cloud on the dome. Four triangular poles of different heights, were set in a square 130 feet apart at each corner of the Pavilion plaza. At the top of each pole were two 500-watt, high intensity xenon lights, each light directed toward the light of the neighboring tower, creating a narrow beam of light between each tower to form the rectangle of light."
+        }
+    }, 
+    {
+        "pk": 31, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                17, 
+                21
+            ], 
+            "technologyTags": [
+                58, 
+                87, 
+                96
+            ], 
+            "activityTags": [
+                1
+            ], 
+            "name": "Pepsi Pavilion Fog Sculpture", 
+            "description": "32. [\u2026] Outside the Pavilion, the dome, which had been decided on before we came into the project, was covered by a water vapor cloud sculpture, by Fujiko Nakaya.\n\n35. The original four artists wanted to cover the dome, which had been decided on before we became involved, with a cloud and asked Japanese artist Fujiko Nakaya to create it. We had already rejected chemical means of producing fog: carbon dioxide for environmental reasons and urea for public relations ones. Nakaya found cloud physicist Tom Mee in Pasadena, who designed a nozzle system for her. Water under pressure of 500 psi is pushed through an orifice 10 mil in diameter and hits a small pin which breaks the water into\ndroplets tiny enough to remain suspended in air. The system for the Pavilion consisted of 2,520 jet-spray nozzles organized in 10-foot strands of plastic pipe with one nozzle every foot, placed in the ridges and valleys on the top section of the roof. The system could generate a 6-foot thick 150-foot diameter area of low-hanging cloud. This required 41 tons of water per hour, and we had to build a small reservoir to continually feed the system. Nakaya took this photograph the first day she had the cloud system turned on full. The Expo fire brigade showed up, but much to their relief found only what they called 'water smoke.'\n\n36. A view of the Pavilion from the back with the cloud sculpture fully on and one of the towers for Myers' Light Frame sculpture. Nakaya designed a cloud control system to monitor the humidity and wind; different groups of nozzles were activated to produce more or less volume of cloud as the weather conditions demanded.\n\n41. At night Frosty Myers' Light Frame sculpture created a tilted rectangle of light around the Pavilion cutting through the Cloud on the dome. [\u2026]"
+        }
+    }, 
+    {
+        "pk": 32, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                6, 
+                7
+            ], 
+            "technologyTags": [
+                92
+            ], 
+            "activityTags": [
+                1
+            ], 
+            "name": "Pepsi Pavilion Clam Room", 
+            "description": "34. The sloping floor and ceiling of the Clam Room was designed by Robert Whitman to provide a transition between the outside of the Pavilion and the Mirror Dome upstairs. It was dark, with some light coming from the glass ceiling which was the center part of the floor of the Mirror Dome. A sound-activated laser deflection system showered the floor and visitors with moving patterns of laser light 10 feet across. Lowell Cross designed the system which split the beam from a krypton laser into four colors, and sent each color beam to sets of mirrors mounted at right angles and vibrating up to 500 cycles per second to create the patterns. This is a view of the Clam Room looking toward the entrance tunnel."
+        }
+    }, 
+    {
+        "pk": 33, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                5, 
+                19
+            ], 
+            "technologyTags": [
+                21, 
+                28
+            ], 
+            "activityTags": [
+                1
+            ], 
+            "name": "Pepsi Pavilion Laser Deflection System", 
+            "description": "34. [\u2026] A sound-activated laser deflection system showered the floor and visitors with moving patterns of laser light 10 feet across. Lowell Cross designed the system which split the beam from a krypton laser into four colors, and sent each color beam to sets of mirrors mounted at right angles and vibrating up to 500 cycles per second to create the patterns. [...]."
+        }
+    }, 
+    {
+        "pk": 34, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                6, 
+                22, 
+                21
+            ], 
+            "technologyTags": [
+                25, 
+                40, 
+                92, 
+                83
+            ], 
+            "activityTags": [
+                1
+            ], 
+            "name": "Pepsi Pavilion Mirror Dome", 
+            "description": "33. [\u2026] Climbing the stairs, they came into the Mirror Dome, which was Bob Whitman's idea. It was a 90 foot diameter 210-degree spherical mirror made of aluminized mylar in which the real image of the floor and the visitors on it hung upside down in space over the their heads. \n\n37. The spherical mirror in the Pepsi Pavilion, showing the real image of the floor and the visitors hanging upside down in space over their heads. This optical effect resembles that of a hologram. Because of the size of our mirror, a spectator looking at the real image of a person could walk around that image and see it from ail sides. The effect was spectacular.\nOur architect John Pearce devised an ingenious way the mylar mirror could be held up inside an air-tight spherical cage. A slight vacuum of less than 1/1000 of an atmosphere in the space between the cage and the mirror was sufficient to hold up the mirror. There was no need for cumbersome air locks.\n\n38. This photograph of Ritty Burchfield with a flag is the first formal photograph taken in the mirror and was used for publicity in Japan. Remy Charlip used this flag and other large pieces of colored cloth for a performance in the Mirror on opening day of the Pavilion. The space in the mirror was gentle and poetic, rich and always changing. It was quite complex in spite of its simplicity. Every day we discovered new and complicated optical effects.\n\n39. This photograph is printed upside down to demonstrate the real image effect in the mirror. We can clearly see the real image of the backs of two men (one wearing a white hat); and the fronts of the same two men standing on the floor, their arms raised, pointing toward their images. Visitors became very excited when they recognized themselves and their friends in the mirror."
+        }
+    }, 
+    {
+        "pk": 35, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                6, 
+                9, 
+                12
+            ], 
+            "technologyTags": [
+                11, 
+                18
+            ], 
+            "activityTags": [
+                1
+            ], 
+            "name": "Pepsi Pavilion Sound System", 
+            "description": "33. [...] David Tudor designed the sound system as an \"instrument\" with 32 input channels and 37 speakers arranged in a rhombic grid on the surface of the dome behind the mirror. Sound could be moved at varying speeds around or across the dome, or it could be shifted abruptly from any one speaker to another, creating point sources of sound. Both the lighting system, designed by artist Tony Martin, and the sound system could be pre-programed or controlled in real time from a console at one side of the Dome."
+        }
+    }, 
+    {
+        "pk": 36, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                7, 
+                6
+            ], 
+            "technologyTags": [
+                21
+            ], 
+            "activityTags": [
+                1, 
+                21, 
+                7
+            ], 
+            "name": "Pepsi Pavilion Interior Light", 
+            "description": "33. [\u2026] Both the lighting system, designed by artist Tony Martin, and the sound system could be pre-programed or controlled in real time from a console at one side of the Dome."
+        }
+    }, 
+    {
+        "pk": 37, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                21, 
+                22
+            ], 
+            "technologyTags": [
+                11, 
+                18, 
+                6, 
+                14
+            ], 
+            "activityTags": [
+                1
+            ], 
+            "name": "Pepsi Pavilion Floor and Sound Loop System", 
+            "description": "37. [\u2026] The floor was divided into 10 areas made up of different materials, such as astroturf, rough wood, slate, tile, and asphalt. Through handsets, visitors could hear different sounds while standing on each different floor material: on the tile floor, horses hooves and shattering glass; on the astroturf, ducks, frogs, cicadas and lions roaring. These sounds were transmitted to the handset from wire loops embedded in the floor section."
+        }
+    }, 
+    {
+        "pk": 38, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                9
+            ], 
+            "technologyTags": [
+                21, 
+                11, 
+                18, 
+                25
+            ], 
+            "activityTags": [
+                3
+            ], 
+            "name": "Pepsi Pavilion Programming", 
+            "description": "33. [\u2026] The artists wanted to create a Pavilion where the vis[i]tors could explore the envi[ro]nment and create their own experience. The artists also conceived of the Pavilion as a performance space, continuously programmed by visiting American and Japanese artists throughout the six months of Expo '70."
+        }
+    }, 
+    {
+        "pk": 39, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": "", 
+            "technologyTags": [
+                99
+            ], 
+            "activityTags": [
+                3
+            ], 
+            "name": "Anand Project", 
+            "description": "42. Vikram Sarabhai, head of the Indian Atomic Energy Commission, asked E.A.T. to develop methods for creating instructional programming for television to be used for the ATS-F Satellite which was going to be placed over India. We assembled a group of specialists in engineering, education and television, as well as an artist, Robert Whitman. The group went to India in December 1969 and worked at the Anand Dairy Cooperative in Gujurat State to produce programs for the women who raise buffalo for milk production. We proposed using 1/2\" video equipment to gather material from the villages which would be used as visual research notes when the final instructional programs would be made for broadcast over the satellite. Our proposal, with its emphasis on local input was adopted and became  the  basis for the programming in what is now known as the SITE television satellite project. I consider this project to be E.A.T.'s most significant contribution."
+        }
+    }, 
+    {
+        "pk": 40, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                13
+            ], 
+            "technologyTags": "", 
+            "activityTags": [
+                3
+            ], 
+            "name": "American Artists in India", 
+            "description": "43. With support from Porter MacCray of the JDR III Fund, E.A.T. organized\ta project for open-ended cultural exchange, called American Artists in India. In 1970 and 1971 we sent nine artists to India for one month each to travel, study, teach or work on their own or on collaborative projects with Indian artists, as they chose. The artists documented their stay through drawings, photographs sound recordings or film. Artists who participated in the project were choreographers Trisha Brown, Steve Paxton, and Yvonne Rainer: composers Lowell Cross, Terry Riley, and LaMonte Young; and visual artists Jared Bark, Jeffrey Lew, Kate Rediker, and Marian Zazeela. In this photograph, Bark, with his hand on his head, talks with students at the National Institute of Design in Ahmedabad, with whom he worked."
+        }
+    }, 
+    {
+        "pk": 41, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                6, 
+                22
+            ], 
+            "technologyTags": [
+                99, 
+                12, 
+                100, 
+                101
+            ], 
+            "activityTags": [
+                3
+            ], 
+            "name": "Children and Communication", 
+            "description": "44. For the project Children and Communication, we linked one uptown and one downtown space in Manhattan with 14 dedicated telephone lines. The terminal equipment on these lines included facsimile machines, electro-writers, telex machines and telephones. Robert Whitman designed environments where the children could freely access all the equipment. For four months, in 1971 more than 500 children visited the two locations. They enthusiastically typed or hand-wrote messages, sent pictures and talked to children at the other location, children from other areas of the city they would not normally meet."
+        }
+    }, 
+    {
+        "pk": 42, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                22, 
+                21
+            ], 
+            "technologyTags": [
+                99, 
+                100
+            ], 
+            "activityTags": [
+                3
+            ], 
+            "name": "Telex: Q&A", 
+            "description": "45. E.A.T. developed an international communications project called Utopia: Q&A, as a contribution to Pontus Hulte\u0301n's exhibition on the Paris Commune, \"Utopia and Visions: 1871-1981.\" We linked four public spaces by telex: Automation House in New York, Moderna Museet in Stockholm, the National Institute of Design in Ahmedabad, India, and a Xerox exhibition space at the Sony building in Tokyo. Visitors were invited to ask people in other countries questions about 1981, ten years into the future. The questions from each site were sent to ail other sites and anyone, expert or layman, could answer the questions about the future.\nThis photograph shows the large public environment at the Tokyo telex site organized by Fujiko Nakaya (center), Hakudo Kobayashi (left), and Yuji Morioka (riqht), where people could come and read the telexes from ail over the world and then send their own questions or answers, and have their pictures taken for the project poster, which she printed at the end of the exhibition."
+        }
+    }, 
+    {
+        "pk": 43, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                5, 
+                6, 
+                8, 
+                14
+            ], 
+            "technologyTags": [
+                25, 
+                11, 
+                18, 
+                58
+            ], 
+            "activityTags": [
+                2
+            ], 
+            "name": "Island Eye Island Ear", 
+            "description": "46. David Tudor proposed a collaborative concert, \"Island Eye Island Ear,\" to use sound and visual elements to reveal the nature on an island. Parabolic antennas would create sound beams of natural sounds recorded earlier by Tudor on the island for people to walk through. In 1973 we traveled to Knavelskar in the Swedish Archipelago and made this map of the plans for Tudor's antennas, Fujiko Nakaya's fog sculpture areas, Jacqueline Matisse Monnier's kites, and Margaretha Asberg's dancers."
+        }
+    }, 
+    {
+        "pk": 44, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                22, 
+                21
+            ], 
+            "technologyTags": [
+                27
+            ], 
+            "activityTags": [
+                3
+            ], 
+            "name": "Interactive Display System for the Plaza", 
+            "description": "47. When Renzo Piano and Richard Rogers won the architectural competition to build Centre Georges Pompidou in Paris, they included in their winning design an outdoor projection screen on the building facing the large piazza in front to the building. E.A.T. received a contract to develop such a screen. With the help of subcontractor Ford Aerospace, we worked out a proposa for a system using a large projection screen made up of thousands of corner reflectors and an Eidophor projector. John Krauskopf, a researcher in perception at Bell Laboratories, worked with us on the specifications for the allowable space between the corner reflectors making up the screen. The biggest problem was to overcome the effect of the sunlight which would directly hit the screen. All these problems were solved, but the projection system was judged to be too expensive and was never built."
+        }
+    }, 
+    {
+        "pk": 45, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                14
+            ], 
+            "technologyTags": [
+                58
+            ], 
+            "activityTags": [
+                1
+            ], 
+            "name": "Opal Loop", 
+            "description": "48. In 1980 Trisha Brown asked Fujiko Nakaya to make a set for a new dance, Opal Loop. Fujiko designed a system for making a stage of fog for the dance, the volume and movement of the fog were controlled by turning sets of nozzles off and on to create convection currents. The dance was first performed in an old OC power station on Crosby Street in Manhattan. Later Trisha included Opal Loop in her program at the Brooklyn Academy of Music. We built a replica of the Brooklyn stage in my backyard and tested the fog system before moving into the theater. Since the dancers could not dance on a wet marley floor, we rented a large gas-driven heat blower, used in football stadium dugouts, and put it underneath the stage to raise the temperature of the floor so the fog droplets evaporated immediately, keeping the floor dry. In this photo, Trisha Brown, far left, and her dancers perform Opal Loop."
+        }
+    }, 
+    {
+        "pk": 46, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                14, 
+                21
+            ], 
+            "technologyTags": [
+                21, 
+                96, 
+                98, 
+                102
+            ], 
+            "activityTags": [
+                1
+            ], 
+            "name": "Astral Convertible", 
+            "description": "49. In 1989 Trisha Brown asked Bob Rauschenberg for a set for her dance Astral Convertible, to be performed in an outdoor space. Rauschenberg and I discussed the project, and I brought engineer Per Biorn into the collaboration. We designed and Biorn built open towers on wheels in which battery-powered motorcycle headlights on the towers face photocells on other towers so that the lights, and sound from tape recorders also located on the towers, are turned off and on as the dancers move among the towers."
+        }
+    }, 
+    {
+        "pk": 47, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": [
+                17, 
+                21
+            ], 
+            "technologyTags": [
+                11, 
+                96
+            ], 
+            "activityTags": [
+                1
+            ], 
+            "name": "Friends and Neighbors", 
+            "description": "50. Artists continue to approach E.A.T. for technical assistance. One of the most recent matchings we made was for Irina Nakhova, a Russian artist who works in New York. Nakhova wanted sculptures that reacted to the presence of viewers. I put her in touch with Per Biorn, who designed and built circuits in which sound was triggered by touch. They were built into the sculptures in the piece in this photograph, Friends and Neighbors, shown first at Hartford College for Women, then in Denmark in 1994, and later at the Cranbrook Museum of Art in Michigan. Nakhova dressed clothes dummies with old thrift store overcoats on which she had painted images of classical sculptures. When viewers approached and touched the coats, the sculptures sounded off with pre-recorded loud cries or insulting or angry comments. Nakhova has collaborated with other engineers on sculptures that inflate and change shape when viewers come close to them."
+        }
+    }, 
+    {
+        "pk": 48, 
+        "model": "archive.activity", 
+        "fields": {
+            "artTags": "", 
+            "technologyTags": "", 
+            "activityTags": [
+                3, 
+                11
+            ], 
+            "name": "9 Evenings Film Preservation", 
+            "description": "51. In 1996 E.A.T. began a film restoration and presentation project, using archival 16 mm film and reel-to-reel tape recordings that 1 had arranged to be shot and recorded during the 9 Evenings. The material was transferred to video. Swedish filmmaker Barbro Schultz Lundestam is editing the material to present each artists' original work as fully as possible. The videos will also include a documentary section of still photographs, artists' notes, and interviews with artists and engineers. The photograph above was taken from the screen of a television monitor during the editing of \u00d6yvind Fahlstr\u00f6m's work. Kisses Sweeter Than Wine, and shows characters Fahlstr\u00f6m called 'Chinese Sparrows' swinging from long swings attached to the ceiling of the Armory."
+        }
+    }
+]
