@@ -55,7 +55,7 @@
 <title>E.A.T. | {% block title %}{%endblock%}</title>
 </head>
 <body>
-
+{% url archive.views.overview as overview_url%}
 
 <!-- supersized! -->
 <div id="overlay" class="test"></div>
@@ -96,7 +96,7 @@
 	
 <!-- logo -->
 <div id="logo">
-  <a class="brand" style="color:black" href="/eat_datascape/">
+  <a class="brand" style="color:black" href="{{overview_url}}">
   	<img src="{{ STATIC_URL }}/images/logo_EAT.png">
   	<img src="{{ STATIC_URL }}/images/logo_EAT_black.png" style="display:none"></a>
 </div>
@@ -107,7 +107,8 @@
     <div class="menu grid_16 alpha omega" >
       
       <ul class="nav">
-        <li><a href="/eat_datascape/">Overview</a></li>
+      
+        <li><a href="{{overview_url}}">Overview</a></li>
         <!-- <li><input type="checkbox" id="help" />Help?</li> -->
         {% block menuItem %}{% endblock %}
       </ul>
