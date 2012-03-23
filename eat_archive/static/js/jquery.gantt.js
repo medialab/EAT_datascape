@@ -56,8 +56,8 @@ var methods = {
             container = this,
             
             // We calculate the minimum/maximum date of the project 
-            min_date = settings.min_date || _.min(phases, function(phase) {if (phase.start_date) return phase.start_date}).start_date,
-            max_date = settings.max_date || _.max(phases, function(phase) {if (phase.end_date) return phase.end_date} ).end_date,
+            //min_date = settings.min_date || _.min(phases, function(phase) {if (phase.start_date) return phase.start_date}).start_date,
+            //max_date = settings.max_date || _.max(phases, function(phase) {if (phase.end_date) return phase.end_date} ).end_date,
             
             // Overall duration
             total = max_date - min_date,
@@ -67,7 +67,7 @@ var methods = {
             draw_gantt_bar = function(phase) {
                 var duration = phase.end_date - phase.start_date,
                 left_offset = ( phase.start_date - min_date ) / total * 100;
-                
+                width=Math.floor(duration/total*100*10)/10
                 return $("<div></div")
                                .css({   "width"  : Math.floor(duration/total*100*10)/10 + "%", 
                                         "position" : "absolute",
