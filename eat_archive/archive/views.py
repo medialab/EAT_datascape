@@ -17,10 +17,14 @@ from django.shortcuts import redirect
 from django.contrib.auth import logout
 from django.core import serializers
 import json, time, pprint, urls, datetime, StringIO, networkx as nx
+import logging
 
 from django.db import connection, transaction
 cursor = connection.cursor()
 today = datetime.date.today()
+
+# logging
+logging.basicConfig(filename='/home/pom/eat_dev_logs/views.log',filemode="w+",level=logging.INFO)
 
 def _action_cloud(id=-1):
 	cloud=[]
@@ -176,25 +180,42 @@ def peopleAndPhasesInActivity(activity_id):
 
 def get_people_over_time():
     """ computes data for the overview curve """
+    people_by_month=[]
+    
     phases = Phase.objects.all().order_by("start_date").annotate(num_actor=Count("actors"))
-    opened_phases = []
-    nr_ppl_per_date = []
+    # thanks to order by, take the first
+    min_month=phases[0].start_date
+    min_month.replace(min_month.year,min_month.month,1)
+    # at least one phase has an None endate => today
+    max_month=datetime.date.today()
+    max_month.replace(max_month.year,max_month.month+1,1)
+    current_month=min_month
+    today=datetime.date.today()
     
-    def still_openc(p):
-        def still_open(p2):
-            if p2.end_date and p2.end_date > p.start_date:
-                return True
-            return False
-        return still_open  
+    # list of months of start_dates and end_dates from phases
+    list_months=[date.replace(day=1) for dates in ((p.start_date,p.end_date or today) for p in phases) for date in dates]
+    list_months=list(set(list_months))
+    list_months.sort()
     
-    for p in phases:
-        still_open = still_openc(p)
-        opened_phases = filter(still_open, opened_phases)
-        opened_phases.append(p)
-        nb_ppl = reduce(lambda x, y: x + y.num_actor, opened_phases, 0)
-        nr_ppl_per_date.append((p.start_date, nb_ppl,  "%s :: %i people :: %s ;;%s" % (p.activity.name, nb_ppl, p.start_date, p.activity.id)))
-    return nr_ppl_per_date
-    
+    for current_month in list_months :
+        # agregates by months
+        if current_month.month<12 :
+            next_month=current_month.replace(current_month.year,current_month.month+1,1)
+        else :
+            # go to next year
+            next_month=current_month.replace(current_month.year+1,1,1)
+        # filter phase which only intersect witht the current month
+        current_phases=filter(lambda p: (current_month <= p.start_date < next_month) or (p.start_date <= current_month <= (p.end_date or today)),phases) 
+        # sum nb of people
+        nb_ppl = reduce(lambda x, y: x + y.num_actor, current_phases,0)
+        # agregates activites
+        activity_names,activity_ids= zip(*[(p.activity.name,p.activity.id) for p in current_phases])
+        activity_ids=set(activity_ids)
+        # process output data
+        people_by_month.append((current_month, nb_ppl,len(activity_ids),"%s :: %i people :: %i activities :: %s" % (",".join(set(activity_names)), nb_ppl,len(activity_ids), current_month.strftime("%m/%Y"))))
+
+        
+    return people_by_month
 
 def getPhasesActivity(activity_id):
     phases = Phase.objects.select_related().filter(activity=activity_id)
@@ -245,8 +266,11 @@ def project(request, activity_id):
     data['annotations'] = ( Annotation.objects
                                 .filter(phases__in = Activity.objects.get(id=activity_id)
                                 .phases.all())
-                                .distinct() );
-                                
+                                .annotate(min_date=Min('phases__start_date')).order_by('min_date')
+                                .distinct()
+                                );
+        
+                      
     # dump the annotation for better javascript performances
     data['sources'] = {}
     for source in data['annotations'] :
@@ -268,7 +292,7 @@ def actor(request, actor_id):
     data["phases"] = json.dumps([ { 
                             "id" : phase.id,
                             "start_date" : phase.start_date,
-                            "end_date" : phase.end_date,
+                            "end_date" : phase.end_date if phase.end_date else datetime.date.today(),
                             "activity" : phase.activity.name,
                             "activity_id" : phase.activity.id,
                             "label" : [tag.tag for tag in phase.actionTags.all()],
@@ -318,7 +342,7 @@ def overview(request):
        , ("profiles", ActorProfileGlossary.objects.all().annotate(size = Count("actor")) ) 
        , ("art"     , ArtGlossary.objects.all().annotate(size = Count("activity")) )
        , ("techno"  , TechnologyGlossary.objects.all().annotate(size = Count("activity")) ) 
-       , ( "action" , ActionGlossary.objects.all().annotate(size = Count("phases")) ) 
+       , ( "action" , ActionGlossary.objects.all().annotate(size = Count("phases")) )   				
     ]
     data["nr_ppl_per_date"] = json.dumps(get_people_over_time(), default=dthandler)
     # data["images"] = [(anno.image ) for anno in Annotation.objects.filter(image__isnull = False) if anno.image]
