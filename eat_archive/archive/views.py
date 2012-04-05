@@ -209,10 +209,25 @@ def get_people_over_time():
         # sum nb of people
         nb_ppl = reduce(lambda x, y: x + y.num_actor, current_phases,0)
         # agregates activites
-        activity_names,activity_ids= zip(*[(p.activity.name,p.activity.id) for p in current_phases])
+        activity_names_numactors,activity_ids= zip(*[([p.activity.name,p.num_actor],p.activity.id) for p in current_phases])
+        # remove duplicates in activities ids
         activity_ids=set(activity_ids)
+        # group by activity name summing number of actors
+        _act_hash=dict()
+        for name,num_actors in activity_names_numactors : 
+            _act_hash[name]=_act_hash[name]+num_actors if name in _act_hash else num_actors
+        _activity_names_by_num_actors=list(_act_hash.iteritems())
+        _activity_names_by_num_actors.sort(lambda i,j:cmp(i[1],j[1]),reverse=True)
+        nb_act_treshold=20
+        # scaling done with NewValue = (((OldValue - OldMin) * (NewMax - NewMin)) / (OldMax - OldMin)) + NewMin
+        #scale_text_size=lambda nb_actor:(((nb_actor - _activity_names_by_num_actors[-1][1]) * (2 - 0.5)) / (_activity_names_by_num_actors[0][1] - _activity_names_by_num_actors[-1][1])) + 0.5
+        #ativities_str=",".join("<span style='font-size=%sem'>%s</span>"%(scale_text_size(num_actors),name) for name,num_actors in _activity_names_by_num_actors[:nb_act_treshold])
+        ativities_str=",".join(name for name,num_actors in _activity_names_by_num_actors[:nb_act_treshold])
+        if len(_activity_names_by_num_actors)>nb_act_treshold :
+            ativities_str+=" and %s more activities..."%(len(_activity_names_by_num_actors)-nb_act_treshold)
+        
         # process output data
-        people_by_month.append((current_month, nb_ppl,len(activity_ids),"%s :: %i people :: %i activities :: %s" % (",".join(set(activity_names)), nb_ppl,len(activity_ids), current_month.strftime("%m/%Y"))))
+        people_by_month.append((current_month, nb_ppl,len(activity_ids),"%s :: %i people :: %i activities :: %s" % (ativities_str, nb_ppl,len(activity_ids), current_month.strftime("%m/%Y"))))
 
         
     return people_by_month
@@ -338,11 +353,12 @@ def overview(request):
     data["places"] = Place.objects.filter(latitude__isnull=False).order_by("name").distinct()
     data["tag_clouds"] = [
          ("projects", Activity.objects.all().annotate(size = Count("phases__actors")).exclude(size__lt=3) ) 
+         , ( "activities" , ActionGlossary.objects.all().annotate(size = Count("phases")) )
        , ( "actors" , Actor.objects.all().annotate(size = Count("phases")).order_by("firstname").exclude(size__lt = 3) ) 
        , ("profiles", ActorProfileGlossary.objects.all().annotate(size = Count("actor")) ) 
        , ("art"     , ArtGlossary.objects.all().annotate(size = Count("activity")) )
        , ("techno"  , TechnologyGlossary.objects.all().annotate(size = Count("activity")) ) 
-       , ( "action" , ActionGlossary.objects.all().annotate(size = Count("phases")) )   				
+          				
     ]
     data["nr_ppl_per_date"] = json.dumps(get_people_over_time(), default=dthandler)
     # data["images"] = [(anno.image ) for anno in Annotation.objects.filter(image__isnull = False) if anno.image]
