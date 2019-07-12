@@ -1,6 +1,7 @@
 FROM python:2.7-alpine
 
 ENV prod=true
+ENV GUNICORN_WORKERS=2
 
 COPY . /
 WORKDIR /
