@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{%block title%}a graph exploration{% endblock %}
+{% block custom_head %}
+<script>
+console.log("here we are");
+</script>
+
+{% endblock %}
+
+{% block menuContent %}
+	<h1 class="title">EAT ARCHIVE <span id="project-date" class="date">graphs</span></h1>
+	<div id="project-auteurs" class="auteurs">network exploration</div>
+{% endblock %}
+
+{% block content %}
+	<div class="activity grid_16 alpha omega" style="margin-top:200px;">
+		<div style="margin:16px; padding-top:16px; border-top:1px solid whitesmoke;">
+			<h1>actor and activities of e.a.t.</h1>
+			<iframe frameborder="0" style="width: 100%; height:500px;" src="{{ STATIC_URL }}/widget/widget.html?net=EAT actors network.json" scrolling="no"></iframe>
+			
+		</div>
+	</div>
+{% endblock %}

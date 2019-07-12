@@ -1,0 +1,58 @@
+{% extends "middleware.html" %}
+{%block title%}a graph exploration{% endblock %}
+{% block custom_head %}
+<script>
+console.log("here we are");
+</script>
+
+{% endblock %}
+
+{% block itemslide %}{% endblock %}
+{% block itemmap %}{% endblock %}
+{% block map %}{% endblock %}
+
+{% block menuContent %}
+	<h1 class="title">E.A.T. ARCHIVE <span id="project-date" class="date">graphs</span></h1>
+	<div id="project-auteurs" class="auteurs">network exploration</div>
+{% endblock %}
+
+{% block content %}
+	
+{% endblock %}
+
+{% block pagetitle %}
+Network of Actors
+{% endblock %}
+
+{% block pagesubtitle %}{% endblock %}
+{% block pagetags %}a graph visualization{% endblock %}
+
+{% block view %}
+	<section id="view" class="grid_16" style="background: white;">
+		<div style="margin:16px;">
+			<div style="padding-bottom: 12px">
+			<p>
+				A visualisation of the network of actors rendered in Gephi, network analysis software.
+Measuring ‘betweeness centrality’ allows the viewer to focus on key actors in the organisation, e.g. Billy Klüver, Robert Rauschenberg, Julie Martin, Robert Whitman, etc.
+
+				<!--
+				Visualisation du réseau d'acteurs via le logiciels logiciel d'analyse de réseau Gephi  (selon la mesure dite de Betweenness centrality, qui met ici en valeurs les acteurs-clefs de l'organisation, comme Billy Klüver, Robert Rauschenberg, Julie Martin et Robert Whitman)
+				-->
+			</p>
+			<!-- p>
+			<i>Actors network visualisation realised in <a href="#//gephi.org">Gephi</a>, a network analysis software.<br/>The measure <i>'betweenness centrality'</i> allows viewer to focus on key actors in the organisation:  Billy Klüver, Robert Rauschenberg, Julie Martin and Robert Whitman</i>
+			</p -->
+			</div>
+			<iframe frameborder="0" style="width: 100%; height:500px;" src="{{ STATIC_URL }}/widget/widget.html?net=/actors_collaboration_network.gexf" scrolling="no"></iframe>
+			
+		</div>
+	
+	</section>
+	
+	<!-- filters -->
+	
+	
+	<!-- actors -->
+	
+
+{% endblock %}

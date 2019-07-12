@@ -11,6 +11,49 @@ import datetime
 from django.db.models import Avg, Max, Min, Count
 from copy import deepcopy
 
+
+def actors_collaboration_network_gexf(request) :
+    """ actor-actor network, link being copresence in same phase"""
+    G = nx.Graph()
+    
+    for phase in Phase.objects.all():
+        for actor1,actor2 in combinations(phase.actors.all(),2) :
+            for actor in actor1,actor2 :
+                if not G.has_node(actor.id) :
+                    G.add_node(actor.id,name=unicode(actor),profile=",".join(unicode(actorProfiletag) for actorProfiletag in actor.profileTags.all()))
+            weight=G[actor1.id][actor2.id]["weight"]+1 if G.has_edge(actor1.id,actor2.id) else 1
+            actions=",".join(set(  ( G[actor1.id][actor2.id]["actions"].split(",") if G.has_edge(actor1.id,actor2.id) else [] )+map(unicode,phase.actionTags.all())))     
+            activities=",".join(set( (G[actor1.id][actor2.id]["activities"].split(",") if G.has_edge(actor1.id,actor2.id) else []) + [unicode(phase.activity)]))
+            G.add_edge(actor1.id, actor2.id,weight=weight, actions=actions,activities=activities)
+        
+    output_gexf = StringIO.StringIO()    
+    nx.write_gexf(G,output_gexf)    
+    response = HttpResponse(output_gexf.getvalue(),mimetype="text/gexf")
+    response['Content-Disposition'] = 'attachment; filename=actors_collaboration_network.gexf'
+    return response
+
+def activity_actors_network_gexf(request) :
+    G = nx.Graph()
+    for activity in Activity.objects.all() :
+        G.add_node("activity_"+str(activity.id),name=unicode(activity),type='activity')
+        for phase in activity.phases.select_related().all() :
+            for actor in phase.actors.all() :
+                if not G.has_node(actor.id) :
+                    G.add_node("actor_"+str(actor.id),name=unicode(actor),type='actor',profile=",".join(unicode(actorProfiletag) for actorProfiletag in actor.profileTags.all()))
+                weight=G[actor.id][activity.id]["weight"]+1 if G.has_edge(actor.id,activity.id) else 1
+                actions=",".join(set(  ( G[actor.id][activity.id]["actions"].split(",") if G.has_edge(actor.id,activity.id) else [] )+map(unicode,phase.actionTags.all())))     
+                G.add_edge("actor_"+str(actor.id), "activity_"+str(activity.id),weight=weight, actions=actions)
+                
+        for activity_linked in activity.children.all() :
+            G.add_node("activity_"+str(activity_linked.id),name=unicode(activity_linked),type='activity')
+            G.add_edge("activity_"+str(activity.id),"activity_"+str(activity_linked.id))
+    # using a memory file to store gexf in a buffer. We don't want to write this on the disk
+    output_gexf = StringIO.StringIO()    
+    nx.write_gexf(G,output_gexf)    
+    response = HttpResponse(output_gexf.getvalue(),mimetype="text/gexf")
+    response['Content-Disposition'] = 'attachment; filename=activity_actors_network.gexf'
+    return response
+
 def actors_network_gexf(request) :
     G = nx.Graph()
     

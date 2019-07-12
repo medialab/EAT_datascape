@@ -1,0 +1,170 @@
+{% extends "boilerplate.html" %}
+{%block title%}an exploration of the project{% endblock %}
+
+{% block body %}
+	<!-- logo -->
+	<div id="logo">
+	  <a class="brand" style="color:black" href="{{ overview_url }}">
+	  	<img src="{{ STATIC_URL }}/images/logo_EAT.png">
+	  	<img src="{{ STATIC_URL }}/images/logo_EAT_black.png" style="display:none"></a>
+	</div>
+
+	<!-- slideshow -->
+	<div id="slideshow">
+	<div id="slide-container"></div>
+	<div id="overlay"></div>
+	<div id="slideshow_info" style="display:none;">
+		A text here
+	</div>
+	<div id="slideshow_left"></div>
+	<div id="slideshow_right"></div>
+	</div>
+
+	<!-- menu accessible -->
+	<div id="menu-utils">
+		{% block itemvideo %}<div class="item video"></div>{% endblock %}
+		{% block itemslide %}<div class="item slides"></div>{% endblock %}
+		{% block itemmap %}<div class="item map"></div>{% endblock %}
+		{% block totop %}<div class="item totop"></div>{% endblock %}
+	</div>
+	
+	<header class="container_16">
+		
+		<div id="header-outer" class="grid_16">
+			<!-- our video container -->
+			
+			<div id="iframe-video" style="position:absolute; text-align: center;background: #303030; height:562px; top: -562px; left:0px; width:100%">
+				<video width="320" poster="{{ STATIC_URL }}/video/poster.jpg" height="240" controls="controls" style="width:100%;height:100%">
+  					<source src="{{ STATIC_URL }}/video/EAT_video.mp4" type="video/mp4" />
+  					<track src="{{ STATIC_URL }}/video/subtitles.srt" kind="subtitle" srclang="en-US" label="English" />
+ 					Your browser does not support the video tag.
+				</video>
+				<div id="fake-nav" style="position:absolute; top:0px; width:100%; text-align:left">
+					<a href="#" class="video-toggle">back to exploration</a>
+				</div>
+				
+				
+			</div>
+			<div id="header-inner">
+				<ul class="nav">
+	      			<li><a href="/">Overview</a></li>
+		        	<li><a href="#" class="video-toggle">video</a></li>
+		        	<li>|</li>
+		        	<li><a href="/graph_dev/">graph</a></li>
+		        	<li>|</li>
+		        	<li><a href="/credits_dev/">credits</a></li>
+		        	<!-- <li><input type="checkbox" id="help" />Help?</li> -->
+		        	{% block menuItem %}{% endblock %}
+		      	</ul>
+				<div class="logo">
+					<a href="#//medialab.sciences-po.fr"><img src="{{ STATIC_URL }}/images/Sc-Po-Medialab-blanc-0.5.png"></a>
+				</div>
+			</div>
+			<div id="page-title">
+				<h1>{% block pagetitle %}{% endblock %}<span>{% block pagesubtitle %}{% endblock %}</span>
+					{% block relatedstuff %}{% endblock %}
+				</h1>
+				<div id="tags">{% block pagetags %}{% endblock %}</div>
+				
+			</div>
+		</div>
+	</header>
+	
+	<div class="container_16">
+		{% block view %}
+		<section id="view" class="grid_16">
+			<div class="grid_12 alpha">
+				<div id="view-left">{% block viewcontent %}WHO{% endblock %}</div>
+				
+			</div>
+			<div class="grid_4 omega">
+				<div id="view-right">
+					{% block sidebar %} Source {% endblock %}
+				</div>
+			</div>
+			<div class="clear"></div>
+		</section>
+		
+		{% endblock %}
+		{% block map %}
+		<section id="map" class="grid_16">
+			<div class="grid_4 alpha">
+				<div id="locations">
+				<h2>Places</h2>
+	            <p class="help" style="display:none">
+	                Here are all the places involved in this project.<br/>
+	                Click on a place, you'll jump to it directly on the map.
+	            </p>
+	            {% for place in places %}
+	            <div class="map-location" data-jmapping="{id: {{place.id}},point: {lng: {{place.longitude|stringformat:'f' }}, lat: {{place.latitude|stringformat:'f' }}}, category: 'museum'}"> 
+	                <a href="#" class="map-link">{{place.name}}</a>
+	                <div class="info-box">
+	                    <p>
+	                        <h3>{{ place.name }}</h3>
+	                        {% if place.address %}{{ place.address }}<br/>{%endif%} 
+	                    </p>
+	                </div>
+	            </div>
+	            {% endfor %}
+				</div>
+			
+			</div>
+			<div class="grid_12 omega">
+				<div class="google-map-outer">
+					<div id="google-map"></div>
+				</div>
+			</div>
+			<div class="clear"></div>
+
+		</section>
+		
+		<!-- map scripts -->
+		<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3.5&sensor=false"></script>
+		<script type="text/javascript" src="{{ STATIC_URL }}/js/markermanager.js"></script>
+		<script type="text/javascript" src="{{ STATIC_URL }}/js/StyledMarker.js"></script>
+		<script type="text/javascript" src="{{ STATIC_URL }}/js/jquery.metadata.js"></script>
+		<script type="text/javascript" src="{{ STATIC_URL }}/js/jquery.jmapping.js"></script>
+
+		<script>
+			// make the google map
+			$(window).load(function(){
+    			$('#google-map').jMapping({
+    				side_bar_selector:"#locations"
+    			});
+			});
+		</script>
+		<!-- endof map-->
+		{% endblock %}
+		<div class="clear"></div>
+	</div>
+	
+	{% block dialog %}
+	<div class="modal" id="source-dialog" style="display:none">
+		<div class="modal-header">
+			<a href="#" class="close">×</a>
+			<h3><!-- {{ activity }} &bull; --><span id="source-header">subtitle</span></h3>
+		</div>
+		<div class="modal-body" id="source">
+				<div id="note-attached">
+					<div class="scrollable-scrollbox">
+						<div class="scrollable-container">
+				    		<div class="scrollable-content">
+				    			<!-- h2 id="source-title"></h2 -->
+								
+				    			<div id="source-image"></div>
+				    			<div id="source-text"></div>
+				    			<div id="source-info"><span id="source-authors"></span><span id="source-mark"></span>
+				    			</div>
+				    			<div id="source-reference"></div>
+				    		</div>
+				    	</div>
+				    	<div class="dragger_container">
+		    				<div class="dragger"></div>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>
+	{% endblock %}
+{% endblock %}
+

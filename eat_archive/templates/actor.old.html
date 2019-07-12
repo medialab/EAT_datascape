@@ -1,0 +1,387 @@
+{% extends "base.html" %}
+{%block title%}{% if actor.firstname %}{{actor.firstname}} {% endif %}{{actor.name}}{% endblock %}
+
+{% block custom_head %}
+<script type="text/javascript"  src="{{ STATIC_URL }}/js/jquery.mCustomScrollbar.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}/js/jquery.anythingzoomer.min.js"></script>
+<script type="text/javascript">
+
+var main_gantt = {{phases|safe}}
+  , formatTitle = function (phase) { 
+        content = "<div class='title'>" + phase.activity + "</div>"
+        content+= phase.label.join(" ") + "<br>";
+        content+= $.datepicker.formatDate("dd/mm/yy", phase.start_date) + " - "
+        content+= $.datepicker.formatDate("dd/mm/yy", phase.end_date) + ""
+        return content
+    }
+  , actor_gantt_config = {
+        "min_date" : min_date,
+        "max_date" : max_date,
+        "title" : formatTitle,
+        "content" : function(phase) {return "";},
+        "customClass" : function(phase) { return "phase" + phase.id; },
+        "height" : "7px"
+    };
+    
+main_gantt = _.map(main_gantt, function(phase) {
+    phase.start_date = $.datepicker.parseDate('yy-mm-dd', phase.start_date);
+    if (phase.end_date)
+        phase.end_date = $.datepicker.parseDate('yy-mm-dd', phase.end_date);
+    return phase;
+});
+
+var min_date = _.min(main_gantt, function(phase) {if (phase.start_date) return phase.start_date}).start_date
+  , max_date = _.max(main_gantt, function(phase) {if (phase.end_date) return phase.end_date}).end_date
+  , phases_by_activity = _.sortBy(_.groupBy(main_gantt, function(phase) { return phase.activity_id }), function(phases_by_activity) {return -phases_by_activity.length});
+
+$(function() {
+
+    _.each(phases_by_activity, function(phases, activity_id) {
+        activity_row = $("<div>", {"class" : "line actor"})
+        
+        html = "<p><a href='../project/" + phases[0].activity_id + "'>" + phases[0].activity +"</a></p>"
+        
+        $("<div/>",{'class':"name grid_3 alpha"}).html(html).appendTo(activity_row);
+        $("<div>", {"class" : "mz-container mz-binded"}).append(
+            $("<div>", {"class" : "mz-content"} ).gantt(phases, actor_gantt_config))
+        .appendTo(activity_row).addClass("grid_9 omega")
+        
+        
+        
+    
+    
+    
+        $("<div>", {"class" : "clear"}).appendTo(activity_row);
+        activity_row.appendTo("#activities");
+    });
+    
+    $("#timegrid").timeline({
+        dates : {
+            min : min_date,
+            max : max_date
+        }   
+    });
+    
+
+    $(".gantt-bar").qtip(EAT.qTipConfig)
+    $('#map').jMapping();
+    $(".help").hide();
+    $("#help").change(function() {
+        if ( $(this).is(":checked") )
+            $(".help").show(300);
+        else
+            $(".help").hide(300);
+    });
+	
+	var byImportance = function(a,b) {
+        return parseInt(b.s) - parseInt(a.s) 
+    }
+    /*
+    $("#mz-master").makeZoomable();
+	$(".mz-binded").makeZoomable("bind", $("#mz-master"), function(item) {});
+	$("#mz-master").dragscrollable({dragSelector: '.dragger:first', acceptPropagatedEvent: true});
+    */
+    // --------
+    // BINDINGS
+    // --------
+    $(".gantt-bar").hover(
+        function () {
+            classes = $(this).attr("class").split(" ");
+            nr_phase = _.find(classes, function (class_str) {
+                return class_str.match("phase[1-9]+")
+            });
+            rows = $("."+nr_phase).addClass("mainHovered")
+                        .parent().not("#gantt")
+                        .parent().not("#mainrow").addClass("highlit");
+            if ($("#onlySelected").is(":checked") )
+                rows.slideToggle(300);
+        }, 
+        
+        function () {
+            classes = $(this).attr("class").split(" ");
+            nr_phase = _.find(classes, function (class_str) {
+                return class_str.match("phase[1-9]+")
+            });
+            rows = $("."+nr_phase).removeClass("mainHovered")
+                           .parent().not("#gantt")
+                           .parent().removeClass("highlit");
+            if ($("#onlySelected").is(":checked") )
+                rows.slideToggle(300);
+        }
+    );
+    
+    $("#expandGantt").change(function() {
+        if ( $(this).is(":checked") ) 
+            $("#gantt").gantt("expand", "40px");
+        else
+            $("#gantt").gantt("expand", "20px");
+    });
+
+    $("#sortImportanceCollaborators").click(function() {
+        $(".collaborator").tsort({
+           "attr" : "data-importance",
+           "order": "desc",
+           "sortFunction" : byImportance
+        });
+    });
+    
+    $("#sortAZcollaborators").click(function() {
+        $(".collaborator").tsort();
+    });
+});
+
+
+</script>
+{% endblock %}
+
+
+
+
+
+{% block menuContent %}
+	<h1 class="title">{% if actor.firstname %}{{actor.firstname}} {% endif %}{{actor.name}} <span id="project-date" class="date">{%for tag in actor.profileTags.all %}{{tag|lower}} {% endfor %}</span></h1>
+	<div class="tags last-list">
+	    {%for tag in art_tags %}<span class="tag">{{tag|lower}}</span> {% endfor %} - 
+	    {%for tag in techno_tags %}<span class="tag">{{tag|lower}}</span> {% endfor %}
+	</div>
+
+{% endblock %}
+
+
+{% block content %}
+
+<script type="text/javascript">
+	$(window).load(function() {
+		EAT.supersize.disable();
+		
+		EAT.initView();
+		
+		EAT.initCustomScrollbars();
+		$('#map').jMapping();
+	});
+</script>
+<style>
+	
+</style>
+	<!-- @section 1: gannts -->
+	<div class="activity grid_12 alpha" >
+		<h2>Projects</h2>
+		<div class="grid_3 alpha">
+			<!-- contains a draggable object in the middle. Its height shoud equal the #timegrid height. Its width is grid_3 minus 8 margin pixel minus 2 border pixel -->
+			<div id="time-navigator">
+				<div id="zoom-info">1x</div>
+				<div id="time-pointer" class="draggable"></div>
+				<div id="zoom-left"  class="attractor"></div>
+				<div id="zoom-right" class="attractor"></div>				
+			</div>
+			
+		</div>
+		<div class="grid_9 omega">
+			<div id="mz-master"  class=" mz-container">
+			    <div class="mz-content dragger">
+			        <div id="timegrid" style="height:50px"></div>
+			    </div>
+		    </div>
+		</div>
+		<div class="clear"></div>
+		
+		<script>
+				EAT.functions = {};
+				EAT.functions.ratio = function( v1,r1, r2 ){
+					return v1 * r2 / r1;
+				}
+				
+				EAT.navigator = { 
+					target:{ $item: $("#mz-master .dragger"), 
+						min_width:$("#mz-master .dragger").width(), 
+						max_width: 2000,
+						width:-1,			// updated autonatically, by update function
+						min_left: 0,		// original left
+						max_left: 0,		// according to width,
+						left:-1				// auto
+					}, 
+					pointer:{ 
+						position:{ 
+							center:{x:80,y:13}
+						}
+					},
+					speed:{}, coeff:{}, pos:{},
+					updater:{}
+				};
+				// smooth BACK-To-THE-CENTER function
+				EAT.navigator.pointer.position.reset = function( event, ui ){
+					$( "#time-pointer" ).animate({
+						top:EAT.navigator.pointer.position.center.y,
+						left: EAT.navigator.pointer.position.center.x
+					},200);
+					EAT.navigator.stop() ;
+				};
+				
+				/** handle position, speed and ceff vector. auto call start to start timeinterval */
+				EAT.navigator.navigate = function( event, ui ){
+					// get current position accordintg to the center
+					EAT.navigator.pos = {
+						x: ui.position.left - EAT.navigator.pointer.position.center.x,
+						y: ui.position.top - EAT.navigator.pointer.position.center.y
+					}
+					
+					// computate speed vector, x and y, range -1, +1
+					EAT.navigator.speed = {
+						x: EAT.functions.ratio( EAT.navigator.pos.x, EAT.navigator.pointer.position.center.x, -1 ),
+						y: EAT.functions.ratio( EAT.navigator.pos.y, EAT.navigator.pointer.position.center.y, 1 )
+					}
+					
+					// correction coefficient for speed, in x and y
+					EAT.navigator.coeff = { x:20, y: -.05 }
+					
+					if( EAT.navigator.started ) return;	// autoupdate with update
+					
+					EAT.navigator.start() ;
+					
+				};
+				
+				EAT.navigator.update = function(){
+					EAT.navigator.stop();
+					
+					var $w = EAT.navigator.target.$item.width();
+					var $nw = $w + $w * EAT.navigator.speed.y * EAT.navigator.coeff.y;
+					
+					// width computation
+					if( $nw > EAT.navigator.target.max_width ){
+						$nw = EAT.navigator.target.max_width;// flat to max_width;
+					} else if( $nw < EAT.navigator.target.min_width ){
+						$nw = EAT.navigator.target.min_width;// flat to min_width
+					}
+					
+					EAT.navigator.target.$item.width( $nw );
+					// bound computations
+					
+					// left computation
+					var $l = EAT.navigator.target.$item.css("left").split("px")[0];
+					$nl = $l == "auto"? 0: parseFloat( $l ); // non numeric value handler
+					
+					$nl += EAT.navigator.speed.x * EAT.navigator.coeff.x;
+					
+					if( $nl > 0 ) $nl = 0;
+					if( $nl < EAT.navigator.target.min_width - $nw ) $nl = EAT.navigator.target.min_width - $nw;
+					console.log( $nl, $l, EAT.navigator.speed.x * EAT.navigator.coeff.x );
+					
+					EAT.navigator.target.width = $nw;
+					EAT.navigator.target.left  = $nl; 
+					
+					EAT.navigator.target.$item.css("left", $nl );
+					EAT.navigator.propagate( {width:$nw,left:$nl} );
+					
+					EAT.navigator.start();
+					
+					// ABSOLUTE TO WINDOW…. crasp!!!
+					// $( ".mz-content.dragger" ).draggable( "option", "containment", [ EAT.navigator.target.min_width - $nw, 0, $nw, 0 ] );	
+					
+				}
+				EAT.navigator.stop = function(){
+					clearInterval( EAT.navigator.timer );
+					EAT.navigator.started = false;
+				}
+				
+				EAT.navigator.propagate = function( options ){
+					$(".mz-content.gantt-container").css( options );
+				}
+				
+				EAT.navigator.start = function(){
+					if( EAT.navigator.started ) return;
+					EAT.navigator.started = true;
+					EAT.navigator.timer = setInterval( EAT.navigator.update, 25 )
+				}
+				
+				$( "#time-pointer" ).draggable({ containment: "parent", 
+					stop: EAT.navigator.pointer.position.reset,
+					drag: EAT.navigator.navigate
+				});
+				$( ".mz-content.dragger" ).draggable({ 
+					axis: "x",
+					// containment : [ -100, 0, 100, 50 ],
+					drag: function( event, ui ){
+						EAT.navigator.propagate({left:ui.position.left});	
+					}
+				});
+			</script>
+		
+		<h2>What else ?<div class="filters"></div></h2>
+		<p class="help">Related activities</p>
+		<div id="activities"></div> 
+	</div>
+	
+    <!-- @section 2: annotations -->
+	<div class="annotations grid_4 omega test">
+		<div id="mcs3_container">
+			<div class="scrollable-scrollbox">
+				<div class="scrollable-container" >
+		    		<div class="scrollable-content">
+						<h2>With who ?</h2>
+						Sort by :
+						<button class="btn small" id="sortAZcollaborators">A-Z</button>
+						<button class="btn small" id="sortImportanceCollaborators">importance</button>
+						<div style="padding-top:9px;">
+						{% if collaborators %}
+							<!-- {{ collaborators }} -->
+							{%for collaborator in collaborators %}
+							<div class="collaborator" data-importance="{{collaborator.count}}">
+								<a href="{{collaborator.id}}">{{collaborator}} ({{collaborator.count}})</a>
+							</div>
+							{% endfor %}
+						{% endif %}
+						</div>
+		    		</div>
+				</div>
+				<div class="dragger_container">
+		    		<div class="dragger"></div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	
+	
+	<!-- section 3: google maps and tags clouds, called #maps-->
+	<div id="maps" class="google-map grid_16 alpha omega">
+		<div id="tagclouds" class="grid_3 alpha">
+	            <h2>What did he do ?</h2>
+	            <!-- p class="help">
+	                Here is a tagcloud of the different types of actors. The bigger a word is
+	                means that more people of this type collaborated on this project. 
+	            </p -->
+	            <div id="action_tag_cloud" class="tag_cloud">
+	                {% for action_tag in action_tags %}
+	                    <div class="tag" data-tag="{size:{{action_tag.count}}}">{{action_tag.tag}}</div><br/>
+	                {% endfor %}
+	            </div>
+	            <script type="text/javascript">
+	                $("#action_tag_cloud").tagcloudsemantic({"max_size" : 2});
+	            </script>
+	    </div>
+		<div id="map-side-bar" class="grid_3">
+	            <h2>Where ?</h2>
+	            <!-- p class="help">
+	                Here are all the places involved in this project.<br/>
+	                Click on a place, you'll jump to it directly on the map.
+	            </p -->
+	            {% for place in places %}
+	            <div class="map-location" data-jmapping="{id: {{place.id}},point: {lng: {{place.longitude|stringformat:'f' }}, lat: {{place.latitude|stringformat:'f' }}}, category: 'museum'}">
+	            	<span style=""><a href="#" class="map-link">{{ place.name }}</a></span>
+	                <!--<a href="#" class="map-link">{% if place.address %}{{ place.address }}{% else %}{{ place.name }}{%endif%}</a>-->
+	                
+	                <div class="info-box">
+	                    <p>
+	                        <span style="">{{ place.name }}</span>
+	                        {% if place.address %}{{ place.address }}<br/>{%endif%} 
+	                    </p>
+	                </div>
+	            </div>
+	            {% endfor %}
+	    </div>
+	    <!-- Map -->
+	    <div class="grid_10 omega" >
+	        <div id="map"></div>
+	    </div>
+	</div>
+{% endblock %}

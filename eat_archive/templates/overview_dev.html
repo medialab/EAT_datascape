@@ -1,0 +1,193 @@
+{% extends "middleware.html" %}
+{%block title%}a graph exploration{% endblock %}
+
+{% block pagetags %}An Exploration of the Experiments in Art and Technology Archives{% endblock %}
+
+{% block pagetitle %} E.A.T. DATASCAPE {% endblock %}{% block pagesubtitle %} 1962-TODAY {% endblock %}
+
+{% block vars %}
+	var images = {% autoescape off %} {{ json_images }} {% endautoescape %};
+	
+{% endblock %};
+
+
+{% block sidebar %}
+	<h2>E.A.T. Actors</h2><div class="filters" style="display:none"></div>
+	<div id="sources-list" class="collaborators">
+	{% if collaborators %}
+							<!-- {{ collaborators }} -->
+							{%for collaborator in collaborators.all %}
+							<div class="source-link{% for phase in collaborator.phases.all %} phase_{{ phase.id}}{% endfor %}" data-importance="{{collaborator.count}}">
+								<a href="./actor/{{collaborator.id}}">{{collaborator}} ({{collaborator.count}} )</a>
+							</div>
+							{% endfor %}
+						{% endif %}
+	</div>
+{% endblock %}
+
+{% block custompreinit %}EAT.view.stiritup=false;{% endblock %}
+
+{% block custom_head %}
+	<!-- link rel="stylesheet" href="{{ STATIC_URL }}/css/line.css" -->
+	<script type="text/javascript" src="{{ STATIC_URL }}/js/underscore-min.js"></script>
+	<script src="{{ STATIC_URL }}/js/d3.js"></script>
+	<script src="{{ STATIC_URL }}/js/d3.time.js"></script>
+	
+{%endblock%}
+
+{% block bottomscripts %}
+<script>
+//d3 is here;
+</script>
+
+{% endblock %}
+
+
+{% block viewcontent %}
+<div class="grid_12 alpha omega">
+	<div id="chart"></div>
+	<div id="time-points">
+		
+	</div>
+	
+	
+
+
+</div>
+<div class="clear"></div>
+<div class="grid_12 alpha omega">
+	<div style="float:right;margin-top:36px;margin-right:12px"><button id="sorting-alpha">A-Z</button><button id="sorting-sizes">0-9</button></div>
+	<ul id="cloud-tabs">
+	{% for category, _ in tag_clouds %}
+		  <li {% if forloop.first %}class="{{category|lower}} active "{%else%}class="{{category|lower}}"{% endif %}><span class="{{category|lower}}" href="#{{category|lower}}">{% ifequal category 'projects' %}Activities {% else %}{% ifequal category 'activities' %}Type of Activity{% else %}{{ category}}{% endifequal %}{% endifequal %} </span></li>
+	{% endfor %}
+	<!--  li class="active"><a href="#activities">Projects and activities</a></li>
+	  <li><a href="#profile">Profile</a></li>
+	  <li><a href="#messages">Messages</a></li>
+	  <li><a href="#settings">Settings</a></li -->
+	</ul>
+	<div id="cloud-tabs-content">
+		{% for category, tag_cloud in tag_clouds %}
+			<div {% if forloop.first %}class="active tab-pane"{% else %}class="tab-pane" style="display:none"{% endif %} id="{{category|lower}}">
+			<!-- {{category|lower}} -->
+			
+			{% for tag in tag_cloud %}
+				{% ifequal category 'projects' %}
+					<div class="tag{%for p in tag.phases.all %} phase_{{p.id}}{% endfor %}" title="{{tag.size}} people involved" data-size="{{tag.size}}"><a href="./project/{{ tag.id }}">{{ tag.name }}</a></div>
+				{% else %}
+                    {% ifequal category 'actors' %}
+                    	<div class="tag" title="involved in {{tag.size}} phases of an EAT project" data-size="{{tag.size}}"><a href="./actor/{{ tag.id }}">{{ tag.name }}</a></div>
+                    {% else %}
+                    	<div class="tag" data-size="{{tag.size}}">{{tag.tag}}</a></div>
+                    {% endifequal %}
+				{% endifequal %}
+				
+			{% endfor %}
+			</div>
+		{% endfor %}
+	</div>
+	
+	
+	
+</div>
+
+
+
+
+
+
+<script type="text/javascript">
+var data = {{nr_ppl_per_date|safe }};
+
+var giddap = {};
+
+giddap.min_date = new Date(data[0][0]);
+giddap.max_date = new Date(data[data.length-1][0]);
+giddap.min_time = giddap.min_date.getTime();
+giddap.max_time = giddap.max_date.getTime();
+giddap.del_time = giddap.max_time - giddap.min_time;
+
+console.log("d3 graph dates", data[0][0], giddap.min_date, data[data.length-1][0], giddap.max_date);
+
+// rebuid dates by using date object
+_.map(data, function(item) {
+    item[4] = new Date(item[0]);
+    return item;
+});
+
+
+giddap.maxy = d3.max(data, function(item) { return item[1] });
+giddap.r_max = d3.max( data, function(item){ return item[2] });
+giddap.r_min = d3.min( data, function(item){ return item[2] });
+giddap.r_del = giddap.r_max - giddap.r_min;
+
+console.log("d3 graph radii", giddap.r_max, giddap.r_min);
+giddap.radius = function( r ){
+	// scale according to rmin, rmax
+	// v1/r1 = v2/r2 r is for range
+	return ( 18 * ( r - giddap.r_min ) / giddap.r_del ) + 3 ;
+}
+
+giddap.whydontupdated3 = function( h, w ){
+	$("#chart").empty();
+	var p = 10;
+	var x = d3.time.scale().domain([giddap.min_date,giddap.max_date]).range([5, w-5]);
+    var y = d3.time.scale().domain([0, giddap.maxy]).range([h, 22]);
+	// perpare vis
+	var vis = d3.select("#chart").data([data]).append("svg:svg").attr("width", w + p * 2).attr("height", h + p * 2).append("svg:g")
+    //.attr("transform", "translate(" + p + "," + p + ")");
+	var rules = vis.selectAll("g.rule").data(x.ticks(10)).enter().append("svg:g").attr("class", "rule");
+
+	
+	
+	rules.append("svg:line")
+    	.attr("x1", x)
+    	.attr("x2", x)
+    	.attr("y1", 0)
+    	.attr("y2", h - 1);
+    rules.append("svg:text")
+    	.attr("y", y)
+    	.attr("x", -3)
+    	.attr("dy", ".35em")
+    	.attr("text-anchor", "end");
+    	
+    vis.append("svg:path")
+    .attr("class", "line")
+    .attr("d", d3.svg.line()
+    .x(function(d) { return x(d[4]); })
+    .y(function(d) { return y(d[1]); }));
+
+	vis.selectAll("circle.line").data(data).enter().append("svg:circle")
+    	.attr("class", function(d){ return "line " + "phase_"+d[5].join(" phase_") }) //  + d[0].split("-").slice(0,2).join("-")})
+    	.attr("cx", function(d) {  return x(d[4]); })
+    	.attr("cy", function(d) { return y(d[1]); })
+    	.attr("title", function(d) {return d[3]})
+    	.attr("r",function(d) {return giddap.radius(d[2])});
+}
+
+
+giddap.whydontupdated3( 200, 710 );
+
+giddap.transform_to_percentage = function( date ){
+	return ( date.getTime() - giddap.min_time ) / giddap.del_time * 100;
+}
+
+giddap.years = [ 1960, 1964, 1968, 1972, 1976, 1980, 1984, 1988, 1992, 1996, 2000, 2004, 2008, 2012 ];
+
+for( var y in giddap.years ){
+	var left = giddap.transform_to_percentage( new Date( giddap.years[y] + "-01-01") );
+	$("#time-points").append(
+		$("<div/>",{"class":"year","style":"left:"+left+"%"}).text( "'" + ( giddap.years[y] + "" ).substr(2) )
+	) 	
+}
+
+
+</script>
+
+{% endblock %}
+
+
+{% block custominit %}
+EAT.cloud.init();
+EAT.chart.init();
+{% endblock %}

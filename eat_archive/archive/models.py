@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from django.db import models
 from django.db.models import F
 from tinymce import models as tinymce_models
@@ -207,17 +209,17 @@ class SourceGlossary(models.Model) :
 ########## SOURCES ANNOTATIONS #########################
 
 class Source(models.Model) :
-    title=models.CharField(max_length=300)
+    title=models.CharField(max_length=300, blank=True,null=True)
     sourceTags=models.ManyToManyField("SourceGlossary") # manytomany to Source
     authors=models.ManyToManyField("Actor") # manytomany to actor
     ref_bibliographic=models.TextField()
-    copyright=models.CharField(max_length=200,blank=True) 
-    private_access=models.BooleanField()
-    url=models.URLField(blank=True)
-    date =models.DateField()
+    copyright=models.CharField(max_length=200,blank=True,null=True) 
+    private_access=models.BooleanField(default=False)
+    url=models.URLField(blank=True,null=True)
+    date =models.DateField(blank=True,null=True)
     
     def __unicode__(self):
-        return self.title
+        return self.ref_bibliographic
 
 # clipping : critical review
 # research : deconnected to an exhibition moment
@@ -228,12 +230,15 @@ class Annotation(models.Model):
     sourcemark=models.CharField(max_length=300,blank=True) # references to a part of a document (page or minutes)
     text=tinymce_models.HTMLField(blank=True) # models.TextField()
     authors=models.ManyToManyField("Actor",related_name="citations")
-    actors=models.ManyToManyField("Actor",blank=True,related_name="annotations") # manyTomany to Actor
+    actors=models.ManyToManyField("Actor",blank=True,null=True,related_name="annotations") # manyTomany to Actor
     activities=models.ManyToManyField("Activity",blank=True,related_name="annotations") # manyTomany to Activity
     places=models.ManyToManyField("Place",blank=True,related_name="annotations") # manyTomany to Place 
     phases=models.ManyToManyField("Phase"	,related_name="annotations") # manyTomany to Phase
     #image = models.ImageField(upload_to="annotation_images", blank=True,null=True)
-    image =ImageWithThumbsField(upload_to='annotation_images', sizes=((187,0),))
+    # before pierre (not knowing if its experimental or not…) :
+    #image =ImageWithThumbsField(upload_to='annotation_images', sizes=((187,0),), blank=True,null=True )
+    # pierre trying (simplest way, using directly django ImageField) :
+    image = models.ImageField(upload_to='annotation_images', blank=True,null=True )
     def __unicode__(self):
         return self.title
     

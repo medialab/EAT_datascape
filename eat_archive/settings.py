@@ -1,12 +1,15 @@
+# -*- coding: utf-8 -*-
+import os
 # Django settings for eat_archive project.
 
-DEBUG = True
+ROOT_PATH = os.environ.get('ROOT_PATH', '/')
+
+DEBUG = os.environ.get("PROD", False) == False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
-    ('Paul Girard','paulgirard@laposte.net'),
-    ('Patrick','ptbrowne@gmail.com'),
+    ('Paul Girard','email'),
 )
 
 SERVER_EMAIL = "django@localhost"
@@ -16,7 +19,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '/home/pom/eat/eat_archive/database/eat_archive.sqlite',                      # Or path to database file if using sqlite3.
+        'NAME': os.path.join(ROOT_PATH, 'eat_archive/database/eat_archive.sqlite'),                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -51,20 +54,20 @@ USE_L10N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = '/mnt/expand/eat_media/'
+MEDIA_ROOT = os.path.join(ROOT_PATH, 'eat_media/')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = '/eat_datascape_dev/media/'
+MEDIA_URL = '/media/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/eat_datascape_dev/static/admin/'
+ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '11#j!nk_55clut)z7)h=3obfzs($^2mqp%83o=peb4^4kmv^_t'
+SECRET_KEY = os.environ.get('SECRET_KEY','11#j!nk_zei"épiéqp%83o=peb4^4kmv^_t')
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -89,8 +92,8 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    "/home/pom/eat_dev/eat_archive/templates",
-    "/home/pat/django/debug_toolbar/templates",
+    os.path.join(ROOT_PATH, "eat_archive/templates"),
+    #"/home/pat/django/debug_toolbar/templates",
 )
 
 INSTALLED_APPS = (
@@ -109,8 +112,8 @@ INSTALLED_APPS = (
 STATICFILES_DIRS = (
 )
 
-STATIC_URL="/eat_datascape_dev/static"
-STATIC_ROOT="/home/pom/eat_dev/eat_archive/static"
+STATIC_URL="/static"
+STATIC_ROOT=os.path.join(ROOT_PATH, "/eat_archive/static")
 
 
 ADMIN_REORDER = (
@@ -118,7 +121,13 @@ ADMIN_REORDER = (
    
 )
 
-INTERNAL_IPS = ('127.0.0.1','10.35.1.210',) 
+INTERNAL_IPS = ('127.0.0.1','0.0.0.0') 
+
+# from ast import literal_eval
+# for k, v in os.environ.items():
+#     if k.startswith("DOCKER_"):
+#         key = k.split('_', 1)[1]
+#         locals()[key] = literal_eval(v)
 
 
 

@@ -119,7 +119,7 @@ admin.site.register(Phase,PhaseAdmin)
 
 class SourceAdmin(admin.ModelAdmin):
 	search_fields = ['title','ref_bibliographic']
-	list_display=("title","date")
+	list_display=("ref_bibliographic","date")
 	list_filter = ('sourceTags',)
 	fieldsets = (("References", {'fields': (('title',"date",),'ref_bibliographic','sourceTags','authors',)}),("document",{"fields":(('copyright','private_access'),'url')}),)
 	filter_horizontal = ("sourceTags","authors",)

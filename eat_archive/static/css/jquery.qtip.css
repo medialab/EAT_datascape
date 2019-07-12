@@ -15,6 +15,7 @@
 /* Core qTip styles */
 .ui-tooltip, .qtip{
 	position: absolute;
+	pointer-events: none;
 	left: -28000px;
 	top: -28000px;
 	display: none;

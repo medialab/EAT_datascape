@@ -14,7 +14,8 @@ margin-bottom:100px;
 
 h1, h2, h3, h4, h5, h6 {
     font-family: "LeagueGothic";
-        text-transform:uppercase;
+    font-weight: normal;
+    text-transform:uppercase;
         
 }
 
@@ -45,8 +46,13 @@ h1, h2, h3, h4, h5, h6 {
     background:transparent !important;
     color: black;
 }
-#gantt .realbar {
-    height:30px;
+
+#gantt .realbar{
+	height:30px;
+    background:#cacaca;
+}
+
+#gantt .realbar.has-source {
     background:#687b95;
 }
 
@@ -132,8 +138,17 @@ margin-right:3px;
 background:#f99;
 }
 
-.actor-container.mainHovered{
-	background: #ffc404;	
+.actor-container{
+	margin-bottom:1px;
+	-webkit-transition: background-color 200ms linear;
+    -moz-transition: background-color 200ms linear;
+    -o-transition: background-color 200ms linear;
+    -ms-transition: background-color 200ms linear;
+    transition: background-color 200ms linear;
+	
+}
+.actor-container.mainHovered, .actor-container.highlighted{
+	background: #eaeef9;	
 }
 
 .artist:hover .circle, .artist:hover .gantt-bar, .artist .gantt-bar.mainHovered {
@@ -176,11 +191,25 @@ label {
 
 }
 
-.annotations .mainHovered {
+.annotations .mainHovered .annotation-link{
     -webkit-box-shadow: none;
     -moz-box-shadow:    none;
     box-shadow:         none;
-    font-weight:bold;
+    background: white;
+}
+
+.annotation-link{
+	background-color: transparent;
+    -webkit-transition: background-color 200ms linear;
+    -moz-transition: background-color 200ms linear;
+    -o-transition: background-color 200ms linear;
+    -ms-transition: background-color 200ms linear;
+    transition: background-color 200ms linear;
+	
+}
+
+.annotation-link.highlighted{
+	background: #fff;
 }
 
 /* ---------------- */
@@ -427,7 +456,8 @@ label {
 }
 
 .view .annotations{
-  overflow: hidden;
+  overflow-y: scroll;/*hidden;*/
+  overflow-x: hidden;
   /* position: fixed; */
   margin-left: 0px;
   padding: 9px 0px;}
@@ -559,8 +589,12 @@ label {
 	font-size: 0.85em;
 	line-height: 1.4em;
 	padding-bottom: 6px;
+	padding-top:12px;
 }
-  
+.source #source-text{
+	padding-bottom:12px;
+}
+
 .footer{
   background: white; }
   
@@ -569,14 +603,14 @@ label {
 
 /** annotation scrollbar */
 #note-attached{position:absolute;  margin:0;  padding:0 10px; height:400px}
-#note-attached .scrollable-scrollbox{position:relative; height:100%; overflow:hidden;}
+#note-attached .scrollable-scrollbox{position:relative; height:100%; overflow:scroll;}
 #note-attached .scrollable-scrollbox .scrollable-container{position:relative; width: 100% ; top:0; float:left;}
 #note-attached .scrollable-scrollbox .scrollable-content{clear:both;margin-right:30px;}
 #note-attached .scrollable-scrollbox .scrollable-content p{
   color:#31231E; }
 
 #note-attached .dragger_container{position:absolute; width:0px; height:100%; right:2px; margin:0px; border-left:0px transparent; cursor:pointer}
-#note-attached .dragger{position:absolute; width:9px; height:60px; background:#31231E; margin-left:-5px; overflow:hidden; cursor:pointer; -moz-border-radius:6px; -khtml-border-radius:6px; -webkit-border-radius:6px; border-radius:6px;}
+#note-attached .dragger{display:none; position:absolute; width:9px; height:60px; background:#31231E; margin-left:-5px; overflow:hidden; cursor:pointer; -moz-border-radius:6px; -khtml-border-radius:6px; -webkit-border-radius:6px; border-radius:6px;}
 #note-attached .dragger_pressed{position:absolute; width:9px; height:60px; background:#31231E; margin-left:-5px; overflow:hidden; cursor:pointer; -moz-border-radius:6px; -khtml-border-radius:6px; -webkit-border-radius:6px; border-radius:6px;}
 
 #mcs3_container .scrollable-scrollbox {
@@ -585,7 +619,7 @@ label {
 #mcs3_container .dragger_container {
   height: 100%; position:absolute; right:2px; margin:0px; border-left:0px transparent; }
  
-#mcs3_container .dragger{
+#mcs3_container .dragger{display:none;
   width:4px;
   margin-left: -3px; }
   
@@ -595,7 +629,7 @@ label {
  .scrollable-scrollbox{ border-bottom: 1px solid ccc }
  #mcs3_container .scrollable-scrollbox {
 	padding-right:20px;}
- #mcs3_container .dragger_container {height: 100%; position:absolute; right:2px; margin:0px; border-left:0px transparent}
+ #mcs3_container .dragger_container {display:none;height: 100%; position:absolute; right:2px; margin:0px; border-left:0px transparent}
  
  #mcs3_container .dragger{
 	width:5px;
@@ -667,6 +701,39 @@ label {
 	display:none; }
 .modal-backdrop {
 	/* background-color: transparent; */ }
+	
+#next-source, #previous-source{
+	cursor: pointer;
+	display:block;
+	position: absolute;
+	background: whiteSmoke;
+	opacity: .5; }
+
+#next-source:hover, #previous-source:hover{
+	opacity: .9; cursor: pointer;}
+		
+#next-source{
+	text-align: right;
+	padding: 5px 10px 5px 5px;
+	right: 0px;
+	margin-right: -40px;
+	width: 30px; 
+	border-top-right-radius: 3px;
+	border-bottom-right-radius: 3px;
+	moz-border-bottom-right-radius: 3px;
+	moz-border-bottom-right-radius: 3px;}
+	
+#previous-source{
+	left: 0px;
+	margin-left: -65px;
+	width: 50px;
+	text-align: left;
+	padding: 5px 5px 5px 10px; 
+	border-top-left-radius: 3px;
+	border-bottom-left-radius: 3px;
+	moz-border-bottom-left-radius: 3px;
+	moz-border-bottom-left-radius: 3px; }
+
 
 /* navgator plugin */
 .mz-container{
@@ -677,32 +744,77 @@ label {
 }
 #time-navigator{
 	margin-left:13px;
-	height:50px;
-	background-repeat:no-repeat;
-	background:url("../images/time-navigator.png") center center;
+	height:80px;
 	border:1px solid transparent;
 	position:relative;
-	
-	margin-bottom:8px;
-	
+	bottom: 0px;
+	margin-bottom:8px;	
+	background-position-x: -1px;
+	background: url('../images/time navigator-02.png') no-repeat;
 }
+
 #time-navigator .left-date, .right-date{
 	position:absolute;
 	top:7px;
 	font-size: .8em;
 	text-transform:uppercase;
-	color: #939393;
-}
+	color: #939393; }
+
+#time-navigator #zoom-info{
+	position:absolute; 
+	text-align:center; top: -20px; left:0px; text-align:center;
+	width:100%
+	}
+
+#time-navigator #zoom-left, #time-navigator #zoom-right{
+	position:absolute;	
+	line-height: 12px;
+	height: 18px;
+	width: 18px;
+	cursor:pointer; }
+
+#time-navigator #zoom-left:hover{
+	background-position-x: -18px; }
+
+#time-navigator #zoom-right:hover{
+	background-position-x: -54px; }
+
+
+#time-navigator #zoom-left{	
+	left: 48px;
+	top: 32px;
+	background: url('../images/navigator-sprite.png') no-repeat; }
+
+#time-navigator #zoom-right{	
+	left: 120px;
+	top: 32px;
+	cursor:pointer; 
+	background: url('../images/navigator-sprite.png') no-repeat;
+	background-position-x: -36px; }
+
 #time-navigator .left-date{
 	left: 5px;
-	text-align:left;	
-}
+	text-align:left; }
+
 #time-navigator .right-date{
 	right: 5px;	
-	text-align:right
-}
-#time-pointer{
-	cursor:pointer;border:0px transparent; background:#3b3b3b;height:24px;width:24px;position:absolute;top:13px;left:80px;border-radius:12px;	
-}
+	text-align:right; }
 
+#time-zoom, #time-pointer{
+	cursor:pointer;
+	border:0px transparent;
+	background:#3b3b3b;
+	height:24px;width:24px;
+	position:absolute;
+	border-radius:12px;	}
+
+#time-zoom{
+	top:28px;
+	left:0px; 
+	background:url('../images/time navigator-04.png') no-repeat; }
+
+#time-pointer{
+	top:28px;
+	left:82px;
+	}
 

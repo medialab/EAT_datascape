@@ -3,9 +3,36 @@
   <head>
     <meta charset="utf-8">
 
-
+ 
 <link rel="stylesheet" href="{{ STATIC_URL }}/css/bootstrap.min.css">
-<link rel="stylesheet" href="{{ STATIC_URL }}/css/fluid.grid.css" />
+	<!-- base grid stylesheet -->
+	<link rel="stylesheet" href="{{ STATIC_URL }}/css/adapt/grid.960.css" />
+
+<script>
+// Edit to suit your needs.
+var ADAPT_CONFIG = {
+  // Where is your CSS?
+  path: '{{ STATIC_URL }}/css/adapt/',
+
+  // false = Only run once, when page first loads.
+  // true = Change on window resize and page tilt.
+  dynamic: true,
+
+  // First range entry is the minimum.
+  // Last range entry is the maximum.
+  // Separate ranges by "to" keyword.
+  range: [
+    '0px    to 1260px  = small.css',
+    '1260   to 1380px =  medium.css',
+    '1380   to 1590px =  large.css',
+    '1590   to 2540px =  extralarge.css',
+    '2540px           = extralarge.css'
+  ]
+};
+</script>
+<script src="{{ STATIC_URL }}/js/adapt.min.js"></script>
+
+
 <link rel="stylesheet" href="{{ STATIC_URL }}/css/custom-theme/jquery-ui-1.8.16.custom.css" />
 <link rel="stylesheet" href="{{ STATIC_URL }}/css/jquery.mCustomScrollbar.css" type="text/css" media="screen" title="no title" charset="utf-8" />
 
@@ -14,7 +41,9 @@
 
 <link rel="stylesheet" href="{{ STATIC_URL }}/css/supersized.shutter.css" type="text/css" media="screen" title="no title" charset="utf-8" />
 
-<script type="text/javascript" src="{{ STATIC_URL }}/js/jquery-1.6.2.min.js"></script>
+<!-- script type="text/javascript" src="{{ STATIC_URL }}/js/jquery-1.6.2.min.js"></script -->
+<script type="text/javascript" src="{{ STATIC_URL }}/js/jquery-1.7.2.min.js"></script>
+
 <script type="text/javascript" src="{{ STATIC_URL }}/js/jquery.easing.min.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}/js/jquery.mousewheel.min.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}/js/underscore-min.js"></script>
@@ -51,11 +80,16 @@
 <script src="{{ STATIC_URL }}/js/scripts.js"></script>
 
 
+
 {% block custom_head %} {%endblock%}
+<script type="text/javascript" src="{{ STATIC_URL }}/js/eat/video.js"></script>
+
 <title>E.A.T. | {% block title %}{%endblock%}</title>
 </head>
 <body>
 {% url archive.views.overview as overview_url%}
+
+
 
 <!-- supersized! -->
 <div id="overlay" class="test"></div>
@@ -106,9 +140,23 @@
   <div class="topbar-inner container_16">
     <div class="menu grid_16 alpha omega" >
       
+      <!-- the video, hidden -->
+<div id="iframe-video" class="grid_16 alpha omega" style="position:absolute; text-align: center;background: #303030; height:562px; top: -562px; left:0px">
+	<video width="320" height="240" controls="controls">
+  			<source src="{{ STATIC_URL }}/video/test_pompidou.mp4" type="video/mp4" />
+  Your browser does not support the video tag.
+</video>
+
+	<!-- iframe style="position:absolute; left:0px " src="http://player.vimeo.com/video/30312312" width="500" height="562" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen>
+	</iframe -->
+</div>
+      
       <ul class="nav">
       
         <li><a href="{{overview_url}}">Overview</a></li>
+        <li><a href="#" id="iframe-video-toggle">video</a></li>
+        <li><a href="/graph/">graph</a></li>
+        <li><a href="/credits/" id="iframe-video-toggle">credits</a></li>
         <!-- <li><input type="checkbox" id="help" />Help?</li> -->
         {% block menuItem %}{% endblock %}
       </ul>

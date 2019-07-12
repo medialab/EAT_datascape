@@ -10,7 +10,11 @@ $(function() {
     var bySize = function(a,b) {
                 return eval("(" + b.s + ")").size - eval("(" + a.s + ")").size 
     }
-    
+    $(".tag").tsort({
+           "attr" : "data-tag",
+           "sortFunction" : bySize
+        });
+		
     $(".sort_size").click(function() {
         $(".tag").tsort({
            "attr" : "data-tag",
@@ -60,7 +64,7 @@ $(function() {
 
 
 {% block menuContent %}
-	<h1 class="title">EAT ARCHIVE <span id="project-date" class="date">1962-TODAY</span></h1>
+	<h1 class="title">E.A.T. DATASCAPE <span id="project-date" class="date">1962-TODAY</span></h1>
 	<div id="project-auteurs" class="auteurs">&nbsp;</div>
 {% endblock %}
 
@@ -102,7 +106,7 @@ var h = 200,
     p = 10,
     w = $("#chart").width() - 2*p,
     x = d3.time.scale().domain([min_date,max_date]).range([0, w]),
-    y = d3.time.scale().domain([0, maxy]).range([h, 0]);
+    y = d3.time.scale().domain([0, maxy]).range([h, 10]);
 
 var vis = d3.select("#chart")
     .data([data])
@@ -156,7 +160,7 @@ vis.append("svg:path")
 vis.selectAll("circle.line")
     .data(data)
   .enter().append("svg:circle")
-    .attr("class", "line")
+    .attr("class", function(d){ return "line " + d[0].split("-").slice(0,2).join("-")})
     .attr("cx", function(d) {  return x(d[4]); })
     .attr("cy", function(d) { return y(d[1]); })
     .attr("title", function(d) {return d[3]})
@@ -202,12 +206,12 @@ $("circle").qtip($.extend(qTipConfig, {
              {% for tag in tag_cloud %}
                  {% ifequal category 'actors' %}
                     <div class="tag {{category}} qTip-enable" title="involved in {{tag.size}} phases of an EAT project" data-tag="{size: {{tag.size}}}">
-                        <a href="actor/{{tag.id}}">{%if tag.firstname %}{{tag.firstname}}{% endif %} {{tag.name}}</a>
+                        <a href="/eat_datascape/actor/{{tag.id}}">{%if tag.firstname %}{{tag.firstname}}{% endif %} {{tag.name}}</a>
                     </div>
                  {% else %}
                     {% ifequal category 'projects' %}
                          <div class="tag {{category}} qTip-enable" title="{{tag.size}} people involved" data-tag="{size: {{tag.size}}}">
-                            <a href="project/{{tag.id}}">{{tag.name}}</a>
+                            <a href="/eat_datascape/project/{{tag.id}}">{{tag.name}}</a>
                         </div>
                     {% else %}
                     <div class="tag {{category}} qTip-enable" title="{{tag.size}}" data-tag="{size: {{tag.size}}}">{{tag.tag}}

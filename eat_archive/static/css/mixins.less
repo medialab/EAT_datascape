@@ -1,0 +1,62 @@
+// twitter bootstrap
+//
+// Mixins.less
+// Snippets of reusable CSS to develop faster and keep code readable
+// -----------------------------------------------------------------
+
+.background-gradient( @from:#0000000, @to: #303030 ){
+	
+	// fallback
+	background:  @from;
+	// background: url(images/linear_bg_2.png);
+	background-repeat: repeat-x;
+  
+	// Safari 4-5, Chrome 1-9
+	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(@from), to(@to));
+  
+	// Safari 5.1, Chrome 10+
+	background: -webkit-linear-gradient(top, @to, @from);
+  
+	// Firefox 3.6+
+	background: -moz-linear-gradient(top, @to, @from);
+  
+	// IE 10
+	background: -ms-linear-gradient(top, @to, @from);
+  
+	// Opera 11.10+
+	background: -o-linear-gradient(top, @to, @from);
+}
+
+.border-radius(@radius: 5px) {
+  -webkit-border-radius: @radius;
+     -moz-border-radius: @radius;
+          border-radius: @radius;
+}
+
+.box-shadow(@shadow: 0 1px 3px rgba(0,0,0,.25)) {
+  -webkit-box-shadow: @shadow;
+     -moz-box-shadow: @shadow;
+          box-shadow: @shadow;
+}
+
+.columnify( @columns:2, @gap:2.5em ){
+	-moz-column-count:  @columns;
+	-moz-column-gap:  @gap;
+	-webkit-column-count:  @columns;
+	-webkit-column-gap: @gap;
+	column-count:  @columns;
+	column-gap: @gap;	
+}
+
+.transition( @what:all, @duration:.2s, @timing-function: linear ){
+	transition: @what @duration;
+	-moz-transition: @what @duration; /* Firefox 4 */
+	-webkit-transition: @what @duration; /* Safari and Chrome */
+	-o-transition: @what @duration; /* Opera */
+	transition-timing-function: @timing-function;
+	-moz-transition-timing-function: @timing-function; /* Firefox 4 */
+	-webkit-transition-timing-function: @timing-function; /* Safari and Chrome */
+	-o-transition-timing-function: @timing-function; /* Opera */
+}
+
+

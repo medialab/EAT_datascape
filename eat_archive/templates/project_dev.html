@@ -1,0 +1,143 @@
+{% extends "middleware.html" %}
+{%block title%}an exploration of the project{% endblock %}
+{% block pagetitle %}{{ activity }}{% endblock %}
+{% block pagesubtitle %}{%for tag in tags.own%} {{ tag|lower}}{% endfor %}{% endblock %}
+
+{% block pagetags %}
+
+		<div class="techno">{%for tag in tags.techno%}<span class="tag">{{tag|lower}}</span> {%if not forloop.last %}&bull;{% endif %} {% endfor %}</div>
+		<div class="art">{% if tags.techno %}&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;{%endif%}{%for tag in tags.art%}<span class="tag">{{tag|lower}}</span> {%if not forloop.last %}&bull;{% endif %} {% endfor %}</div>
+	
+{% endblock %}
+
+
+
+{% block sidebar %}
+	<h2>Sources</h2><div class="filters" style="display:none"></div>
+	<div id="sources-list">
+						{% load listutils %}
+						{% for source in sources %}
+							{% if source.text or source.image  %}
+							<div data-source="{{source.id}}" class="source-link{% for p in source.phases.all %} phase_{{p.id}}{% endfor %}" >
+								 
+								{% if source.image %}
+									<div class="image-container" >
+										<!-- not using thumbnails here, just resizing original image... -->
+										<!-- <img src="{{ annotation.image.url_187x0}}"/> -->
+										<img src="{{ source.image.url}}"/>
+										<div class="title"><a href="#">{{source.title}}</a></div>
+									</div>
+								{% else %}
+									<div class="blockquote-container" >
+										<div class="blockquote" >"{{ source.text|blockquote }}"</div>
+									</div>
+								{% endif %}
+							</div>
+							
+							
+							{% endif %}
+						{% endfor %}
+	</div>
+
+{% endblock %}
+
+
+{% block relatedstuff %}
+	{% if num_linked_activities > 0 %}
+		<div class="linked-activities">
+		<div id="linked-activities-caller"></div>
+			<span>related activites</span>{% for la in linked_activities %}
+				<a href="/project/{{la.id}}">{{la.name}}</a>
+				{%if not forloop.last %} &bull; {% endif %} 
+			{% endfor %}
+			
+		</div>
+	{% endif %}
+
+{% endblock %}
+
+{% block viewcontent %}
+	
+	<div class="grid_3 alpha">
+		<h2 style="padding: 12px" >TIMELINE</h2>
+		
+			<div style="padding: 12px 12px 0 12px; font-size:.8em;padding-top:0;">
+				drag the triangle to zoom
+			</div>
+		
+		<div id="timeline-controller">
+			<div id="time-navigator">
+				<div id="zoom-info"></div>
+				<div id="zoom-pointer"></div>
+			</div>
+			<div id="zoom-min">min</div>
+			<div id="zoom-max">max</div>
+		</div>
+		
+		<div id="legend">
+			<div><span class="gold"></span>Exhibitions</div>
+			<div class="clear"></div>
+			<div style="padding-top:4px"><span class="dark"></span>Other phases</div>
+		</div>
+		
+		
+	</div>
+	<div class="grid_9 omega">
+		<div id="timeline">
+			<div id="min-view-date">mar 2010</div>
+			<div id="max-view-date">oct 2102</div>
+			<div id="timeline-view-outer">
+				<div id="timeline-view">
+				</div>
+			</div>
+			<div id="timeline-navigator">timeline</div>
+			<div id="timeline-rail"> 
+				<div id="timeline-handle"></div>
+			</div>
+			<div id="min-date">mar 2010</div>
+			<div id="max-date">oct 2102</div>
+		</div>
+	</div>
+	<div class="clear"></div>
+	
+	
+	
+	<!-- actors -->
+	<h2 class="separator">ACTORS</h2>
+	<!-- filters -->
+	<div class="filters" style="display:none"></div>
+	<div id="actors">
+		<!-- each actor is a line -->
+		<div class="actor phase_0 phase_6">
+			<div class="grid_3 alpha">
+				<div class="actor-name">Actorn Name</div>
+			</div>
+			<div class="grid_9 omega">
+				<div class="actor-phases">Actorn phases</div>
+			</div>
+			<div class="clear"></div>
+	
+		</div>
+		<!-- -->
+	</div>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% block vars %}
+var sources = {% autoescape off %} {{ json_sources }} {% endautoescape %};
+var phases = {% autoescape off %} {{ json_phases }} {% endautoescape %};
+var actors_phases = {% autoescape off %} {{ json_people }} {% endautoescape %};
+
+{% endblock %}

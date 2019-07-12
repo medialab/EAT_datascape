@@ -27,6 +27,10 @@
 </script>
 
 <script type="text/javascript">
+
+var linked_activity_ids = {{ linked_activity_ids|safe }}
+
+
 /* function to fix the -10000 pixel limit of jquery.animate */
 $.fx.prototype.cur = function(){
     if ( this.elem[this.prop] != null && (!this.elem.style || this.elem.style[this.prop] == null) ) {
@@ -38,7 +42,8 @@ $.fx.prototype.cur = function(){
 
 var main_gantt = {{phases|safe}}
   , gantt_charts = {{ people|safe }}
-  , info_people = {{info_people|safe}};
+  , info_people = {{info_people|safe}}
+  ,linked_gantt = {{ linked_phases|safe }};
 
 // parse date into javascript's native Date()
 main_gantt = _.map(main_gantt, function(phase) {
@@ -47,6 +52,13 @@ main_gantt = _.map(main_gantt, function(phase) {
         phase.end_date = $.datepicker.parseDate('yy-mm-dd', phase.end_date);
     return phase;
 });
+linked_gantt = _.map(linked_gantt, function(phase) {
+    phase.start_date = $.datepicker.parseDate('yy-mm-dd', phase.start_date);
+    if (phase.end_date)
+        phase.end_date = $.datepicker.parseDate('yy-mm-dd', phase.end_date);
+    return phase;
+});
+
 
 gantt_charts = _.map(gantt_charts, function(gantt_chart) {
     gantt_chart["data"] = _.map(gantt_chart["data"], function(phase) {
@@ -65,14 +77,37 @@ gantt_charts = _.sortBy(gantt_charts, function (gantt_chart) {
 });
 
 // saving min_date and max_date to use when building actor's gantt and timegrid
-var min_date = _.min(main_gantt, function(phase) {if (phase.start_date) return phase.start_date}).start_date
-  , max_date = _.max(main_gantt, function(phase) {if (phase.end_date) return phase.end_date}).end_date;
+var min_main_gantt_date = _.min(main_gantt, function(phase) {if (phase.start_date) return phase.start_date}).start_date
+  , max_main_gantt_date = _.max(main_gantt, function(phase) {if (phase.end_date) return phase.end_date}).end_date;
+  try{
+	var min_linked_gantt_date = _.min(linked_gantt, function(phase) {if (phase.start_date) return phase.start_date}).start_date
+  	var max_linked_gantt_date = _.max(linked_gantt, function(phase) {if (phase.end_date) return phase.end_date}).end_date;  
+  } catch( e ){
+  	var min_linked_gantt_date = min_main_gantt_date
+    var max_linked_gantt_date = max_main_gantt_date
+  }
+
+if(min_main_gantt_date.getTime() < min_linked_gantt_date.getTime())
+    var min_date=min_main_gantt_date;
+else
+    var min_date=min_linked_gantt_date;
+if(max_main_gantt_date.getTime() > max_linked_gantt_date.getTime())
+    var max_date=max_main_gantt_date;
+else
+    var max_date=max_linked_gantt_date;
 
 // gantt config
 var formatTitle = function(phase) {
-        var title = phase.tags.join(", ") + "<br>"
-        title += $.datepicker.formatDate('yy-mm-dd', phase.start_date) + " - ";
-        title += $.datepicker.formatDate('yy-mm-dd', phase.end_date);
+        var title = phase.tags.join(", ") + "<br>" + (phase.description.length? "<b>" + phase.description + "</b><br>" :"" )
+        
+        var sd = $.datepicker.formatDate('M yy', phase.start_date);
+        var ed = $.datepicker.formatDate('M yy', phase.end_date);
+        
+        if( sd == ed ){
+        	title += sd;
+        	return title;	
+        }
+        title += sd + " - " + ed;
         return title;
     }
   , formatContent = function (phase) {
@@ -101,7 +136,26 @@ var formatTitle = function(phase) {
       , "min_date" : min_date
       , "max_date" : max_date 
       , "customClass" : function(phase) { return "phase" + phase.phase_id; }
+    },
+    formatLinkedTitle = function (phase) { 
+        content = "<div class='title'>" + phase.activity + "</div>"
+        content+= phase.label.join(" ") + "<br>";
+        content+= $.datepicker.formatDate("dd/mm/yy", phase.start_date) + " - "
+        content+= $.datepicker.formatDate("dd/mm/yy", phase.end_date) + ""
+        return content
+    },
+     linked_gantt_config = {
+        "min_date" : min_date,
+        "max_date" : max_date,
+        "title" : formatLinkedTitle,
+        "content" : function(phase) {return "";},
+        "customClass" : function(phase) { return "phase" + phase.id; },
+        "height" : "7px"
     };
+    
+
+
+var phases_by_activity = _.sortBy(_.groupBy(linked_gantt, function(phase) { return phase.activity_id }), function(phases_by_activity) {return -phases_by_activity.length});
 
 $(window).load(function(){
     // make main gantt
@@ -115,6 +169,27 @@ $(window).load(function(){
             .gantt(gantt_chart["data"], actors_gantt_config)
 
     });
+    
+    // linked activities gantt
+    _.each(phases_by_activity, function(phases, activity_id) {
+        activity_row = $("<div>", {"class" : "line actor"})
+        
+        html = "<p><a href='../project/" + phases[0].activity_id + "'>" + phases[0].activity +"</a></p>"
+        
+        $("<div/>",{'class':"name grid_3 alpha"}).html(html).appendTo(activity_row);
+        $("<div>", {"class" : "mz-container mz-binded"}).append(
+            $("<div>", {"class" : "mz-content"} ).gantt(phases, linked_gantt_config))
+        .appendTo(activity_row).addClass("grid_9 omega")
+        
+        
+        
+    
+    
+    
+        $("<div>", {"class" : "clear"}).appendTo(activity_row);
+        activity_row.appendTo("#activities");
+    });
+    
     
     // qTips on gantt bars
     $(".gantt-bar").qtip(EAT.qTipConfig)
@@ -134,7 +209,7 @@ $(window).load(function(){
     // add zoom to the master timeline and bind the other timeline to it
     $("#mz-master").makeZoomable();
 	$(".mz-binded").makeZoomable("bind", $("#mz-master"), function(item) {})
-	$("#mz-master").dragscrollable({dragSelector: '.dragger:first', acceptPropagatedEvent: true});
+	// $("#mz-master").dragscrollable({dragSelector: '.dragger:first', acceptPropagatedEvent: true});
 	   
 	// add modal
 	$('#annotation-dialog').modal({ show: false, backdrop:true, keyboard: true});
@@ -151,9 +226,10 @@ $(window).load(function(){
 		
 		{% for p in annotation.phases.all %}
 			if( ! EAT.phases.annotated[ {{p.id}} ] ){
-				$("#gantt .gantt-bar.phase{{p.id}} .realbar").append(
-					$("<img/>", {src:"{{ STATIC_URL }}/images/has-source.png"})
-				);
+				$("#gantt .gantt-bar.phase{{p.id}} .realbar").addClass("has-source")
+				//append(
+				//	$("<img/>", {src:"{{ STATIC_URL }}/images/has-source.png"})
+				//);
 				EAT.phases.annotated[ {{p.id}} ] = 0;
 			}
 			EAT.phases.annotated[ {{p.id}} ]++;
@@ -164,13 +240,17 @@ $(window).load(function(){
     {% endfor %}
    
 	EAT.initView();
-	EAT.initSupersize( supersizedImages );	
-
+	
+	if( supersizedImages.length > 0){
+		EAT.initSupersize( supersizedImages );	
+	} else {
+		EAT.supersize.disable();	
+	}
 	
 	
     // --------
     // BINDINGS  
-   //  --------
+    //  --------
     $("#onlySelected").change(function() {
         if ( $(this).is(":checked") )
             rows = $(".actor").not("#mainrow").hide(300);
@@ -206,46 +286,83 @@ $(window).load(function(){
     }).mouseleave( EAT.phases.mouseout );
   
 	$(".annotation-link").click(function() {
-		nr_annotation = $(this).attr("data-annotation");
 		
-		source = sources[ nr_annotation ];
+		EAT.sources.load( $(this) );
 		
-		$("#source-title").empty().text( source.title );
-		$("#source-header").empty().text( source.title );
-		$("#source-reference").empty().text( source.ref_bibliographic );
-		$("#source-text").empty().html( source.text );
-		$("#source-image").empty();
-		
-		if( source.image.url ) {
-			
-			var modalHeight = Math.min( EAT.getBounds().height - 100, ( source.image.height + 100 ) );
-			
-			$('#annotation-dialog').css({
-				"margin-left": - ( source.image.width + 60 ) / 2, 
-				"margin-top": - modalHeight / 2, 
-				"height": modalHeight, 
-				"width": source.image.width+ 60});
-			$('#note-attached').css({height:modalHeight - 80});
-			$("#source-image").append("<img src='"+source.image.url+"' style='width:"+source.image.width+"px; height:"+source.image.height+"px'/>")
-			
-		} else {
-			$('#annotation-dialog').css({"margin-left": - 280, width: 560, "margin-top": - 250, "height": 500 });
-			$('#note-attached').css({height:400});
-		}
-		$('#annotation-dialog').modal("show");
-		EAT.initCustomScrollbars();
+		// EAT.initCustomScrollbars();
 	});
 	
 
-
-
-
+	// timeline
+	// project related things
+	$("#time-navigator").css({
+		"margin-top": $( "#gannt-outer" ).height() - $("#time-navigator").height()
+	}); 
+	EAT.navigator.target.$item = $("#gantt"), 
+	EAT.navigator.target.min_width = $("#gantt").width()-20
+	/*
+	$( "#time-zoom" ).draggable({ 
+		axis: "y",		
+		containment: "parent", 
+		stop: EAT.navigator.zoom.position.reset,
+		drag: EAT.navigator.navigate
+	});
+	*/
+		
+	$( "#time-pointer" ).draggable({ 
+		axis: "y",		
+		containment: "parent", 
+		stop: EAT.navigator.pointer.position.reset,
+		drag: EAT.navigator.navigate
+	});
+	
+	$( "#zoom-right" ).mousedown(EAT.navigator.move);
+	$( "#zoom-left" ).mousedown(EAT.navigator.move);
+	
+	$(document).mouseup(function(){
+		EAT.navigator.speed.x = 0;
+		EAT.navigator.stop();
+	});
+	
+	$( ".mz-content.dragger" ).draggable({ 
+		axis: "x",
+					// containment : [ -100, 0, 100, 50 ],
+		drag: function( event, ui ){
+			EAT.navigator.propagate({left:ui.position.left});	
+			$("#gantt").css({left:ui.position.left + "px"} );
+		}
+	});
+	// setup
+	EAT.navigator.info.$zoom = $("#zoom-info");
+	EAT.navigator.pointer.position.center.x = 82;
+	EAT.navigator.pointer.position.center.y = 28;
+	
+	// resize with the desired focused width
+	
+	var desired_width = EAT.navigator.stir_it_up (
+		max_main_gantt_date.getTime() - min_main_gantt_date.getTime(), 
+		max_date.getTime() - min_date.getTime(), 
+		EAT.navigator.target.min_width
+	);
+	
+	// do resize 
+	EAT.navigator.target.$item.width( desired_width );
+	EAT.navigator.propagate( {width:desired_width,left:0} );
+	
+	var proposed_max_width =  EAT.navigator.stir_it_up (
+		EAT.time.milliseconds_per_year, 
+		max_date - min_date, 
+		EAT.navigator.target.min_width
+	);
+	
+	EAT.navigator.target.max_width = Math.max( desired_width, proposed_max_width);
+	
 /**
  * note: window object MUST be loaded before init some plugin
  * because of browser width/ height constraints
  */
 
-	EAT.initCustomScrollbars();
+	// EAT.initCustomScrollbars();
 	EAT.qTip();
 	
 	$(".gantt-bar").click( function(){
@@ -266,8 +383,10 @@ $(window).load(function(){
 
 	var sources = {% autoescape off %} {{ sources }} {% endautoescape %};
 </script>
-<script src="{{ STATIC_URL }}/js/jquery.mCustomScrollbar.js"></script>
 
+<script src="{{ STATIC_URL }}/js/jquery.mCustomScrollbar.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}/js/eat/timeline.js"></script>
+		
 {% endblock %}
 
 {% block menuItem %}
@@ -305,7 +424,7 @@ $(window).load(function(){
 	<div class="activity grid_12 alpha">
 	
 		{% comment %}
-		<p class="help">Below is the title of the project and tags that describe the project (blue are technology tags, red are artistic tags).</p>
+		<p class="help" style="display:none">Below is the title of the project and tags that describe the project (blue are technology tags, red are artistic tags).</p>
 		
 		<div id="project-material" ></div>
 		<div id="project-description" style="display:none" class="description">{{ activity.description }}</div>
@@ -340,27 +459,46 @@ $(window).load(function(){
 		{% endcomment %}
 		
 		<!-- WHEN MAIN -->
+		<h2>When ?</h2>
 		
-		<div class="grid_3 alpha">
-		   <h2>When ?</h2>
-			<div class="when">
-		   <p class="help">This timeline shows you the different phases of the project. <br/>Hover on a phase to get more information.</p>
+		<div class="when">
+		   <p class="help" style="display:none">This timeline shows you the different phases of the project. <br/>Hover on a phase to get more information.</p>
 		   <h4>Options</h4>
 		   <ul class="inputs-list">
 		      <li><label for="expandGantt">
 		      	<input type="checkbox" id="expandGantt"> expanded</label>
-		      	<small class="help">means the timeline will be bigger</small>
+		      	<small class="help" style="display:none">means the timeline will be bigger</small>
 		      </li>
 		      <li><label for="onlySelected">
 		      	<input type="checkbox" id="onlySelected" /> only hovered</label>
-		      	<small class="help">means that below will be displayed only the actors who played a role in the phase you're hovering</small>
+		      	<small class="help" style="display:none">means that below will be displayed only the actors who played a role in the phase you're hovering</small>
 		      </li>
 		   </ul>
+		</div>
+		
+		<div class="grid_3 alpha">
+			<!-- contains a draggable object in the middle. Its height shoud equal the #timegrid height. Its width is grid_3 minus 8 margin pixel minus 2 border pixel -->
+			<div id="time-navigator">
+				<!--<div class="left-date">May<br/>1960</div>
+				<div class="right-date">June<br/>1990</div> -->
+				<div id="zoom-info">1x</div>
+				<div id="time-pointer" class="draggable"></div>
+				<div id="zoom-left"  class="attractor"></div>
+				<div id="zoom-right" class="attractor"></div>
+				<!-- div id="time-zoom" class="draggable"></div -->
+				<!-- <div id="zoom-plus"  class="attractor" style="position:absolute; top: 0px; left:50px; width:12px; height:12px;text-align:center">+</div>
+				<div id="zoom-minus" class="attractor" style="position:absolute; width:12px; height:12px;text-align:center">-</div>
+				<div id="zoom-left"  class="attractor" style="position:absolute; top: 0px; left:50px; width:12px; height:12px;text-align:center">&lt;</div>
+				<div id="zoom-right" class="attractor" style="position:absolute; top:35; width:12px; height:12px;text-align:center">&gt;</div>
+				-->
 			</div>
+		
+			
+		   
 		</div>
 		
 		<!-- WHEN MAIN gannt -->
-		<div class="gannt grid_9 omega">
+		<div id="gannt-outer" class="gannt grid_9 omega">
 		   <div class="mz-container mz-binded">
 		        <div class="mz-content">
 		            <div id="gantt"></div>
@@ -374,12 +512,26 @@ $(window).load(function(){
 
 		</div>
 		
+		
 		<!-- WHO MAIN -->
-				<div class="clear"></div>
-		<h2>Who ?<div class="filters"></div></h2>
-		<p class="help">These are the actors who played a part in the project. You can click on a name to go the actor's page.</p>
+		<div class="clear"></div>	
+		
+		<h2 style="margin-top: 1em">Who ?<div class="filters"></div></h2>
+		<p class="help" style="display:none">These are the actors who played a part in the project. You can click on a name to go the actor's page.</p>
 		<div id="actors" class="who grid_12 alpha omega"></div>		
+		
+		<div class="clear"></div>
+		<h2 style="margin-top: 1em">Related activities</h2>
+		<p class="help" style="display:none">Related activities</p>		
+		
+		<div id="activities"></div>
+
+		<div class="clear"></div>
+		
 	</div>
+	
+	
+	
 	<script type="text/javascript">
 		    		  
 		    		</script>
@@ -397,7 +549,9 @@ $(window).load(function(){
 								 
 								{% if annotation.image %}
 									<div class="image-container" >
-										<img src="{{ annotation.image.url_187x0}}"/>
+										<!-- not using thumbnails here, just resizing original image... -->
+										<!-- <img src="{{ annotation.image.url_187x0}}"/> -->
+										<img src="{{ annotation.image.url}}"/>
 										<div class="title"><a href="#">{{annotation.title}}</a></div>
 									</div>
 								{% else %}
@@ -424,7 +578,7 @@ $(window).load(function(){
 	<div id="maps" class="google-map grid_16 alpha omega">
 		<div id="tagclouds" class="grid_3 alpha">
 	            <h2>PROFILES </h2>
-	            <p class="help">
+	            <p class="help" style="display:none">
 	                Here is a tagcloud of the different types of actors. The bigger a word is
 	                means that more people of this type collaborated on this project. 
 	            </p>
@@ -439,7 +593,7 @@ $(window).load(function(){
 	    </div>
 		<div id="map-side-bar" class="grid_3">
 	            <h2>Where ?</h2>
-	            <p class="help">
+	            <p class="help" style="display:none">
 	                Here are all the places involved in this project.<br/>
 	                Click on a place, you'll jump to it directly on the map.
 	            </p>
@@ -466,17 +620,20 @@ $(window).load(function(){
 	<div id="annotation-dialog" class="modal source" style="display: none; ">
 		<div class="modal-header">
 			<a href="#" class="close">×</a>
-			<h3>{{ activity }} &bull; <span id="source-header">subtitle</span></h3>
+			<h3><!-- {{ activity }} &bull; --><span id="source-header">subtitle</span></h3>
 		</div>
 		<div class="modal-body" id="source">
 				<div id="note-attached">
 					<div class="scrollable-scrollbox">
 						<div class="scrollable-container">
 				    		<div class="scrollable-content">
-				    			<h2 id="source-title"></h2>
-								<div id="source-reference"></div>
+				    			<!-- h2 id="source-title"></h2 -->
+								
 				    			<div id="source-image"></div>
 				    			<div id="source-text"></div>
+				    			<div id="source-info"><span id="source-authors"></span><span id="source-mark"></span>
+				    			</div>
+				    			<div id="source-reference"></div>
 				    		</div>
 				    	</div>
 				    	<div class="dragger_container">

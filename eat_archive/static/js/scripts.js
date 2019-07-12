@@ -2,12 +2,12 @@ EAT = { templates:{}};
 
 EAT.initView = function(){
 	console.log("init view" );
-	var h = $("#menu-content").height();
-	$(".view").css({'margin-top': h + 40 });
+	var h = $(".menu").height();
+	$(".view").css({'margin-top': h });
 	// $("#logo").animate({height: h- 20} ); // logo inner padding
 	
 	var ph = $(".activity").height();// pahe height
-	$("#mcs3_container").css({'height': ph}); // without padding!
+	// $("#mcs3_container").css({'height': ph}); // without padding!
 	
 	$(".view .annotations").css({'height': ph});
 	$(".activity").css({'height': ph});
@@ -16,11 +16,20 @@ EAT.initView = function(){
 	$("#map-side-bar").height( tagsHeight );
 	$("#map").height( tagsHeight ); 
 	
+	$(".annotations").on( "mouseenter", ".annotation-link", function(){
+		$(this).addClass("highlighted");//animate({backgroundColor:"#ffffff"},200);
+	});
+	$(".annotations").on( "mouseleave", ".annotation-link", function(){
+		//if( !$(this).hasClass("filtered"))
+			$(this).removeClass("highlighted");
+	})
+	/*
 	$(".annotation-link" ).mouseenter( function(){
 		$(this).animate({backgroundColor:"#ffffff"},200);
 	}). mouseleave( function(){
 		$(this).animate({backgroundColor:"transparent"},200);
 	});
+	*/
 
 };
 
@@ -175,26 +184,29 @@ EAT.phases={ previous:0, annotated:{} };
  * @param phase id */
 EAT.phases.mouseover = function( nr_phase, target ){
 	
-	
+	console.log( "EAT.phases.mouseover", nr_phase, "previous:",EAT.phases.previous );
 	
 	if( EAT.phases.previous != 0 && EAT.phases.previous != nr_phase ){
 			EAT.phases.mouseout( EAT.phases.previous );
 	}
 	EAT.phases.previous = nr_phase;
 	
+	$(".annotation-link."+nr_phase).addClass("highlighted");
+	//$(".gantt-bar."+nr_phase).
+	$(".gantt-bar."+nr_phase).parent().parent(".mz-container").parent().parent().addClass("highlighted");
+	return;
+	
 	if( target ){
 		$(target).addClass("phase-hover");	
 	}
 	
-	console.log( "EAT.phases.mouseover", nr_phase );
 	// phase container
 	var phasebox = $("."+nr_phase).parent().parent().parent().parent();
 	// console.log( phasebox );
 	if( phasebox.hasClass( "actor-container" ) ){
 		phasebox.addClass( "mainHovered" );	
 	}
-	
-	return
+	return;
 	// background red
 	$("."+nr_phase).addClass("mainHovered")
 				    .parent().not("#gantt")
@@ -230,6 +242,9 @@ EAT.phases.mouseover = function( nr_phase, target ){
 EAT.phases.mouseout = function( nr_phase ){
 	$(".mainHovered" ).removeClass("mainHovered")// console.log( phasebox );}
 	$(".phase-hover").removeClass("phase-hover");
+	// $(".annotation-link").removeClass("highlighted");
+	$(".highlighted").removeClass("highlighted");
+	
 }
 
 
@@ -247,7 +262,7 @@ EAT.phases.click = function( nr_phase ){
 		EAT.phases.filters.add( nr_phase );
 		// 
 		$(".actor-container").hide();
-		$("."+nr_phase).parent().parent().parent( ".actor" ).parent().show("fast");
+		$("."+nr_phase).parent().parent().parent( ".actor" ).parent().show();
 }
 
 
@@ -267,9 +282,11 @@ EAT.phases.filters.add = function( nr_phase ){ // add functions
 			$( EAT.templates.filter )
 		);
 		var phase_id = nr_phase.replace(/[^\d]+/,'');
-		console.log( "EAT.phases.filters.add" , nr_phase, phase_id );
+		console.log( "EAT.phases.filters.add modiofied" , nr_phase, phase_id );
 		
-		var phase_title =  EAT.phases.items[ phase_id ].tags.join(", ") + " " + EAT.phases.items[ phase_id ].start_date + " sources:" + (EAT.phases.annotated[ phase_id ]?EAT.phases.annotated[ phase_id ]:0);
+		var phase_title =  EAT.phases.items[ phase_id ].tags.join(", ") + " (" + EAT.phases.items[ phase_id ].start_date.split("-")[0] +")" ; 
+		
+		// + " sources:" + (EAT.phases.annotated[ phase_id ]?EAT.phases.annotated[ phase_id ]:0);
 		$(".filters .filter-remove").css("cursor","pointer").qtip( EAT.qTipStaticConfig ).click( EAT.phases.reset );
 		$(".filters .filter-content").attr(
 			"title",phase_title
@@ -323,6 +340,8 @@ EAT.phases.reset = function(){
 }
 
 
+
+
 /**
  * TOOLTIP HANDLERS
  */
@@ -353,5 +372,84 @@ EAT.qTipConfig = {
     style:     {    classes: 'ui-tooltip-daniele ui-tooltip-shadow'}
 } 
 
-
+/**
+ * SOURCES AKA ANNOTATIONS
+ */
+EAT.sources = {};
+EAT.sources.load = function( $this ) {
+		nr_annotation = $this.attr("data-annotation");
+		source = sources[ nr_annotation ];
+		if( !source ) return;
+		previous = $this.prev().attr("data-annotation");
+		next = $this.next().attr("data-annotation");
+		
+		
+		console.log( "EAT.source.load", next, previous  );
+		$next = "";
+		if( next ){
+			console.log("has next");
+			$next = $("<a/>",{"id":"next-source"}).click(function(event){event.preventDefault();EAT.sources.load( $this.next() )}).text(" next ");
+		}
+		$previous = "";
+		if( previous ){
+			console.log("has previous");
+			$previous = $("<a/>",{"id":"previous-source"}).click(function(event){event.preventDefault();EAT.sources.load( $this.prev() )}).text(" previous ");
+		}
+		
+		
+		source.title = source.title.replace( /_/g," ");
+		$("#source-title").empty().text( source.title );
+		$("#source-header").empty().text( source.title + " ");
+		$("#source-header").append( $previous );
+		$("#source-header").append( $next );
+		
+		$("#source-reference").empty().text( source.ref_bibliographic );
+		$("#source-authors").empty();
+		$("#source-text").empty();
+		$("#source-mark").empty();
+		
+		if( source.authors )
+			$("#source-authors").empty().text( source.authors );
+		
+		if( source.sourcemark)
+			$("#source-mark").empty().text( ", " + source.sourcemark );
+		if( source.text )
+			$("#source-text").empty().html( "&laquo;" + source.text.replace( /[\n\r]+/g,"<br/><br/>") + "&raquo;" );
+		$("#source-image").empty();
+		
+		if( source.image.url ) {
+			var modal_width = Math.min( EAT.getBounds().width - 100, source.image.width );
+			var modal_height = Math.min( EAT.getBounds().height - 100, source.image.height );
+			console.log("image loaded",source.image.width, EAT.getBounds().width, "min:",modal_width ); 
+			
+			$('#annotation-dialog').css({
+				"width": modal_width,
+				"margin-left": - modal_width / 2,
+				"margin-top": - modal_height / 2, 
+				"height": modal_height,
+			});
+			$("#source-image").append("<img src='"+source.image.url+"' style='width:100%'/>")
+			$('#note-attached').css({height:modal_height - 100,width:modal_width-50});
+			/*
+			var modalHeight = Math.min( EAT.getBounds().height - 100, ( source.image.height + 100 ) );
+			var imageWidth = Math.min( EAT.getBounds().width - 100, ( source.image.width + 100 ) );
+			var modalWidth =  Math.min( imageWidth, ( source.image.width + 100 ) );
+			
+			
+			$('#annotation-dialog').css({
+				"margin-left": - modalWidth / 2, 
+				"margin-top": - modalHeight / 2, 
+				"height": source.image.height, 
+				"width": modalWidth });
+			$('#note-attached').css({height:modalHeight - 80});
+			$("#source-image").append("<img src='"+source.image.url+"' style='width:100%'/>")
+			*/
+			
+		} else {
+			$('#annotation-dialog').css({"margin-left": - 280, width: 560, "margin-top": - 250, "height": 500 });
+			$('#note-attached').css({height:400,width:510});
+		}
+		$('#annotation-dialog').modal("hide");	
+		$('#annotation-dialog').modal("show");	
+}
 

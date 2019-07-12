@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{%block title%}an exploration of the archive. Overview{% endblock %}
+
+{% block custom_head %}
+<script type="text/javascript">
+$(function() {
+    $(".tag_cloud").tagcloudsemantic({"max_size":2});
+    $("#map").jMapping();
+    
+    var bySize = function(a,b) {
+                return eval("(" + b.s + ")").size - eval("(" + a.s + ")").size 
+    }
+    
+    $(".sort_size").click(function() {
+        $(".tag").tsort({
+           "attr" : "data-tag",
+           "sortFunction" : bySize
+        });
+    });
+    
+    $(".sort_alpha").click(function() {
+        $(".tag").tsort();
+    });
+
+		_.each($(".tag_cloud"), function(tag_cloud) {
+		    $tagcloud = $(tag_cloud);
+		    thresold_min = $tagcloud.data("thresold_min");
+		    thresold_max = $tagcloud.data("thresold_max");
+		    $tagcloud.children(".slider").slider({
+		        range : true,
+		        min : thresold_min,
+		        max : thresold_max,
+		        values : [thresold_min, thresold_max],
+		        slide: function(event, ui) {
+		              console.log(ui.values[ 0 ], ui.values[ 1 ]);
+				        $(this).parent().tagcloudsemantic("render", ui.values[ 0 ], ui.values[ 1 ] );
+			        }
+		    });
+		});;
+});
+</script>
+	<link rel="stylesheet" href="{{ STATIC_URL }}/css/line.css">
+	<script src="{{ STATIC_URL }}/js/d3.js"></script>
+	<script src="{{ STATIC_URL }}/js/d3.time.js"></script>
+
+	<script type="text/javascript">
+	$(window).load(function() {
+		
+		var supersizedImages = [];
+		{%for im in images%}
+   			 supersizedImages.push( {image:"{{MEDIA_URL}}{{im.url}}", title:"{{im.title}}"} );
+		{% endfor %}
+		console.log(supersizedImages);
+		EAT.initView();
+		EAT.initSupersize( supersizedImages );	
+		EAT.qTipEnable();
+	});
+	</script>
+{% endblock %}
+
+
+{% block menuContent %}
+	<h1 class="title">EAT ARCHIVE <span id="project-date" class="date">1962-TODAY</span></h1>
+	<div id="project-auteurs" class="auteurs">acknowledgement</div>
+{% endblock %}
+
+
+{% block content %}
+	<div class="activity grid_16 alpha omega">
+		<div style="margin:16px; padding-top:16px; border-top:1px solid whitesmoke;">
+			<h1>Credits</h1>
+			<i>Nous tenons à remercier tous ceux qui ont soutenu et encouragé ce projet</i></br>
+			
+			In "order of appearance":
+			<h2>E.A.T. Datascape team</h2>
+			<ul>
+				<li>Christophe Leclercq, historien de l'art, direction scientifique du projet</li>
+				<li>Paul Girard, ingénieur, direction technologique et méthodologique du projet</li>
+				<li>Daniele Guido, designer, conception des interfaces de visualisations</li>
+				<li>Patrick Browne, élève ingénieur, développement du système d'information</li>
+				<li>Benedetta Signaroldi : designer, mise en exposition du projet</li>
+			</ul>
+			<h2>VIDEOs</h2>
+			<ul>
+				<li>Thomas Arrivé, prises de vue</li>
+				<li>Owen Martel, traduction (sous-titre)</li>
+			</ul>
+ 			Realise avec le soutien de Julie Martin, directrice d’<i>Experiments in Art and Technology</i> et de la 
+ 			<i>Robert Rauschenberg Foundation</i>.<br>
+			Remerciements: The Roy Lichtenstein Foundation, Mathieu Jacomy
+		</div>
+	</div>
+{% endblock %}
+

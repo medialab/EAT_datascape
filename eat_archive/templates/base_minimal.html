@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+ 
+	<link rel="stylesheet" href="{{ STATIC_URL }}/css/bootstrap.min.css">
+	<!-- base grid stylesheet -->
+	<link rel="stylesheet" href="{{ STATIC_URL }}/css/adapt/grid.960.css" />
+
+	<script>
+		// Edit to suit your needs.
+		var ADAPT_CONFIG = {
+		  // Where is your CSS?
+		  path: '{{ STATIC_URL }}/css/adapt/',
+		
+		  // false = Only run once, when page first loads.
+		  // true = Change on window resize and page tilt.
+		  dynamic: true,
+		
+		  // First range entry is the minimum.
+		  // Last range entry is the maximum.
+		  // Separate ranges by "to" keyword.
+		  range: [
+		    '0px    to 1260px  = small.css',
+		    '1260   to 1380px =  medium.css',
+		    '1380   to 1590px =  large.css',
+		    '1590   to 2540px =  extralarge.css',
+		    '2540px           = extralarge.css'
+		  ]
+		};
+	</script>
+	<link rel="stylesheet" href="{{ STATIC_URL }}/css/new.css" /> 
+	<script src="{{ STATIC_URL }}/js/adapt.min.js"></script>
+	
+	
+	<script type="text/javascript" src="{{ STATIC_URL }}/js/jquery-1.7.2.min.js"></script>
+	<script src="{{ STATIC_URL }}/js/scripts.js"></script>
+	{% block custom_head %} {%endblock%}
+	<script type="text/javascript" src="{{ STATIC_URL }}/js/eat/video.js"></script>
+	
+	<title>E.A.T. | {% block title %}{%endblock%}</title>
+</head>
+<body>
+
+
+</body>
+</html>

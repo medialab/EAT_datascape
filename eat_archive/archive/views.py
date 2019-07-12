@@ -24,7 +24,7 @@ cursor = connection.cursor()
 today = datetime.date.today()
 
 # logging
-logging.basicConfig(filename='/home/pom/eat_dev_logs/views.log',filemode="w+",level=logging.INFO)
+logging.basicConfig(filename='views.log',filemode="w+",level=logging.INFO)
 
 def _action_cloud(id=-1):
 	cloud=[]
@@ -188,7 +188,10 @@ def get_people_over_time():
     min_month.replace(min_month.year,min_month.month,1)
     # at least one phase has an None endate => today
     max_month=datetime.date.today()
-    max_month.replace(max_month.year,max_month.month+1,1)
+    if max_month.month <12 :
+        max_month.replace(max_month.year,max_month.month+1,1)
+    else : 
+        max_month.replace(max_month.year+1,1,1)
     current_month=min_month
     today=datetime.date.today()
     
@@ -210,6 +213,9 @@ def get_people_over_time():
         nb_ppl = reduce(lambda x, y: x + y.num_actor, current_phases,0)
         # agregates activites
         activity_names_numactors,activity_ids= zip(*[([p.activity.name,p.num_actor],p.activity.id) for p in current_phases])
+        
+        phases_involved = [ p.id for p in current_phases ]
+        
         # remove duplicates in activities ids
         activity_ids=set(activity_ids)
         # group by activity name summing number of actors
@@ -222,27 +228,102 @@ def get_people_over_time():
         # scaling done with NewValue = (((OldValue - OldMin) * (NewMax - NewMin)) / (OldMax - OldMin)) + NewMin
         #scale_text_size=lambda nb_actor:(((nb_actor - _activity_names_by_num_actors[-1][1]) * (2 - 0.5)) / (_activity_names_by_num_actors[0][1] - _activity_names_by_num_actors[-1][1])) + 0.5
         #ativities_str=",".join("<span style='font-size=%sem'>%s</span>"%(scale_text_size(num_actors),name) for name,num_actors in _activity_names_by_num_actors[:nb_act_treshold])
-        ativities_str=",".join(name for name,num_actors in _activity_names_by_num_actors[:nb_act_treshold])
+        ativities_str=", ".join(name for name,num_actors in _activity_names_by_num_actors[:nb_act_treshold])
         if len(_activity_names_by_num_actors)>nb_act_treshold :
             ativities_str+=" and %s more activities..."%(len(_activity_names_by_num_actors)-nb_act_treshold)
         
         # process output data
-        people_by_month.append((current_month, nb_ppl,len(activity_ids),"%s :: %i people :: %i activities :: %s" % (ativities_str, nb_ppl,len(activity_ids), current_month.strftime("%m/%Y"))))
+        people_by_month.append((current_month, nb_ppl,len(activity_ids),"%s :: %i people :: %i activities :: %s" % (ativities_str, nb_ppl,len(activity_ids), current_month.strftime("%m/%Y")),current_phases,phases_involved ))
 
         
     return people_by_month
 
+
+
 def getPhasesActivity(activity_id):
     phases = Phase.objects.select_related().filter(activity=activity_id)
     for phase in phases :
-        yield {"id" : phase.id, "start_date" : phase.start_date, "end_date" : phase.end_date, "tags" : [tag.tag for tag in phase.actionTags.all()]}
+        yield {"id" : phase.id, "description": phase.description, "start_date" : phase.start_date, "end_date" : phase.end_date, "tags" : [tag.tag for tag in phase.actionTags.all()]}
+
+def tag(request, tag_id):
+	data = {}
+	return render_to_response('tag.html',RequestContext(request, data))
 
 
+def graph( request ):
+	data = {}
+	return render_to_response('graph.html',RequestContext(request, data))
 
 
+def graph_dev( request ):
+	data = {}
+	return render_to_response('graph_dev.html',RequestContext(request, data))
 
+def credits_dev( request ):
+	data = {}
+	return render_to_response('credits_dev.html',RequestContext(request, data))
+
+	
+# @logged_in_or_basicauth()
+def credits( request ):
+    data = {}
+    cursor = connection.cursor()
+    sql = """
+      SELECT a.image, a.title FROM archive_annotation a WHERE LENGTH(image) > 0
+
+    """
+    cursor.execute(sql)
+    
+    images = [];
+    for row in dictfetchall(cursor):
+        images.append( {'url':row[ 'image' ], 'title':row[ 'title' ]} );
         
-#@logged_in_or_basicauth()        
+	data["images"] = images
+	return render_to_response('credits.html',RequestContext(request, data))
+
+# @logged_in_or_basicauth()
+def project_dev( request, activity_id ):
+	data = {}
+	data['activity'] = activity = Activity.objects.get(id=activity_id)
+	data['tags'] = {
+		'techno' : Activity.objects.get(id=activity_id).technologyTags.all(),
+		'art'    : Activity.objects.get(id=activity_id).artTags.all(),
+		'own'    : Activity.objects.get(id=activity_id).activityTags.all()  
+	}
+	data['sources'] = ( Annotation.objects
+                                .filter(phases__in = Activity.objects.get(id=activity_id)
+                                .phases.all())
+                                .annotate(min_date=Min('phases__start_date')).order_by('min_date')
+                                .distinct()
+    );
+    
+	data['places'] = ( Place.objects
+                            .filter( latitude__isnull = False, phases__in = activity.phases.all() )
+                            .order_by("name")
+                            .distinct() 
+	)
+    
+    #json dumps 
+	json_sources = {}
+	for annotation in data['sources'] :
+		json_sources[annotation.id] = { "id" : annotation.id, "title" : annotation.title, "text": annotation.text, "authors":",".join(map(unicode,annotation.authors.all())),"sourcemark":annotation.sourcemark, "ref_bibliographic": annotation.source.ref_bibliographic, "image": { "url": annotation.image.url, "width":annotation.image.width, "height":annotation.image.height } if annotation.image else "" }
+         
+	data['json_sources'] = json.dumps( json_sources ); 
+    
+	data['json_phases'] = json.dumps(list(getPhasesActivity(activity_id)), default = dthandler)
+    
+	data["json_people"] = json.dumps(peopleAndPhasesInActivity(activity_id), default=dthandler)
+    
+	data["linked_activities"]=linked_activities= set([a.activity_target for a in activity.activity_source.all()]+[a.activity_source for a in activity.activity_target.all()])
+	
+	data["linked_activity_ids"]=json.dumps([a.id for a in linked_activities], default=dthandler)
+    
+	data["num_linked_activities"] = len( linked_activities )
+    
+	return render_to_response('project_dev.html', RequestContext(request, data))
+	
+        
+# # @logged_in_or_basicauth()        
 def project(request, activity_id): 
     data = { "user" : request.user}
 
@@ -284,12 +365,26 @@ def project(request, activity_id):
                                 .annotate(min_date=Min('phases__start_date')).order_by('min_date')
                                 .distinct()
                                 );
+                                
+    # add linked activities phases
+    linked_activities= [a.activity_target for a in activity.activity_source.all()]+[a.activity_source for a in activity.activity_target.all()]
+    data["linked_activity_ids"]=json.dumps([a.id for a in linked_activities], default=dthandler)
+    phases = [p for a in linked_activities for p in a.phases.select_related().all()]
+    data["linked_phases"] = json.dumps([ { 
+                            "id" : phase.id,
+                            "start_date" : phase.start_date,
+                            "end_date" : phase.end_date if phase.end_date else datetime.date.today(),
+                            "activity" : phase.activity.name,
+                            "activity_id" : phase.activity.id,
+                            "label" : [tag.tag for tag in phase.actionTags.all()],
+                     } for phase in phases], default=dthandler)
+
         
                       
     # dump the annotation for better javascript performances
     data['sources'] = {}
-    for source in data['annotations'] :
-        data['sources'][source.id] = { "id" : source.id, "title" : source.title, "text": source.text, "ref_bibliographic": source.source.ref_bibliographic, "image": { "url": source.image.url, "width":source.image.width, "height":source.image.height } if source.image else "" }
+    for annotation in data['annotations'] :
+        data['sources'][annotation.id] = { "id" : annotation.id, "title" : annotation.title, "text": annotation.text, "authors":",".join(map(unicode,annotation.authors.all())),"sourcemark":annotation.sourcemark, "ref_bibliographic": annotation.source.ref_bibliographic, "image": { "url": annotation.image.url, "width":annotation.image.width, "height":annotation.image.height } if annotation.image else "" }
          
     data['sources'] = json.dumps( data['sources'] );   
    
@@ -297,8 +392,50 @@ def project(request, activity_id):
     return render_to_response('project.html',c)
 
 
+def actor_dev(request, actor_id):
+    """Returns all the data for the actor page"""
+    data = {}
+    phases = Actor.objects.get(id=actor_id).phases.select_related().all().order_by('start_date')
+    data["actor"] = Actor.objects.get(id=actor_id)
+    data["phases"] = json.dumps([ { 
+                            "id" : phase.id,
+                            "start_date" : phase.start_date,
+                            "end_date" : phase.end_date if phase.end_date else datetime.date.today(),
+                            "description" : phase.activity.name,
+                            "activity_id" : phase.activity.id,
+                            "tags" : [tag.tag for tag in phase.actionTags.all()],
+                     } for phase in phases], default=dthandler)
+    
+    data["places"] = ( Place.objects
+                        .filter(latitude__isnull = False, phases__in = Actor.objects.get(id=actor_id).phases.all())
+                        .annotate(count=Count("id"))
+                        .order_by("name") )
+    data["collaborators"] = ( Actor.objects
+                                .filter(phases__in = Actor.objects.get(id=actor_id).phases.all())
+                                .annotate(count=Count("id")).exclude(id=actor_id)
+                                .order_by("-count") )
+    
+    data["action_tags"] = ( ActionGlossary.objects
+                                .filter(phases__in = Actor.objects.get(id=actor_id).phases.all() )
+                                .annotate(count=Count("id"))
+                                .order_by("-count") )
+    
+    data["art_tags"] =  ( ArtGlossary.objects
+                            .filter(activity__phases__in = Actor.objects.get(id=actor_id).phases.all())
+                            .annotate(count=Count("id"))
+                            .order_by("-count")[0:3] )
+   
+    data["techno_tags"] = ( TechnologyGlossary.objects
+                            .filter(activity__phases__in = Actor.objects
+                                                                .get(id=actor_id)
+                                                                .phases.all())
+                            .annotate(count=Count("id"))
+                            .order_by("-count")[0:3] )
+                            
+    c = RequestContext(request, data)
+    return render_to_response('actor_dev.html',c)
 
-#@logged_in_or_basicauth()  
+# # @logged_in_or_basicauth()  
 def actor(request, actor_id):
     """Returns all the data for the actor page"""
     data = {}
@@ -345,9 +482,38 @@ def actor(request, actor_id):
 
 
 
+def overview_dev( request ):
+	data ={}
+	data["places"] = Place.objects.filter(latitude__isnull=False).order_by("name").distinct()
+	
+	cursor = connection.cursor()
+	sql = """
+      SELECT a.image, a.title FROM archive_annotation a WHERE LENGTH(image) > 0
 
+    """
+	cursor.execute(sql)
+	images = [];
+	for row in dictfetchall(cursor):
+		images.append( {'url':row[ 'image' ], 'title':row[ 'title' ]} );
+        
+	data["json_images"] = json.dumps( images )
 
-#@logged_in_or_basicauth()  
+	data["collaborators"] = ( Actor.objects.annotate(count=Count('phases')).order_by('-count')[:50] )
+	data["nr_ppl_per_date"] = json.dumps(get_people_over_time(), default=dthandler)
+    
+	data["tag_clouds"] = [
+         ("projects", Activity.objects.all().annotate(size = Count("phases__actors")).exclude(size__lt=3) ) 
+         , ( "activities" , ActionGlossary.objects.all().annotate(size = Count("phases")) )
+       , ( "actors" , Actor.objects.all().annotate(size = Count("phases")).order_by("firstname").exclude(size__lt = 3) ) 
+       , ("profiles", ActorProfileGlossary.objects.all().annotate(size = Count("actor")) ) 
+       , ("art"     , ArtGlossary.objects.all().annotate(size = Count("activity")) )
+       , ("techno"  , TechnologyGlossary.objects.all().annotate(size = Count("activity")) )]
+
+	
+	return render_to_response('overview_dev.html', RequestContext(request, data) )
+
+	
+# # @logged_in_or_basicauth()  
 def overview(request):
     data = {}
     data["places"] = Place.objects.filter(latitude__isnull=False).order_by("name").distinct()
