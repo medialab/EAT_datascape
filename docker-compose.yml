@@ -1,0 +1,35 @@
+version: '2'
+
+services:
+
+  djangoapp:
+    build: .
+    volumes:
+      - static_volume:/eat_archive/static  # <-- bind the static volume
+      - media_volume:/eat_media  # <-- bind the media volume
+      - database_volume:/eat_archive/database
+    networks:
+      - nginx_network
+
+  nginx:
+    image: nginx:1.13
+    ports:
+      - 8000:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/local.conf
+      - static_volume:/static  # <-- bind the static volume
+      - media_volume:/media  # <-- bind the media volume
+    depends_on:
+      - djangoapp
+    networks:
+      - nginx_network
+
+networks:
+  nginx_network:
+    driver: bridge
+
+volumes:
+  database_volume:
+  static_volume:  # <-- declare the static volume
+  media_volume:  # <-- declare the media volume
+
