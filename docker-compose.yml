@@ -16,7 +16,7 @@ services:
     ports:
       - 8000:80
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/local.conf
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - static_volume:/static  # <-- bind the static volume
       - media_volume:/media  # <-- bind the media volume
     depends_on:
