@@ -3,7 +3,9 @@ version: '2'
 services:
 
   djangoapp:
-    build: .
+    build: 
+      context: .
+      dockerfile: eat_archive/Dockerfile
     volumes:
       - static_volume:/eat_archive/static  # <-- bind the static volume
       - media_volume:/eat_media  # <-- bind the media volume
@@ -12,11 +14,11 @@ services:
       - nginx_network
 
   nginx:
-    image: nginx:1.13
+    build:
+      context: .
     ports:
       - 8000:80
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - static_volume:/static  # <-- bind the static volume
       - media_volume:/media  # <-- bind the media volume
     depends_on:
