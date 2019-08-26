@@ -13,7 +13,7 @@ RUN apk add --update-cache \
     apk add --virtual=build-deps \ 
                gcc  \
                build-base python-dev py-pip jpeg-dev zlib-dev&& \
-    pip --no-cache-dir install --requirement /eat_archive/requirements.txt gunicorn&& \
+    pip --no-cache-dir install --requirement /eat_archive/requirements.txt gunicorn gunicorn[gthread] futures && \
     apk del build-deps && rm -rf /var/cache/apk/* 
 
 VOLUME /eat_media
