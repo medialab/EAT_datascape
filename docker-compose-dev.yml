@@ -18,8 +18,8 @@ services:
     ports:
       - 8000:80
     volumes:
-      - static_volume:/static  # <-- bind the static volume
-      - media_volume:/media  # <-- bind the media volume
+      - static_volume:/eat/static  # <-- bind the static volume
+      - media_volume:/eat/media  # <-- bind the media volume
     depends_on:
       - djangoapp
     networks:
