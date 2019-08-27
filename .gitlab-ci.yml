@@ -24,7 +24,7 @@ build_frontend_image:
 build_backend_image:
   stage: build
   script:
-    - docker build -t $BACKEND_IMAGE_NAME -f eat_archive/Dockerfile .
+    - docker build -t $BACKEND_IMAGE_NAME -f eat_archive/Dockerfile eat_archive/
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - docker push $BACKEND_IMAGE_NAME
   environment:
