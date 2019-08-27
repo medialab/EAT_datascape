@@ -17,7 +17,7 @@ RUN apk add --update-cache \
     apk del build-deps && rm -rf /var/cache/apk/* 
 
 VOLUME /eat_media
-VOLUME /eat_archive/static
+VOLUME /eat_archive/static_root
 VOLUME /eat_archive/database
 
 EXPOSE 8000
