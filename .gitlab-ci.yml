@@ -2,6 +2,7 @@ image: docker:stable
 
 stages:
   - build
+  - deploy
 
 variables:
   FRONTEND_IMAGE_NAME: $CI_REGISTRY_IMAGE/eat-frontend:$CI_COMMIT_REF_SLUG
@@ -35,3 +36,15 @@ build_backend_image:
     - production
     - tags
 
+deploy:
+  stage: deploy
+  image: cdrx/rancher-gitlab-deploy
+  script:
+    - upgrade --rancher-key $RANCHER_ACCESS_KEY --rancher-secret $RANCHER_SECRET_KEY --rancher-url $RANCHER_URL --environment $RANCHER_ENV --stack $RANCHER_STACK --service $RANCHER_BACKEND_SERVICE --start-before-stopping
+    - upgrade --rancher-key $RANCHER_ACCESS_KEY --rancher-secret $RANCHER_SECRET_KEY --rancher-url $RANCHER_URL --environment $RANCHER_ENV --stack $RANCHER_STACK --service $RANCHER_FRONTEND_SERVICE --start-before-stopping
+  environment:
+    name: $CI_COMMIT_REF_SLUG
+    url: $STAGING_BASEURL
+  only:
+    - staging
+    - production
