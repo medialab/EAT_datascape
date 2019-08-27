@@ -4,10 +4,9 @@ services:
 
   djangoapp:
     build: 
-      context: .
-      dockerfile: eat_archive/Dockerfile
+      context: eat_archive
     volumes:
-      - static_volume:/eat_archive/static  # <-- bind the static volume
+      - static_volume:/eat_archive/static_root  # <-- bind the static volume
       - media_volume:/eat_media  # <-- bind the media volume
       - database_volume:/eat_archive/database
     networks:

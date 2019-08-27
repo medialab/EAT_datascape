@@ -109,11 +109,12 @@ INSTALLED_APPS = (
    # 'debug_toolbar',
 )
 
-STATICFILES_DIRS = (
-)
+STATICFILES_DIRS = [
+"/eat_archive/static"
+]
 
 STATIC_URL="/static"
-STATIC_ROOT=os.path.join(ROOT_PATH, "/eat_archive/static")
+STATIC_ROOT=os.path.join(ROOT_PATH, "/eat_archive/static_root")
 
 
 ADMIN_REORDER = (
