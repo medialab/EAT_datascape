@@ -4,15 +4,15 @@ stages:
   - build
 
 variables:
-  CLIENT_IMAGE_NAME: $CI_REGISTRY_IMAGE/eat-client:$CI_COMMIT_REF_SLUG
-  API_IMAGE_NAME: $CI_REGISTRY_IMAGE/eat-djangoapp:$CI_COMMIT_REF_SLUG
+  FRONTEND_IMAGE_NAME: $CI_REGISTRY_IMAGE/eat-frontend:$CI_COMMIT_REF_SLUG
+  BACKEND_IMAGE_NAME: $CI_REGISTRY_IMAGE/eat-backend:$CI_COMMIT_REF_SLUG
 
-build_client_image:
+build_frontend_image:
   stage: build
   script:
-    - docker build -t $CLIENT_IMAGE_NAME  .
+    - docker build -t $FRONTEND_IMAGE_NAME  .
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-    - docker push $CLIENT_IMAGE_NAME
+    - docker push $FRONTEND_IMAGE_NAME
   environment:
     name: $CI_COMMIT_REF_SLUG
     url: $BASEURL
@@ -21,12 +21,12 @@ build_client_image:
     - production
     - tags
 
-build_api_image:
+build_backend_image:
   stage: build
   script:
-    - docker build -t $API_IMAGE_NAME -f eat_archive/Dockerfile .
+    - docker build -t $BACKEND_IMAGE_NAME -f eat_archive/Dockerfile .
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-    - docker push $API_IMAGE_NAME
+    - docker push $BACKEND_IMAGE_NAME
   environment:
     name: $CI_COMMIT_REF_SLUG
     url: $BASEURL
