@@ -1,0 +1,50 @@
+image: docker:stable
+
+stages:
+  - build
+  - deploy
+
+variables:
+  FRONTEND_IMAGE_NAME: $CI_REGISTRY_IMAGE/eat-frontend:$CI_COMMIT_REF_SLUG
+  BACKEND_IMAGE_NAME: $CI_REGISTRY_IMAGE/eat-backend:$CI_COMMIT_REF_SLUG
+
+build_frontend_image:
+  stage: build
+  script:
+    - docker build -t $FRONTEND_IMAGE_NAME  .
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - docker push $FRONTEND_IMAGE_NAME
+  environment:
+    name: $CI_COMMIT_REF_SLUG
+    url: $BASEURL
+  only:
+    - staging
+    - production
+    - tags
+
+build_backend_image:
+  stage: build
+  script:
+    - docker build -t $BACKEND_IMAGE_NAME -f eat_archive/Dockerfile eat_archive/
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - docker push $BACKEND_IMAGE_NAME
+  environment:
+    name: $CI_COMMIT_REF_SLUG
+    url: $BASEURL
+  only:
+    - staging
+    - production
+    - tags
+
+deploy:
+  stage: deploy
+  image: cdrx/rancher-gitlab-deploy
+  script:
+    - upgrade --rancher-key $RANCHER_ACCESS_KEY --rancher-secret $RANCHER_SECRET_KEY --rancher-url $RANCHER_URL --environment $RANCHER_ENV --stack $RANCHER_STACK --service $RANCHER_BACKEND_SERVICE --start-before-stopping
+    - upgrade --rancher-key $RANCHER_ACCESS_KEY --rancher-secret $RANCHER_SECRET_KEY --rancher-url $RANCHER_URL --environment $RANCHER_ENV --stack $RANCHER_STACK --service $RANCHER_FRONTEND_SERVICE --start-before-stopping
+  environment:
+    name: $CI_COMMIT_REF_SLUG
+    url: $STAGING_BASEURL
+  only:
+    - staging
+    - production

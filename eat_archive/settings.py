@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
+from ast import literal_eval
 # Django settings for eat_archive project.
 
 ROOT_PATH = os.environ.get('ROOT_PATH', '/')
 
-DEBUG = os.environ.get("PROD", False) == False
+DEBUG = literal_eval(os.environ.get("PROD", False)) == False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -109,11 +110,12 @@ INSTALLED_APPS = (
    # 'debug_toolbar',
 )
 
-STATICFILES_DIRS = (
-)
+STATICFILES_DIRS = [
+"/eat_archive/static"
+]
 
 STATIC_URL="/static"
-STATIC_ROOT=os.path.join(ROOT_PATH, "/eat_archive/static")
+STATIC_ROOT=os.path.join(ROOT_PATH, "/eat_archive/static_root")
 
 
 ADMIN_REORDER = (
