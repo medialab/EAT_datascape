@@ -11,6 +11,8 @@ services:
       - database_volume:/eat_archive/database
     networks:
       - nginx_network
+    environment:
+      - PROD=False
 
   nginx:
     build:
