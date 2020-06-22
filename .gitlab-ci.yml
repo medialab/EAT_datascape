@@ -12,7 +12,7 @@ variables:
 
 services:
     - docker:stable-dind
-    
+
 build_frontend_image:
   stage: build
   script:
@@ -21,8 +21,8 @@ build_frontend_image:
     - docker push $FRONTEND_IMAGE_NAME
   environment:
     name: $CI_COMMIT_REF_SLUG
-    url: $BASEURL
   only:
+    - master
     - staging
     - production
     - tags
@@ -35,8 +35,8 @@ build_backend_image:
     - docker push $BACKEND_IMAGE_NAME
   environment:
     name: $CI_COMMIT_REF_SLUG
-    url: $BASEURL
   only:
+    - master
     - staging
     - production
     - tags
