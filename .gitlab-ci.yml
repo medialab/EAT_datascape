@@ -7,7 +7,12 @@ stages:
 variables:
   FRONTEND_IMAGE_NAME: $CI_REGISTRY_IMAGE/eat-frontend:$CI_COMMIT_REF_SLUG
   BACKEND_IMAGE_NAME: $CI_REGISTRY_IMAGE/eat-backend:$CI_COMMIT_REF_SLUG
+  DOCKER_HOST: tcp://127.0.0.1:2375
+  DOCKER_TLS_CERTDIR: ""
 
+services:
+    - docker:stable-dind
+    
 build_frontend_image:
   stage: build
   script:
