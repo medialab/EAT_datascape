@@ -24,7 +24,7 @@ build_frontend_image:
   only:
     - master
     - staging
-    - production
+    - prod
     - tags
 
 build_backend_image:
@@ -38,7 +38,7 @@ build_backend_image:
   only:
     - master
     - staging
-    - production
+    - prod
     - tags
 
 deploy:
@@ -52,4 +52,4 @@ deploy:
     url: $STAGING_BASEURL
   only:
     - staging
-    - production
+    - prod
