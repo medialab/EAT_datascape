@@ -58,8 +58,8 @@ deploy:
     - kubectl apply -f k8s/namespace.yml
     - cp ${BACKEND_SECRETS} k8s/overlays/$CI_COMMIT_REF_SLUG/backend.env
     - kubectl apply -k k8s/overlays/$CI_COMMIT_REF_SLUG
-    - kubectl -n ${NS} rollout restart deployment ${NS}-api
-    - kubectl -n ${NS} rollout restart deployment ${NS}-client
+    - kubectl -n ${NS} rollout restart deployment ${NS}-backend
+    - kubectl -n ${NS} rollout restart deployment ${NS}-frontend
   environment:
     name: $CI_COMMIT_REF_SLUG
   only:
