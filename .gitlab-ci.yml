@@ -13,7 +13,7 @@ variables:
 services:
     - docker:stable-dind
 
-build_frontend_image:
+build_frontend:
   stage: build
   script:
     - docker build -t $FRONTEND_IMAGE_NAME  .
@@ -27,7 +27,7 @@ build_frontend_image:
     - prod
     - tags
 
-build_backend_image:
+build_backend:
   stage: build
   script:
     - docker build -t $BACKEND_IMAGE_NAME -f eat_archive/Dockerfile eat_archive/
@@ -42,14 +42,26 @@ build_backend_image:
     - tags
 
 deploy:
+  image:
+    name: jrisp/kubehelper:latest
+    entrypoint: [""]
   stage: deploy
-  image: cdrx/rancher-gitlab-deploy
+  dependencies:
+    - build_frontend
+    - build_backend
   script:
-    - upgrade --rancher-key $RANCHER_ACCESS_KEY --rancher-secret $RANCHER_SECRET_KEY --rancher-url $RANCHER_URL --environment $RANCHER_ENV --stack $RANCHER_STACK --service $RANCHER_BACKEND_SERVICE --start-before-stopping
-    - upgrade --rancher-key $RANCHER_ACCESS_KEY --rancher-secret $RANCHER_SECRET_KEY --rancher-url $RANCHER_URL --environment $RANCHER_ENV --stack $RANCHER_STACK --service $RANCHER_FRONTEND_SERVICE --start-before-stopping
+    - NS=eat
+    - kubectl config set-cluster k8s --server="$KUBE_URL" --certificate-authority="$KUBE_CA_PEM_FILE"
+    - kubectl config set-credentials gitlab-admin --token="$KUBE_TOKEN"
+    - kubectl config set-context default --cluster=k8s --user=gitlab-admin
+    - kubectl config use-context default
+    - kubectl apply -f k8s/namespace.yml
+    - cp ${EAT_SECRETS} k8s/overlays/$CI_COMMIT_REF_SLUG/eat.env
+    - kubectl apply -k k8s/overlays/$CI_COMMIT_REF_SLUG
+    - kubectl -n ${NS} rollout restart deployment ${NS}-api
+    - kubectl -n ${NS} rollout restart deployment ${NS}-client
   environment:
     name: $CI_COMMIT_REF_SLUG
-    url: $STAGING_BASEURL
   only:
-    - staging
-    - prod
+   - staging
+   - prod
