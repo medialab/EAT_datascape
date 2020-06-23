@@ -4,9 +4,10 @@ metadata:
   name: ingress
   annotations:
     ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/server-alias: eat_datascape-pprd.medialab.sciences-po.fr
 spec:
   rules:
-  - host: eat_datascape-pprd.medialab.sciences-po.fr
+  - host: eat-pprd.medialab.sciences-po.fr
     http:
       paths:
         - path: /
