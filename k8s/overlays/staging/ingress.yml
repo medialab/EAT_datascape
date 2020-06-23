@@ -1,0 +1,15 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: eat_datascape-pprd.medialab.sciences-po.fr
+    http:
+      paths:
+        - path: /
+          backend:
+            serviceName: frontend
+            servicePort: 80

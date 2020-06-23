@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: backend
+  template:
+    metadata:
+      labels:
+        component: backend
+    spec:
+      imagePullSecrets:
+        - name: gitlab
+      containers:
+        - name: backend
+          image: gitlab.sciences-po.fr:4567/medialab/eat_datascape/eat-backend:latest
+          env:
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: backend
+                  key: secret_key
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: db-vol
+              mountPath: /eat_archive/database
+            - name: static-vol
+              mountPath: /eat_archive/static_root
+            - name: media-vol
+              mountPath: /eat_media
+      volumes:
+        - name: db-vol
+          persistentVolumeClaim:
+            claimName: db-pvc
+        - name: static-vol
+          persistentVolumeClaim:
+            claimName: static-pvc
+        - name: media-vol
+          persistentVolumeClaim:
+            claimName: media-pvc

@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: frontend
+  template:
+    metadata:
+      labels:
+        component: frontend
+    spec:
+      imagePullSecrets:
+        - name: gitlab
+      containers:
+        - name: frontend
+          image: gitlab.sciences-po.fr:4567/medialab/eat_datascape/eat-frontend:latest
+          env:
+            - name: API_HOST
+              value: eat-backend.eat.svc.cluster.local
+            - name: API_PORT
+              value: '8000'
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: static-vol
+              mountPath: /eat/static
+            - name: media-vol
+              mountPath: /eat/media
+      volumes:
+        - name: static-vol
+          persistentVolumeClaim:
+            claimName: static-pvc
+        - name: media-vol
+          persistentVolumeClaim:
+            claimName: media-pvc

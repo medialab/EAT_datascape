@@ -1,0 +1,28 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: eat
+
+namePrefix: eat-
+
+bases:
+  - ../../base/
+
+resources:
+  - ingress.yml
+
+patchesStrategicMerge:
+  - env.yml
+
+secretGenerator:
+- name: backend
+  env: backend.env
+
+commonLabels:
+  stage: staging
+
+images:
+  - name: gitlab.sciences-po.fr:4567/medialab/eat_datascape/eat-backend
+    newTag: 'staging'
+  - name: gitlab.sciences-po.fr:4567/medialab/eat_datascape/eat-frontend
+    newTag: 'staging'
