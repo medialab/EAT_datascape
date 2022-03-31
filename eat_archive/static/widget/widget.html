@@ -144,8 +144,7 @@ $(document).ready(function() {
 		s.bind('overnodes',function(e){
 			// Cursor: pointer for hovered nodes
 			$('#carto').addClass("nodehovered");	// Actually, the whole canvas has the property
-			if (e.content.length > 0)
-				console.log(graph.nodes_byId[e.content[0]]);
+			
 		});
 		s.bind('outnodes',function(e){
 			// Remove the pointer cursor on node out
@@ -167,8 +166,8 @@ $(document).ready(function() {
 				var nodes = e.content;
 				if(nodes.length>0){
 					var nId = nodes[0];
-					
-					var url = "http://jiminy.medialab.sciences-po.fr/eat_datascape/actor/"+graph.nodes_byId[nId].id;
+					//  id are type_id we trasnform into type/id...
+					var url = "/"+graph.nodes_byId[nId].id.replace('_', '/');
 					if(url){
 						top.location = url;
 					}
@@ -182,7 +181,7 @@ $(document).ready(function() {
 		};
 		resizeWidget();
 		updateGraph();
-		s.startForceAtlas2();
+		//s.startForceAtlas2();
 		forceAtlas = true;
 
 	},
@@ -219,13 +218,13 @@ var updateGraph = function(){
 	// Build graph (sigma)
 	s.emptyGraph();
 	graph.nodes.forEach(function(n){
-		console.log(n);
+		
 		s.addNode(n.id,{
 			x: n.x || Math.random()*100,
 			y: n.y || Math.random()*100,
 			size: Math.sqrt(1+n.inEdges.length+n.outEdges.length),
 			label: n.attributes_byId[nameAttId] || n.label || '',
-			color: 'rgba(38,38,38,.1)'//(n.color && 'rgb('+n.color.r+', '+n.color.g+', '+n.color.b+')') || "#A09999"
+			color: (n.color && 'rgb('+n.color.r+', '+n.color.g+', '+n.color.b+')') || "#A09999"
 		});
 	});
 	graph.edges.forEach(function(e,i){
